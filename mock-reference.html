@@ -11,24 +11,39 @@ body{font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;overflow:hi
 /* ── App shell ── */
 .app{display:flex;height:100vh;font-size:13px;color:#333;}
 
-/* ── Sidebar ── */
-.sidebar{width:220px;min-width:220px;background:#7B1857;color:#fff;display:flex;flex-direction:column;overflow-y:auto;}
-.sb-logo{padding:14px 16px;display:flex;align-items:center;gap:8px;}
-.sb-logo .zoho-icon{width:28px;height:28px;background:#E8384F;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:900;flex-shrink:0;}
-.sb-logo .logo-text{color:#fff;font-size:14px;font-weight:600;}
-.sb-logo .collapse-btn{margin-left:auto;cursor:pointer;color:rgba(255,255,255,0.6);font-size:16px;}
-.sb-teamspace{padding:6px 12px;display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.85);}
-.sb-teamspace .ts-icon{width:22px;height:22px;background:#00BCD4;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
-.sb-search{padding:6px 12px;}
-.sb-search input{width:100%;padding:5px 8px;border-radius:4px;border:none;background:rgba(255,255,255,0.15);color:#fff;font-size:12px;}
-.sb-search input::placeholder{color:rgba(255,255,255,0.55);}
-.sb-nav{flex:1;padding:4px 0;overflow-y:auto;}
-.sb-item{padding:9px 16px;cursor:pointer;color:rgba(255,255,255,0.8);font-size:13px;display:flex;align-items:center;gap:10px;transition:.15s;}
-.sb-item:hover{background:rgba(255,255,255,0.1);color:#fff;}
-.sb-item.active{background:rgba(255,255,255,0.18);color:#fff;font-weight:600;border-left:3px solid rgba(255,255,255,0.8);}
-.sb-item.active{padding-left:13px;}
-.sb-bottom{display:flex;justify-content:space-around;padding:10px 6px;border-top:1px solid rgba(255,255,255,0.15);}
-.sb-bottom-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.7);font-size:10px;cursor:pointer;}
+/* ── Sidebar — Nxt Gen Left Menu ── */
+.sidebar{width:240px;min-width:240px;background:#fff;color:#434D5E;border-right:1px solid #DCDBEE;display:flex;flex-direction:column;overflow-y:auto;font-family:'Zoho Puvi','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;}
+.sb-logo{padding:10px 10px 8px 12px;display:flex;align-items:center;gap:8px;}
+.sb-logo .zoho-icon{width:28px;height:28px;background:#5464F2;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;flex-shrink:0;}
+.sb-logo .logo-text{color:#434D5E;font-size:15px;font-weight:600;}
+.sb-logo .collapse-btn{margin-left:auto;cursor:pointer;color:#8C91AB;font-size:15px;}
+.sb-static-nav{padding:0 10px 10px;border-bottom:1px solid #EDF0F4;display:flex;flex-direction:column;gap:2px;}
+.sb-static-item{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;font-size:14px;color:#434D5E;cursor:pointer;transition:.12s;}
+.sb-static-item svg{flex-shrink:0;color:#616E88;}
+.sb-static-item:hover{background:#F5F6F8;}
+.sb-teamspace{margin-top:8px;padding:3px 10px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:#434D5E;}
+.sb-teamspace .ts-icon{width:24px;height:24px;background:#1FC31C;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-search{padding:8px 10px 6px;}
+.sb-search-box{display:flex;align-items:center;gap:6px;border:1px solid #C0C8E2;border-radius:6px;height:34px;padding:0 10px;background:#fff;transition:border-color .12s;}
+.sb-search-box:focus-within{border-color:#5464F2;box-shadow:0 0 0 3px rgba(76,94,253,0.15);}
+.sb-search-box svg{flex-shrink:0;color:#8C91AB;}
+.sb-search-box input{width:100%;border:none;outline:none;background:transparent;font-size:14px;color:#434D5E;font-family:inherit;}
+.sb-search-box input::placeholder{color:#8C91AB;}
+.sb-nav{flex:1;padding:2px 10px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
+.sb-item{padding:5px 6px;cursor:pointer;color:#434D5E;font-size:14px;display:flex;align-items:center;gap:10px;border-radius:6px;transition:.12s;}
+.sb-item svg{flex-shrink:0;color:#616E88;}
+.sb-item:hover{background:#F5F6F8;}
+.sb-item.active{background:#EEF0FF;color:#5464F2;font-weight:600;}
+.sb-item.active svg{color:#5464F2;}
+.sb-folder{display:flex;align-items:center;gap:8px;padding:5px 6px;margin-top:4px;font-size:14px;font-weight:500;color:#434D5E;cursor:pointer;border-radius:6px;transition:.12s;}
+.sb-folder:hover{background:#F5F6F8;}
+.sb-folder svg{flex-shrink:0;color:#616E88;}
+.sb-folder .sb-folder-chev{margin-left:auto;color:#8C91AB;transition:transform .15s;}
+.sb-folder.collapsed .sb-folder-chev{transform:rotate(-90deg);}
+.sb-folder-group.collapsed{display:none;}
+.sb-bottom{display:flex;justify-content:space-around;padding:10px 6px;border-top:1px solid #EDF0F4;}
+.sb-bottom-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#616E88;font-size:10px;cursor:pointer;}
+.sb-bottom-item svg{color:#616E88;}
 
 /* ── Main content ── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;}
@@ -1932,39 +1947,95 @@ tbody tr:hover{background:#f5f7ff;}
 <body>
 <div class="app">
 
-  <!-- ═══ SIDEBAR ═══ -->
+  <!-- ═══ SIDEBAR — Nxt Gen Left Menu ═══ -->
   <div class="sidebar">
     <div class="sb-logo">
       <div class="zoho-icon">Z</div>
       <span class="logo-text">Zoho CRM</span>
-      <span class="collapse-btn">&#9001;</span>
+      <span class="collapse-btn">&#10094;</span>
+    </div>
+    <div class="sb-static-nav">
+      <div class="sb-static-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+      <div class="sb-static-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20z" fill="currentColor" fill-opacity="0.15" stroke="none"/></svg>Analytics</div>
+      <div class="sb-static-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>Reports</div>
+      <div class="sb-static-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>My Requests</div>
     </div>
     <div class="sb-teamspace">
       <div class="ts-icon">CT</div>
-      <span style="font-weight:600;font-size:12px;">CRM Teamspace</span>
-      <span style="font-size:10px;color:rgba(255,255,255,0.6);">&#9660;</span>
-      <span style="margin-left:auto;cursor:pointer;color:rgba(255,255,255,0.6);font-size:14px;">&#8943;</span>
+      <span style="flex:1;">CRM Teamspace</span>
+      <span style="font-size:10px;color:#8C91AB;">&#9660;</span>
+      <span style="cursor:pointer;color:#8C91AB;font-size:14px;">&#8943;</span>
     </div>
     <div class="sb-search">
-      <input type="text" placeholder="Search">
+      <div class="sb-search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search Modules">
+      </div>
     </div>
     <div class="sb-nav">
       <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Home</div>
-      <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5"/><rect x="2" y="10" width="20" height="5"/><rect x="2" y="17" width="20" height="5"/></svg>Reports</div>
-      <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboards</div>
-      <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><circle cx="17" cy="17" r="3"/></svg>Feeds</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</div>
       <div class="sb-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Leads</div>
       <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Deals</div>
       <div class="sb-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>Accounts</div>
       <div class="sb-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Potentials</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 6 12 14 2 6"/><path d="M2 6h20v13a1 1 0 01-1 1H3a1 1 0 01-1-1z"/></svg>Forecasts</div>
+      <div class="sb-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Solutions</div>
+      <div class="sb-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Products</div>
+      <div class="sb-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Case Study</div>
+
+      <div class="sb-folder" onclick="sbToggleFolder(this,'activity-folder')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Activity
+        <svg class="sb-folder-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-folder" onclick="sbToggleFolder(this,'inventory-folder')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Inventory
+        <svg class="sb-folder-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-folder-group" id="inventory-folder">
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Demo Request</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Expanse Tracking</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Social Media Strategy</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><circle cx="17" cy="17" r="3"/></svg>Influencer Outreach</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/></svg>Budget Allocation S...</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Brand Voice and Gui...</div>
+      </div>
+
+      <div class="sb-folder" onclick="sbToggleFolder(this,'projects-folder')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Projects
+        <svg class="sb-folder-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-folder" onclick="sbToggleFolder(this,'cliq-folder')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Cliq Channels
+        <svg class="sb-folder-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-folder-group" id="cliq-folder">
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Bugs and Ideas</div>
+        <div class="sb-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Strategy Presentation</div>
+      </div>
+
       <div class="sb-item active" id="sb-zoho-survey">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="17" x2="12" y2="17"/></svg>Zoho Survey</div>
       <div class="sb-item">
@@ -5425,6 +5496,12 @@ document.addEventListener('click', function(e) {
   var lm = document.getElementById('logic-menu');
   if (lm && !lm.contains(e.target)) lm.style.display = 'none';
 });
+
+function sbToggleFolder(el, groupId) {
+  el.classList.toggle('collapsed');
+  var group = document.getElementById(groupId);
+  if (group) group.classList.toggle('collapsed');
+}
 
 function openCreateSurvey() {
   document.getElementById('main-area').style.display = 'none';

@@ -159,4 +159,5 @@ from scratch.
 Reverse-chronological log of edits made to `mock-reference.html`. Each entry: date,
 one-line summary, why.
 
+- 2026-07-23 — Replaced the left sidebar with the Figma "Nxt Gen Left Menu" design (white bg, static nav section, CRM Teamspace switcher, Search Modules box, icon-led module list, collapsible Activity/Inventory/Projects/Cliq Channels folders). Why: user asked to apply that Figma section to the list view page's module nav.
 - 2026-07-23 — Repo initialized and pushed; began tracking mock edits here going forward.
