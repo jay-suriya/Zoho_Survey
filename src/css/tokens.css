@@ -1,0 +1,105 @@
+/* Design tokens — sourced from design-rules.md (Zoho CRM Figma style guide) */
+:root {
+  /* Text / base colors */
+  --heading: #202123;
+  --basecolor: #313949;
+  --label: #616e88;
+  --paragraph: #434d5e;
+  --link: #5464f2;
+  --full-white: #ffffff;
+  --card-bg: #ffffff;
+  --border-1: #c5c4d3;
+  --border-2: #d6d6e3;
+
+  /* Primary button */
+  --btn-primary-grad-1: #5767f6;
+  --btn-primary-grad-2: #124dc3;
+  --btn-primary-hover-1: #3e4dec;
+  --btn-primary-hover-2: #0e3b98;
+  --btn-primary-active: #1344a9;
+  --btn-primary-disabled-bg: #adb3ee;
+
+  /* Default (secondary) button */
+  --btn-default-grad-1: #ffffff;
+  --btn-default-grad-2: #f1f0f7;
+  --btn-default-border: #d5d8e9;
+  --btn-default-hover-2: #eaebf5;
+  --btn-default-active: #f0f1f8;
+  --btn-default-disabled-bg: #f6f6fb;
+  --btn-default-disabled-text: #9394af;
+
+  /* Negative button */
+  --btn-negative-grad-1: #ff4657;
+  --btn-negative-grad-2: #e23041;
+  --btn-negative-hover-1: #fc5060;
+  --btn-negative-hover-2: #d30b1e;
+  --btn-negative-disabled-bg: #ffb1b8;
+
+  /* Success button */
+  --btn-success-grad-1: #11b670;
+  --btn-success-grad-2: #0f935b;
+  --btn-success-hover-1: #13c177;
+  --btn-success-hover-2: #0f9a5f;
+
+  /* Warning button */
+  --btn-warning-grad-1: #f5973a;
+  --btn-warning-grad-2: #db842f;
+
+  /* Outline buttons */
+  --outline-blue-text: #5464f2;
+  --outline-blue-bg: #f0f1ff;
+  --outline-green-text: #10975e;
+  --outline-green-border: #19b171;
+  --outline-green-bg: #e9fbf4;
+  --outline-red-text: #f63648;
+  --outline-red-border: #ff4d5b;
+  --outline-red-bg: #fff2f3;
+  --outline-orange-text: #f57c00;
+  --outline-orange-border: #e28c27;
+  --outline-orange-bg: #fff9ed;
+
+  /* Ghost buttons */
+  --ghost-blue-text: #5464f2;
+  --ghost-blue-bg: #eeefff;
+  --ghost-red-text: #ff5d5a;
+  --ghost-red-bg: #ffe8ea;
+
+  /* Links */
+  --link-primary: #5464f2;
+  --link-primary-hover: #3752ca;
+  --link-secondary: #313949;
+  --link-default: #616e88;
+  --link-red: #ff5d5a;
+  --link-red-hover: #f14a47;
+
+  /* Inputs */
+  --input-default-outline: #c0c8e2;
+  --input-hover-outline: #797883;
+  --input-focus-outline: #5464f2;
+  --input-focus-shadow: rgba(76, 94, 253, 0.5);
+  --input-error-outline: #ff5d5a;
+  --input-disabled-bg: #f5f6f8;
+  --input-disabled-outline: #d2d9f1;
+  --input-placeholder: #8c91ab;
+  --input-icon-bg: #f4f4f6;
+
+  /* Tabs */
+  --tab-border: #dcdbee;
+  --tab-hover-bg: #f2f4ff;
+  --tab-active-bg: #ebedff;
+  --tab-active-border: #a3acff;
+  --tab-inner-border: #d2d7ff;
+
+  /* Modal */
+  --modal-shadow: 0px 4px 9px rgba(49, 57, 73, 0.6);
+  --modal-scrim: rgba(49, 57, 73, 0.5);
+  --modal-radius: 15px;
+
+  /* Type */
+  --font-family: "Zoho Puvi", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Radii / spacing shared by components */
+  --radius-control: 6px;
+  --control-height: 34px;
+  --btn-height: 32px;
+}

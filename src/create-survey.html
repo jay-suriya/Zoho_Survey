@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Survey — Zoho Survey — CRM Integration</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar__logo">ZOHO CRM</div>
+      <ul class="sidebar__nav">
+        <li class="sidebar__item">Home</li>
+        <li class="sidebar__item">Reports</li>
+        <li class="sidebar__item">Dashboards</li>
+        <li class="sidebar__item">Leads</li>
+        <li class="sidebar__item">Contacts</li>
+        <li class="sidebar__item">Accounts</li>
+        <li class="sidebar__item">Potentials</li>
+        <li class="sidebar__item sidebar__item--active">Zoho Survey</li>
+        <li class="sidebar__item">Tasks</li>
+        <li class="sidebar__item">Meetings</li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <div class="form-subbar">
+        <div class="form-subbar__left">
+          <span class="form-subbar__title">Create Survey</span>
+        </div>
+        <div class="form-subbar__actions">
+          <a class="link" href="index.html" style="margin-right:4px;align-self:center;">Cancel</a>
+          <button class="btn btn--default" id="btn-save-new">Save &amp; New</button>
+          <button class="btn btn--primary" id="btn-save">Save</button>
+        </div>
+      </div>
+
+      <div class="form-page">
+
+        <!-- Section 1: Survey Details -->
+        <div class="form-section">
+          <div class="form-section-title">Survey Details</div>
+          <div class="form-cols">
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Type<span class="required">*</span></div>
+                <div class="form-row__control">
+                  <select class="input" id="survey-type">
+                    <option value="scratch" selected>Create from Scratch</option>
+                    <option value="quick">Create with Quick Editor</option>
+                    <option value="ai">Create using AI</option>
+                    <option value="templates">Create from Templates</option>
+                    <option value="copy">Copy from Existing</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-template">
+                <div class="form-row__label">Select from Template<span class="required">*</span></div>
+                <div class="form-row__control">
+                  <select class="input" id="survey-template">
+                    <option value="" selected>-- None --</option>
+                    <option value="airline">Airline Passenger Experience Feedback Form</option>
+                    <option value="auto">Auto Survey</option>
+                    <option value="b2b">B2B Client Satisfaction Survey</option>
+                    <option value="brand">Brand Feedback Survey</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Name<span class="required">*</span></div>
+                <div class="form-row__control">
+                  <input type="text" class="input" id="survey-name" placeholder="Survey 1" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Category</div>
+                <div class="form-row__control">
+                  <select class="input" id="survey-category">
+                    <option value="" disabled selected>-- Select --</option>
+                    <option value="customer">Customer Satisfaction Survey</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="education">Education</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="events">Events</option>
+                    <option value="healthcare">Healthcare Survey</option>
+                    <option value="nonprofit">Non Profit</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Form</div>
+                <div class="form-row__control">
+                  <a class="form-action-link" id="link-add-form">+ Add Form</a>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Push to CRM</div>
+                <div class="form-row__control">
+                  <div class="form-push-crm" id="push-to-crm-unsaved">
+                    <input type="checkbox" class="form-checkbox" id="push-to-crm-cb" disabled style="opacity:0.45;cursor:not-allowed;" />
+                    <span style="font-size:12px;color:var(--label);">Save the survey to configure</span>
+                  </div>
+                  <div class="form-push-crm" id="push-to-crm-saved" style="display:none;">
+                    <input type="checkbox" class="form-checkbox" id="push-to-crm-saved-cb" checked />
+                    <a class="form-action-link" id="link-manage-config">Manage Configuration</a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-col">
+              <div class="form-row">
+                <div class="form-row__label">Questions Scoring</div>
+                <div class="form-row__control">
+                  <a class="form-action-link form-action-link--disabled">+ Add Scoring</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 2: Appearance -->
+        <div class="form-section">
+          <div class="form-section-title">Appearance</div>
+          <div class="form-cols">
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Logo</div>
+                <div class="form-row__control">
+                  <button class="btn btn--default btn--small" id="btn-upload-logo">Upload Image</button>
+                  <input type="file" id="logo-upload" accept="image/*" style="display:none;" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Title</div>
+                <div class="form-row__control">
+                  <select class="input" id="title-type">
+                    <option value="use_survey_name">Use Survey Name</option>
+                    <option value="use_specific_text">Use Specific Text</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-title-text">
+                <div class="form-row__label">Title Text</div>
+                <div class="form-row__control">
+                  <input type="text" class="input" id="title-text" placeholder="Enter title" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Introduction Page</div>
+                <div class="form-row__control">
+                  <select class="input" id="intro-page-enabled">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-intro-title">
+                <div class="form-row__label">Introduction Page title</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-intro-desc">
+                <div class="form-row__label">Introduction Page Description</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">&#8226;</button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-intro-btn">
+                <div class="form-row__label">Begin Survey Button Label</div>
+                <div class="form-row__control">
+                  <input type="text" class="input" id="intro-btn-label" value="Begin Survey" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Footer</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Terms and conditions</div>
+                <div class="form-row__control">
+                  <select class="input" id="tnc-enabled">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-tnc-label">
+                <div class="form-row__label">Terms and conditions label</div>
+                <div class="form-row__control">
+                  <input type="text" class="input" id="tnc-label" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-tnc-nav">
+                <div class="form-row__label">Navigation Behaviour</div>
+                <div class="form-row__control">
+                  <select class="input" id="tnc-nav">
+                    <option value="show_error">Show error if agreement not accepted</option>
+                    <option value="enable_next" selected>Enable Next only after agreement</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Respondent Experience -->
+        <div class="form-section">
+          <div class="form-section-title">Respondent Experience</div>
+          <div class="form-cols">
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Timer</div>
+                <div class="form-row__control">
+                  <a class="form-action-link" id="link-timer">+ Add Timer</a>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Show progress bar</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="show-progress-bar" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Show question numbers</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="show-question-numbers" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Enable CAPTCHA</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="enable-captcha" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Show the Previous button</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="show-previous-button" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Quota</div>
+                <div class="form-row__control">
+                  <select class="input" id="quota-enabled">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-quota-condition">
+                <div class="form-row__label">Quota Conditions</div>
+                <div class="form-row__control">
+                  <a class="form-action-link" id="link-quota-condition">+ Add Condition</a>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-quota-limit">
+                <div class="form-row__label">Survey Quota Limit</div>
+                <div class="form-row__control">
+                  <select class="input" id="quota-limit">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="unlimited">Unlimited</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Save and continue Later</div>
+                <div class="form-row__control">
+                  <select class="input" id="save-continue">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-allow-edits">
+                <div class="form-row__label">Allow edits after submission</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="allow-edits-after-submission" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Response access for respondents</div>
+                <div class="form-row__control">
+                  <select class="input" id="response-access">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-link-access">
+                <div class="form-row__label">Link access</div>
+                <div class="form-row__control">
+                  <select class="input" id="link-access">
+                    <option value="share_with_password">Share with password</option>
+                    <option value="share_with_organisation">Share with organisation</option>
+                    <option value="share_with_public">Share with public</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-set-password">
+                <div class="form-row__label">Set Password</div>
+                <div class="form-row__control">
+                  <input type="password" class="input" id="set-password" placeholder="••••" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-generate-link">
+                <div class="form-row__label">Generate link per response with</div>
+                <div class="form-row__control">
+                  <select class="input" id="generate-link-per-response">
+                    <option value="none">None</option>
+                    <option value="all_questions">All questions</option>
+                    <option value="shown_questions">Shown Questions</option>
+                    <option value="answered_questions">Answered Questions</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-generate-download">
+                <div class="form-row__label">Generate download links for signatures &amp; uploads</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="generate-download-links" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-generate-merged">
+                <div class="form-row__label">Generate link per merged document</div>
+                <div class="form-row__control">
+                  <input type="checkbox" class="form-checkbox" id="generate-link-per-merged" />
+                </div>
+              </div>
+
+              <div class="form-row" style="align-items:flex-start;">
+                <div class="form-row__label" style="padding-top:8px;">Response Editing Restriction Page</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">&#8226;</button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Completion & Distribution -->
+        <div class="form-section">
+          <div class="form-section-title">Completion &amp; Distribution</div>
+          <div class="form-cols">
+            <div class="form-col">
+
+              <div class="form-row">
+                <div class="form-row__label">Social Media Preview</div>
+                <div class="form-row__control">
+                  <select class="input" id="social-preview-enabled">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-preview-title">
+                <div class="form-row__label">Preview Title</div>
+                <div class="form-row__control">
+                  <select class="input" id="preview-title-type">
+                    <option value="use_survey_title">Use survey title</option>
+                    <option value="use_specific_title">Use specific title</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-preview-title-text">
+                <div class="form-row__label">Title Text</div>
+                <div class="form-row__control">
+                  <input type="text" class="input" id="preview-title-text" placeholder="Enter preview title" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-preview-image">
+                <div class="form-row__label">Preview Image</div>
+                <div class="form-row__control">
+                  <select class="input" id="preview-image-type">
+                    <option value="use_survey_image">Use survey image</option>
+                    <option value="use_specific_image">Use specific image</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-preview-image-upload">
+                <div class="form-row__label">Upload Image</div>
+                <div class="form-row__control">
+                  <button class="btn btn--default btn--small" id="btn-upload-preview-image">Upload Image</button>
+                  <input type="file" id="preview-image-upload" accept="image/*" style="display:none;" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="row-preview-desc" style="align-items:flex-start;">
+                <div class="form-row__label" style="padding-top:8px;">Preview Description</div>
+                <div class="form-row__control">
+                  <textarea class="input" id="preview-description" placeholder="Enter preview description" rows="3" style="height:auto;resize:vertical;"></textarea>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Document Merge</div>
+                <div class="form-row__control">
+                  <div class="doc-merge-box">
+                    <button class="btn btn--default btn--small" id="btn-doc-merge">Select Template</button>
+                    <span class="doc-merge-name" id="doc-merge-selected-name"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey End Page</div>
+                <div class="form-row__control">
+                  <select class="input" id="sep-type">
+                    <option value="default">Default end page</option>
+                    <option value="condition">Based on a condition</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="sep-default-fields">
+                <div class="form-row">
+                  <div class="form-row__label">Select End Page</div>
+                  <div class="form-row__control">
+                    <select class="input" id="sep-default-page">
+                      <option value="thankyou">Zoho Survey Thank You page</option>
+                      <option value="summary">Show a summary of response</option>
+                      <option value="submitted">Show submitted response</option>
+                      <option value="custom">Custom message</option>
+                      <option value="redirect">Redirect to a new page</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row form-row--hidden" id="sep-row-summary">
+                  <div class="form-row__label">Summary Type</div>
+                  <div class="form-row__control">
+                    <select class="input" id="sep-summary-type">
+                      <option value="default_report">Default report</option>
+                      <option value="by_day">By day</option>
+                      <option value="by_week">By week</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row form-row--hidden" id="sep-row-submitted">
+                  <div class="form-row__label">Individual Response View</div>
+                  <div class="form-row__control">
+                    <select class="input" id="sep-submitted-view">
+                      <option value="all_questions">All questions</option>
+                      <option value="shown_questions">Shown questions</option>
+                      <option value="answered_questions">Answered questions</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row form-row--hidden" id="sep-row-custom" style="align-items:flex-start;">
+                  <div class="form-row__label" style="padding-top:8px;">Custom Message</div>
+                  <div class="form-row__control">
+                    <div class="form-rte">
+                      <div class="form-rte-bar">
+                        <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                        <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                        <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                      </div>
+                      <div class="form-rte-body" contenteditable="true"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row form-row--hidden" id="sep-row-redirect">
+                  <div class="form-row__label">Redirect URL</div>
+                  <div class="form-row__control">
+                    <input type="url" class="input" id="sep-redirect-url" placeholder="https://example.com" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="sep-condition-fields">
+                <div class="form-row__label">Set Conditions</div>
+                <div class="form-row__control">
+                  <a class="form-action-link" id="link-sep-condition">+ Add Condition</a>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-col">
+
+              <div class="form-row" style="align-items:flex-start;">
+                <div class="form-row__label" style="padding-top:8px;">Closed Survey Page</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-row__label">Survey Disqualification Page</div>
+                <div class="form-row__control">
+                  <select class="input" id="sdp-type">
+                    <option value="custom">Custom message</option>
+                    <option value="redirect">Redirect to a new page</option>
+                    <option value="condition">Based on a condition</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row" id="sdp-row-custom" style="align-items:flex-start;">
+                <div class="form-row__label" style="padding-top:8px;">Disqualification Message</div>
+                <div class="form-row__control">
+                  <div class="form-rte">
+                    <div class="form-rte-bar">
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+                      <button class="form-rte-btn" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+                    </div>
+                    <div class="form-rte-body" contenteditable="true"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="sdp-row-redirect">
+                <div class="form-row__label">Redirect URL</div>
+                <div class="form-row__control">
+                  <input type="url" class="input" id="sdp-redirect-url" placeholder="https://example.com" />
+                </div>
+              </div>
+
+              <div class="form-row form-row--hidden" id="sdp-row-condition">
+                <div class="form-row__label">Set Condition</div>
+                <div class="form-row__control">
+                  <a class="form-action-link" id="link-sdp-condition">+ Add Condition</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Timer modal -->
+  <div class="modal-scrim" id="timer-modal-scrim">
+    <div class="modal" style="min-width:560px;max-width:600px;">
+      <div class="modal__title">Timer</div>
+      <div class="form-row">
+        <div class="form-row__label">Timer Type</div>
+        <div class="form-row__control">
+          <select class="input" id="modal-timer-type">
+            <option value="survey_timer">Survey Timer</option>
+            <option value="page_timer">Page Timer</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="modal-survey-timer-fields">
+        <div class="form-row">
+          <div class="form-row__label">Min Timer</div>
+          <div class="form-row__control" style="display:flex;gap:6px;">
+            <select class="input"><option>Hours</option><option>0</option><option>1</option><option>2</option></select>
+            <select class="input"><option>Mins</option><option>0</option><option>5</option><option>10</option></select>
+            <select class="input"><option>Secs</option><option>0</option><option>10</option><option>30</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-row__label">Max Timer</div>
+          <div class="form-row__control" style="display:flex;gap:6px;">
+            <select class="input"><option>Hours</option><option>0</option><option>1</option><option>2</option></select>
+            <select class="input"><option>Mins</option><option>0</option><option>5</option><option>10</option></select>
+            <select class="input"><option>Secs</option><option>0</option><option>10</option><option>30</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-row__label">Allow additional time to submit</div>
+          <div class="form-row__control">
+            <input type="checkbox" class="form-checkbox" id="st-allow-additional" />
+          </div>
+        </div>
+        <div class="form-row form-row--hidden" id="row-st-auto-approve">
+          <div class="form-row__label">Auto-approve late responses</div>
+          <div class="form-row__control">
+            <input type="checkbox" class="form-checkbox" />
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-page-timer-fields" style="display:none;">
+        <div id="pt-cards-container"></div>
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn btn--default" id="btn-timer-cancel">Cancel</button>
+        <button class="btn btn--primary" id="btn-timer-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Merge modal -->
+  <div class="modal-scrim" id="docmerge-modal-scrim">
+    <div class="modal" style="min-width:440px;">
+      <div class="modal__title">Select a template</div>
+      <div class="tpl-list" id="docmerge-tpl-list">
+        <div class="tpl-item" data-name="">-- None --</div>
+        <div class="tpl-item" data-name="Welcome Letter">Welcome Letter</div>
+        <div class="tpl-item" data-name="Feedback Summary">Feedback Summary</div>
+        <div class="tpl-item" data-name="Account Review">Account Review</div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--default" id="btn-docmerge-cancel">Cancel</button>
+        <button class="btn btn--primary" id="btn-docmerge-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quota Condition slide-over -->
+  <div class="slideover-scrim" id="quota-condition-scrim">
+    <div class="slideover" id="quota-condition-panel">
+      <div class="slideover__header">
+        <span class="slideover__title">Condition</span>
+        <button class="btn btn--ghost-blue btn--small" id="btn-quota-delete">Delete</button>
+      </div>
+      <div class="slideover__body">
+        <div id="quota-rows-container"></div>
+        <button class="btn btn--default btn--small" id="btn-quota-add-row">+ Add Condition</button>
+      </div>
+      <div class="slideover__footer">
+        <button class="btn btn--default" id="btn-quota-cancel">Cancel</button>
+        <button class="btn btn--primary" id="btn-quota-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Survey End Page Condition slide-over -->
+  <div class="slideover-scrim" id="sep-condition-scrim">
+    <div class="slideover" id="sep-condition-slideover">
+      <div class="slideover__header">
+        <span class="slideover__title">Condition</span>
+        <button class="btn btn--ghost-blue btn--small" id="btn-sep-delete">Delete</button>
+      </div>
+      <div class="slideover__body">
+        <div style="font-size:12px;font-weight:600;color:var(--label);margin-bottom:10px;">End page logic</div>
+        <div id="sep-rows-container"></div>
+        <button class="btn btn--default btn--small" id="btn-sep-add-row">+ Add Logic</button>
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border-2);">
+          <div style="font-size:14px;font-weight:600;color:var(--heading);margin-bottom:8px;">Default end page</div>
+          <label class="radio-row"><input type="radio" name="sep-default-radio" value="thankyou" checked /> Zoho Survey's Thank You page</label><br/>
+          <label class="radio-row"><input type="radio" name="sep-default-radio" value="summary" /> Show summary of responses</label><br/>
+          <label class="radio-row"><input type="radio" name="sep-default-radio" value="custom" /> Custom message</label><br/>
+          <label class="radio-row"><input type="radio" name="sep-default-radio" value="redirect" /> Redirect to a new page</label>
+        </div>
+      </div>
+      <div class="slideover__footer">
+        <button class="btn btn--default" id="btn-sep-cancel">Cancel</button>
+        <button class="btn btn--primary" id="btn-sep-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disqualification Condition slide-over -->
+  <div class="slideover-scrim" id="sdp-condition-scrim">
+    <div class="slideover" id="sdp-condition-slideover">
+      <div class="slideover__header">
+        <span class="slideover__title">Condition</span>
+        <button class="btn btn--ghost-blue btn--small" id="btn-sdp-delete">Delete</button>
+      </div>
+      <div class="slideover__body">
+        <div id="sdp-rows-container"></div>
+        <button class="btn btn--default btn--small" id="btn-sdp-add-row">+ Add Condition</button>
+      </div>
+      <div class="slideover__footer">
+        <button class="btn btn--default" id="btn-sdp-cancel">Cancel</button>
+        <button class="btn btn--primary" id="btn-sdp-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/create-survey.js"></script>
+</body>
+</html>

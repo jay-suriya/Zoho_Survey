@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoho Survey — CRM Integration</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar__logo">ZOHO CRM</div>
+      <ul class="sidebar__nav">
+        <li class="sidebar__item">Home</li>
+        <li class="sidebar__item">Reports</li>
+        <li class="sidebar__item">Dashboards</li>
+        <li class="sidebar__item">Leads</li>
+        <li class="sidebar__item">Contacts</li>
+        <li class="sidebar__item">Accounts</li>
+        <li class="sidebar__item">Potentials</li>
+        <li class="sidebar__item sidebar__item--active">Zoho Survey</li>
+        <li class="sidebar__item">Tasks</li>
+        <li class="sidebar__item">Meetings</li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h1>Surveys</h1>
+        <button class="btn btn--primary" id="btn-create-survey">Create Survey</button>
+      </header>
+
+      <div class="content">
+        <nav class="tabs-primary" id="survey-tabs">
+          <div class="tab-primary tab-primary--active" data-tab="all">All Surveys</div>
+          <div class="tab-primary" data-tab="my">My Surveys</div>
+          <div class="tab-primary" data-tab="published">Published</div>
+          <div class="tab-primary" data-tab="draft">Draft</div>
+        </nav>
+
+        <div class="card" style="margin-top: 16px;">
+          <table class="table" id="survey-table">
+            <thead>
+              <tr>
+                <th>Survey Name</th>
+                <th>Status</th>
+                <th>Responses</th>
+                <th>Collectors</th>
+                <th>Modified</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="survey-table-body">
+              <!-- rows injected by js/app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
