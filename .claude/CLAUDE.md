@@ -153,6 +153,9 @@ from scratch.
   this silently.
 - Every edit to `mock-reference.html` gets committed to git, and this file's Mock Edit
   Log (below) gets a new entry in the same commit describing what changed and why.
+- After every commit, push to `origin/master` (the global master) right away — don't
+  let commits sit local-only. If the push fails or is rejected, tell the user instead
+  of silently skipping it.
 
 ## Mock Edit Log
 
