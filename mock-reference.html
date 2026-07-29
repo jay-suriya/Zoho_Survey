@@ -100,8 +100,8 @@ body{font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;overflow:hi
 .um-footer-item.signout{color:#ef5a6f;}
 
 /* ── App-wide dark mode (invert trick) ── */
-body.app-dark-mode .app{filter:invert(1) hue-rotate(180deg);}
-body.app-dark-mode .app img{filter:invert(1) hue-rotate(180deg);}
+body.app-dark-mode > *:not(#um-overlay){filter:invert(1) hue-rotate(180deg);}
+body.app-dark-mode > *:not(#um-overlay) img{filter:invert(1) hue-rotate(180deg);}
 
 /* ── Filter tabs ── */
 .filter-tabs{padding:0 16px;display:flex;align-items:center;height:44px;border-bottom:1px solid #e8e8e8;overflow-x:auto;gap:0;}
