@@ -159,5 +159,6 @@ from scratch.
 Reverse-chronological log of edits made to `mock-reference.html`. Each entry: date,
 one-line summary, why.
 
+- 2026-07-29 — Added the account/user menu (click the "M" avatar top-right): profile, org switcher, plan card, Day/Night/Auto mode toggle, theme swatches, Need Help/News room/Mobile App sections, My Account/Sign Out footer. Night mode now applies an app-wide dark theme (invert+hue-rotate filter on `.app`, double-applied to `<img>` to cancel it). Why: user provided a screenshot of the desired account panel and asked for the dark theme toggle to actually work.
 - 2026-07-23 — Replaced the left sidebar with the Figma "Nxt Gen Left Menu" design (white bg, static nav section, CRM Teamspace switcher, Search Modules box, icon-led module list, collapsible Activity/Inventory/Projects/Cliq Channels folders). Why: user asked to apply that Figma section to the list view page's module nav.
 - 2026-07-23 — Repo initialized and pushed; began tracking mock edits here going forward.
