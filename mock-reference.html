@@ -3911,15 +3911,15 @@ tbody tr:hover{background:#f5f7ff;}
                   <div id="sd-chart1-container" style="padding:12px 14px;display:flex;align-items:center;gap:16px;min-height:120px;flex:1;">
                     <div id="sd-chart1-visual">
                       <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#4285f4" stroke-width="20" stroke-dasharray="176 75.4" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#34a853" stroke-width="20" stroke-dasharray="50.3 201.1" stroke-dashoffset="-176" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#fbbc04" stroke-width="20" stroke-dasharray="25.1 226.2" stroke-dashoffset="-226.3" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#4285f4" stroke-width="20" stroke-dasharray="125.6 125.6" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#34a853" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="-125.6" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#fbbc04" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-209.3" transform="rotate(-90 50 50)"/>
                       </svg>
                     </div>
                     <div style="font-size:11px;color:#555;line-height:2;">
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#4285f4;flex-shrink:0;"></span> Lead (7)</div>
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#34a853;flex-shrink:0;"></span> Contact (2)</div>
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#fbbc04;flex-shrink:0;"></span> Vendor (1)</div>
+                      <div onclick="sdApplyChartFilter('Module: Leads', function(r){return r.module==='Leads';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#4285f4;flex-shrink:0;"></span> Lead (3)</div>
+                      <div onclick="sdApplyChartFilter('Module: Contacts', function(r){return r.module==='Contacts';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#34a853;flex-shrink:0;"></span> Contact (2)</div>
+                      <div onclick="sdApplyChartFilter('Module: Custom Module', function(r){return r.module==='Custom Module';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#fbbc04;flex-shrink:0;"></span> Vendor (1)</div>
                     </div>
                   </div>
                   <!-- Expandable table -->
@@ -3931,11 +3931,11 @@ tbody tr:hover{background:#f5f7ff;}
                         <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Share</th>
                       </tr></thead>
                       <tbody>
-                        <tr><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#4285f4;display:inline-block;"></span>Lead</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">7</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">70%</td></tr>
-                        <tr><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#34a853;display:inline-block;"></span>Contact</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">20%</td></tr>
-                        <tr><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span>Vendor</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">10%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Module: Leads', function(r){return r.module==='Leads';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#4285f4;display:inline-block;"></span>Lead</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">3</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">50%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Module: Contacts', function(r){return r.module==='Contacts';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#34a853;display:inline-block;"></span>Contact</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Module: Custom Module', function(r){return r.module==='Custom Module';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span>Vendor</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">17%</td></tr>
                       </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">10</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
+                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
                     </table>
                   </div>
                 </div>
@@ -3960,17 +3960,17 @@ tbody tr:hover{background:#f5f7ff;}
                   <div id="sd-chart2-container" style="padding:12px 14px;display:flex;align-items:center;gap:16px;min-height:120px;flex:1;">
                     <div id="sd-chart2-visual">
                       <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#7c4dff" stroke-width="20" stroke-dasharray="100.5 150.8" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#00bcd4" stroke-width="20" stroke-dasharray="75.4 175.9" stroke-dashoffset="-100.5" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#ff7043" stroke-width="20" stroke-dasharray="50.3 201" stroke-dashoffset="-175.9" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#78909c" stroke-width="20" stroke-dasharray="25.1 226.2" stroke-dashoffset="-226.2" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#7c4dff" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#00bcd4" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="-83.7" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#ff7043" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-167.4" transform="rotate(-90 50 50)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#78909c" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-209.3" transform="rotate(-90 50 50)"/>
                       </svg>
                     </div>
                     <div style="font-size:11px;color:#555;line-height:2;">
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#7c4dff;flex-shrink:0;"></span> Age 20–30 (4)</div>
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#00bcd4;flex-shrink:0;"></span> Age 35–40 (3)</div>
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#ff7043;flex-shrink:0;"></span> Age 60 (2)</div>
-                      <div style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#78909c;flex-shrink:0;"></span> Default (1)</div>
+                      <div onclick="sdApplyChartFilter('Collector: Age 20–30', function(r){return r.collector==='Age 20–30';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#7c4dff;flex-shrink:0;"></span> Age 20–30 (2)</div>
+                      <div onclick="sdApplyChartFilter('Collector: Age 35–40', function(r){return r.collector==='Age 35–40';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#00bcd4;flex-shrink:0;"></span> Age 35–40 (2)</div>
+                      <div onclick="sdApplyChartFilter('Collector: Age 60', function(r){return r.collector==='Age 60';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#ff7043;flex-shrink:0;"></span> Age 60 (1)</div>
+                      <div onclick="sdApplyChartFilter('Collector: Default', function(r){return r.collector==='Default';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#78909c;flex-shrink:0;"></span> Default (1)</div>
                     </div>
                   </div>
                   <!-- Expandable table -->
@@ -3982,12 +3982,12 @@ tbody tr:hover{background:#f5f7ff;}
                         <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Share</th>
                       </tr></thead>
                       <tbody>
-                        <tr><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#7c4dff;display:inline-block;"></span>Age 20–30</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">4</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">40%</td></tr>
-                        <tr><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span>Age 35–40</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">3</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">30%</td></tr>
-                        <tr><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#ff7043;display:inline-block;"></span>Age 60</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">20%</td></tr>
-                        <tr><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#78909c;display:inline-block;"></span>Default</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">10%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Collector: Age 20–30', function(r){return r.collector==='Age 20–30';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#7c4dff;display:inline-block;"></span>Age 20–30</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Collector: Age 35–40', function(r){return r.collector==='Age 35–40';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span>Age 35–40</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Collector: Age 60', function(r){return r.collector==='Age 60';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#ff7043;display:inline-block;"></span>Age 60</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">17%</td></tr>
+                        <tr onclick="sdApplyChartFilter('Collector: Default', function(r){return r.collector==='Default';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#78909c;display:inline-block;"></span>Default</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">17%</td></tr>
                       </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">10</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
+                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
                     </table>
                   </div>
                 </div>
@@ -3997,23 +3997,20 @@ tbody tr:hover{background:#f5f7ff;}
                   <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
                     <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Daily Responses Trend</span>
                     <div style="display:flex;align-items:center;gap:6px;">
-                      <span style="background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">10 total</span>
-                      <span style="background:#e3f2fd;color:#1565c0;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">Peak: Aug 9</span>
+                      <span style="background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">6 total</span>
+                      <span style="background:#e3f2fd;color:#1565c0;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">Apr 1–6</span>
                     </div>
                   </div>
                   <div style="padding:12px 14px;flex:1;">
                     <svg width="100%" height="100" viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet" style="overflow:visible;">
                       <line x1="30" y1="15" x2="310" y2="15" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <line x1="30" y1="35" x2="310" y2="35" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <line x1="30" y1="55" x2="310" y2="55" stroke="#f0f0f0" stroke-width="0.5"/>
+                      <line x1="30" y1="45" x2="310" y2="45" stroke="#f0f0f0" stroke-width="0.5"/>
                       <line x1="30" y1="75" x2="310" y2="75" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <text x="24" y="18" font-size="8" fill="#999" text-anchor="end">4</text>
-                      <text x="24" y="38" font-size="8" fill="#999" text-anchor="end">3</text>
-                      <text x="24" y="58" font-size="8" fill="#999" text-anchor="end">2</text>
-                      <text x="24" y="78" font-size="8" fill="#999" text-anchor="end">1</text>
-                      <polyline fill="none" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round" points="55,75 80,75 105,75 130,75 155,55 180,75 205,75 230,55 255,15 280,55 305,55"/>
-                      <circle cx="55" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="80" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="105" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="130" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="155" cy="55" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="180" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="205" cy="75" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="230" cy="55" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="255" cy="15" r="3.5" fill="#5c6bc0" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="280" cy="55" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle cx="305" cy="55" r="3" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/>
-                      <text x="55" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 1</text><text x="80" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 2</text><text x="105" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 3</text><text x="130" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 4</text><text x="155" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 5</text><text x="180" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 6</text><text x="205" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 7</text><text x="230" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 8</text><text x="255" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 9</text><text x="280" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 10</text><text x="305" y="92" font-size="7" fill="#999" text-anchor="middle">Aug 11</text>
+                      <text x="24" y="18" font-size="8" fill="#999" text-anchor="end">2</text>
+                      <text x="24" y="78" font-size="8" fill="#999" text-anchor="end">0</text>
+                      <polyline fill="none" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round" points="60,45 105,45 150,45 195,45 240,45 285,45"/>
+                      <circle onclick="sdApplyChartFilter('Response Date: Apr 1', function(r){return r.startTime.indexOf('Apr 1,')===0;})" style="cursor:pointer;" cx="60" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 2', function(r){return r.startTime.indexOf('Apr 2,')===0;})" style="cursor:pointer;" cx="105" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 3', function(r){return r.startTime.indexOf('Apr 3,')===0;})" style="cursor:pointer;" cx="150" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 4', function(r){return r.startTime.indexOf('Apr 4,')===0;})" style="cursor:pointer;" cx="195" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 5', function(r){return r.startTime.indexOf('Apr 5,')===0;})" style="cursor:pointer;" cx="240" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 6', function(r){return r.startTime.indexOf('Apr 6,')===0;})" style="cursor:pointer;" cx="285" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/>
+                      <text x="60" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 1</text><text x="105" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 2</text><text x="150" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 3</text><text x="195" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 4</text><text x="240" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 5</text><text x="285" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 6</text>
                     </svg>
                   </div>
                   <!-- Expandable table -->
@@ -4025,14 +4022,14 @@ tbody tr:hover{background:#f5f7ff;}
                         <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Cumulative</th>
                       </tr></thead>
                       <tbody>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Aug 1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">1</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Aug 2</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">2</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Aug 5</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">4</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Aug 8</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">6</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Aug 9 ⭐</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#e65100;">3</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">9</td></tr>
-                        <tr><td style="padding:7px 14px;color:#555;">Aug 10–11</td><td style="padding:7px 14px;text-align:center;font-weight:600;color:#333;">2</td><td style="padding:7px 14px;text-align:center;color:#5c6bc0;font-weight:600;">10</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 1', function(r){return r.startTime.indexOf('Apr 1,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">1</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 2', function(r){return r.startTime.indexOf('Apr 2,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 2</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">2</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 3', function(r){return r.startTime.indexOf('Apr 3,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 3</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">3</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 4', function(r){return r.startTime.indexOf('Apr 4,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 4</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">4</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 5', function(r){return r.startTime.indexOf('Apr 5,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 5</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">5</td></tr>
+                        <tr onclick="sdApplyChartFilter('Response Date: Apr 6', function(r){return r.startTime.indexOf('Apr 6,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;color:#555;">Apr 6</td><td style="padding:7px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;color:#5c6bc0;font-weight:600;">6</td></tr>
                       </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">10</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">—</td></tr></tfoot>
+                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">—</td></tr></tfoot>
                     </table>
                   </div>
                 </div>
@@ -4051,20 +4048,20 @@ tbody tr:hover{background:#f5f7ff;}
                     <div style="display:flex;align-items:center;gap:16px;">
                       <svg width="90" height="90" viewBox="0 0 90 90">
                         <circle cx="45" cy="45" r="34" fill="none" stroke="#f0f0f0" stroke-width="14"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#00bcd4" stroke-width="14" stroke-dasharray="64 150" stroke-dashoffset="-38" transform="rotate(-90 45 45)"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#fbbc04" stroke-width="14" stroke-dasharray="42 172" stroke-dashoffset="-102" transform="rotate(-90 45 45)"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#e53935" stroke-width="14" stroke-dasharray="107 107" stroke-dashoffset="-144" transform="rotate(-90 45 45)"/>
-                        <text x="45" y="49" text-anchor="middle" font-size="13" font-weight="700" fill="#333">42%</text>
+                        <circle cx="45" cy="45" r="34" fill="none" stroke="#00bcd4" stroke-width="14" stroke-dasharray="106.8 106.8" stroke-dashoffset="0" transform="rotate(-90 45 45)"/>
+                        <circle cx="45" cy="45" r="34" fill="none" stroke="#fbbc04" stroke-width="14" stroke-dasharray="35.6 178" stroke-dashoffset="-106.8" transform="rotate(-90 45 45)"/>
+                        <circle cx="45" cy="45" r="34" fill="none" stroke="#e53935" stroke-width="14" stroke-dasharray="71.2 142.4" stroke-dashoffset="-142.4" transform="rotate(-90 45 45)"/>
+                        <text x="45" y="49" text-anchor="middle" font-size="13" font-weight="700" fill="#333">60%</text>
                       </svg>
                       <div style="font-size:11px;color:#555;line-height:2.1;">
-                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span><span>Positive <strong style="color:#333;">4</strong></span></div>
-                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span><span>Neutral <strong style="color:#333;">3</strong></span></div>
-                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#e53935;display:inline-block;"></span><span>Negative <strong style="color:#333;">7</strong></span></div>
+                        <div onclick="sdApplyChartFilter('CSAT: Positive', function(r){return parseInt(r.csatScore)>=4;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span><span>Positive <strong style="color:#333;">3</strong></span></div>
+                        <div onclick="sdApplyChartFilter('CSAT: Neutral', function(r){var c=parseInt(r.csatScore);return c===2||c===3;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span><span>Neutral <strong style="color:#333;">1</strong></span></div>
+                        <div onclick="sdApplyChartFilter('CSAT: Negative', function(r){return parseInt(r.csatScore)<=1;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#e53935;display:inline-block;"></span><span>Negative <strong style="color:#333;">2</strong></span></div>
                       </div>
                     </div>
                     <div style="background:#f5fffe;border-radius:6px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
                       <span style="font-size:11px;color:#666;">Overall CSAT Score</span>
-                      <span style="font-size:18px;font-weight:700;color:#00bcd4;">42.00</span>
+                      <span style="font-size:18px;font-weight:700;color:#00bcd4;">60.00</span>
                     </div>
                   </div>
                   <!-- Expandable table -->
@@ -4238,6 +4235,12 @@ tbody tr:hover{background:#f5f7ff;}
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;">
                 <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">All Respondents</span>
                 <span id="sd-resp-count-badge" style="background:#0d904f;color:#fff;border-radius:10px;font-size:11px;padding:2px 8px;font-weight:700;">6</span>
+                <div id="sd-resp-filter-chip" style="display:none;align-items:center;gap:6px;background:#EEF0FF;color:#5464F2;border:1px solid #C7CDFB;border-radius:100px;padding:4px 6px 4px 12px;font-size:12px;font-weight:600;">
+                  <span id="sd-resp-filter-chip-label"></span>
+                  <button onclick="sdClearChartFilter()" title="Clear filter" style="background:none;border:none;cursor:pointer;color:#5464F2;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;padding:0;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
               </div>
               <div style="padding:8px 24px 20px;">
               <!-- Table container with border -->
@@ -8954,14 +8957,42 @@ var sdRespFixedCols = ['name','email','module'];
 var sdRespColTemp = {};
 
 var sdRespData = [
-  {name:'Priya', email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Email Invites by Zoho Survey collector', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
-  {name:'Raj', email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Email Invites by Zoho Survey collector', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
-  {name:'Malar', email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Web Link collector', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
-  {name:'Nisha', email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Email Invites by Zoho Survey collector', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
-  {name:'Divya', email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Web Link collector', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
-  {name:'Clara', email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Email Invites by Zoho Survey collector', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
+  {name:'Priya', email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Age 20–30', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
+  {name:'Raj', email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Age 20–30', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
+  {name:'Malar', email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Age 35–40', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
+  {name:'Nisha', email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Age 60', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
+  {name:'Divya', email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Default', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
+  {name:'Clara', email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Age 35–40', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
 ];
 var sdRespModuleFilter = 'All Modules';
+var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){...}}
+
+function sdRespPassesFilters(r) {
+  if (sdRespModuleFilter !== 'All Modules' && r.module !== sdRespModuleFilter) return false;
+  if (sdActiveChartFilter && !sdActiveChartFilter.test(r)) return false;
+  return true;
+}
+
+function sdApplyChartFilter(label, testFn) {
+  sdActiveChartFilter = { label: label, test: testFn };
+  var chip = document.getElementById('sd-resp-filter-chip');
+  if (chip) {
+    chip.style.display = 'flex';
+    document.getElementById('sd-resp-filter-chip-label').textContent = label;
+  }
+  sdRespPage = 1;
+  sdRespRender();
+  var section = document.getElementById('sd-responses-section');
+  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function sdClearChartFilter() {
+  sdActiveChartFilter = null;
+  var chip = document.getElementById('sd-resp-filter-chip');
+  if (chip) chip.style.display = 'none';
+  sdRespPage = 1;
+  sdRespRender();
+}
 
 function sdRespGetVisibleCols() {
   return sdRespAllColumns.filter(function(c){return c.on;});
@@ -8993,7 +9024,7 @@ function sdRespToggleRow(id, checked) {
   sdRespUpdateSelectionBar();
   // Update select-all checkbox state
   var filtered = sdRespData.filter(function(r){
-    return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter;
+    return sdRespPassesFilters(r);
   });
   var allChecked = filtered.length > 0 && filtered.every(function(r){ return sdRespSelectedIds[r.responseId]; });
   var selAll = document.getElementById('sd-resp-select-all');
@@ -9002,7 +9033,7 @@ function sdRespToggleRow(id, checked) {
 
 function sdRespToggleAll(checked) {
   var filtered = sdRespData.filter(function(r){
-    return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter;
+    return sdRespPassesFilters(r);
   });
   filtered.forEach(function(r){ sdRespSelectedIds[r.responseId] = checked; });
   // Update all row checkboxes
@@ -9020,7 +9051,7 @@ function sdRespClearSelection() {
 
 function sdRespSelectAllView() {
   var filtered = sdRespData.filter(function(r){
-    return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter;
+    return sdRespPassesFilters(r);
   });
   filtered.forEach(function(r){ sdRespSelectedIds[r.responseId] = true; });
   document.querySelectorAll('.sd-resp-row-cb').forEach(function(cb){ cb.checked = true; });
@@ -9043,7 +9074,7 @@ document.addEventListener('click', function() {
 function sdRespRender() {
   var showCheckboxes = sdRespModuleFilter !== 'All Modules';
   var filtered = sdRespData.filter(function(r){
-    return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter;
+    return sdRespPassesFilters(r);
   });
   var visCols = sdRespGetVisibleCols();
   var totalCols = (showCheckboxes ? 1 : 0) + 3 + visCols.length;
@@ -9189,7 +9220,7 @@ function sdRespToggleExpand() {
   var overlay = document.getElementById('sd-resp-expand-overlay');
   overlay.style.display = 'flex';
   var wrap = document.getElementById('sd-resp-expand-table-wrap');
-  var filtered = sdRespData.filter(function(r){ return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter; });
+  var filtered = sdRespData.filter(function(r){ return sdRespPassesFilters(r); });
   var visCols = sdRespGetVisibleCols();
   var totalCols = 3 + visCols.length;
   document.getElementById('sd-resp-expand-count').textContent = filtered.length;
@@ -10875,7 +10906,7 @@ document.addEventListener('click', function(e) {
 function rdpOpen(rowIdx) {
   // Build the working dataset from current filtered data
   rdpDataset = sdRespData.filter(function(r){
-    return sdRespModuleFilter === 'All Modules' || r.module === sdRespModuleFilter;
+    return sdRespPassesFilters(r);
   });
   rdpCurrentIdx = rowIdx;
   rdpRender();
