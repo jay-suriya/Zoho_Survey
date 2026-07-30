@@ -3870,43 +3870,33 @@ tbody tr:hover{background:#f5f7ff;}
                     </div>
                   </div>
                 </div>
-                <span id="sd-quota-status-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;background:#E9FBF4;color:#10975E;">— % collected</span>
               </div>
-              <div style="padding:6px 24px 20px;display:flex;align-items:center;gap:24px;">
+              <div style="padding:6px 24px 22px;display:flex;align-items:center;gap:20px;">
                 <!-- Radial progress -->
-                <div style="position:relative;width:96px;height:96px;flex-shrink:0;">
-                  <svg width="96" height="96" viewBox="0 0 96 96">
+                <div style="position:relative;width:88px;height:88px;flex-shrink:0;">
+                  <svg width="88" height="88" viewBox="0 0 96 96">
                     <circle cx="48" cy="48" r="40" fill="none" stroke="#EEF0F4" stroke-width="10"/>
                     <circle id="sd-quota-ring" cx="48" cy="48" r="40" fill="none" stroke="#5464F2" stroke-width="10" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" transform="rotate(-90 48 48)" style="transition:stroke-dashoffset .5s, stroke .3s;"/>
                   </svg>
-                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-                    <span id="sd-quota-pct" style="font-size:18px;font-weight:800;color:#202123;">—</span>
-                    <span style="font-size:9px;color:#8C91AB;">collected</span>
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+                    <span id="sd-quota-pct" style="font-size:19px;font-weight:800;color:#202123;">—</span>
                   </div>
                 </div>
-                <!-- Fraction + meta tiles -->
+                <!-- Plain-language summary -->
                 <div style="flex:1;">
-                  <div style="font-size:13px;color:#616E88;margin-bottom:10px;">
-                    <span id="sd-quota-collected" style="font-size:20px;font-weight:800;color:#202123;">—</span>
-                    <span style="color:#8C91AB;"> / </span>
-                    <span id="sd-quota-limit-disp" style="font-size:14px;font-weight:600;color:#616E88;">—</span>
-                    <span style="margin-left:4px;">responses collected</span>
+                  <div style="font-size:15px;color:#202123;margin-bottom:4px;">
+                    <span id="sd-quota-collected" style="font-weight:800;">—</span>
+                    <span style="color:#8C91AB;"> of </span>
+                    <span id="sd-quota-limit-disp" style="font-weight:800;">—</span>
+                    <span style="color:#616E88;"> responses collected</span>
                   </div>
-                  <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #EDF0F4;border-radius:8px;overflow:hidden;">
-                    <div style="padding:10px 14px;border-right:1px solid #EDF0F4;">
-                      <div style="font-size:10.5px;color:#8C91AB;">Limit</div>
-                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-limit-meta">—</div>
-                    </div>
-                    <div style="padding:10px 14px;border-right:1px solid #EDF0F4;">
-                      <div style="font-size:10.5px;color:#8C91AB;">When Reached</div>
-                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-when-meta">—</div>
-                    </div>
-                    <div style="padding:10px 14px;">
-                      <div style="font-size:10.5px;color:#8C91AB;">Remaining</div>
-                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-remaining">—</div>
-                    </div>
+                  <div style="font-size:13px;color:#616E88;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span><span id="sd-quota-remaining" style="font-weight:700;color:#202123;">—</span> responses left before the quota is reached</span>
+                    <span style="color:#C5C4D3;">•</span>
+                    <span>When reached: <span id="sd-quota-when-meta" style="font-weight:700;color:#202123;">—</span></span>
                   </div>
                 </div>
+                <span id="sd-quota-status-badge" style="display:none;align-self:flex-start;font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap;"></span>
               </div>
             </div><!-- /Survey Quota -->
 
@@ -5647,7 +5637,6 @@ function openSurveyDetail(survey) {
       var qWhenLabels = { close: 'Close the survey', redirect: 'Redirect to quota page', allow: 'Allow beyond quota' };
       document.getElementById('sd-quota-collected').textContent = qCollected;
       document.getElementById('sd-quota-limit-disp').textContent = qLimit === Infinity ? '∞' : qLimit;
-      document.getElementById('sd-quota-limit-meta').textContent = qLimit === Infinity ? 'Unlimited' : qLimit;
       document.getElementById('sd-quota-when-meta').textContent = qWhenLabels[survey.quotaWhen] || 'Close the survey';
       document.getElementById('sd-quota-remaining').textContent = qLimit === Infinity ? '∞' : Math.max(0, qLimit - qCollected);
       document.getElementById('sd-quota-pct').textContent = (qLimit === Infinity ? 0 : qPct) + '%';
@@ -5657,11 +5646,15 @@ function openSurveyDetail(survey) {
       ring.style.stroke = qReached ? '#E23041' : (qPct >= 75 ? '#F5973A' : '#5464F2');
       var badge = document.getElementById('sd-quota-status-badge');
       if (qReached) {
+        badge.style.display = 'inline-block';
         badge.textContent = 'Quota reached';
         badge.style.background = '#FFF2F3'; badge.style.color = '#F63648';
+      } else if (qLimit !== Infinity && qPct >= 90) {
+        badge.style.display = 'inline-block';
+        badge.textContent = 'Almost full';
+        badge.style.background = '#FFF9ED'; badge.style.color = '#E28C27';
       } else {
-        badge.textContent = (qLimit === Infinity ? 0 : qPct) + '% collected';
-        badge.style.background = '#E9FBF4'; badge.style.color = '#10975E';
+        badge.style.display = 'none';
       }
       currentQuotaConditions = survey.quotaConditions || [];
     }
