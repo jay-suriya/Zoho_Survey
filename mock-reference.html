@@ -1982,13 +1982,22 @@ tbody tr:hover{background:#f5f7ff;}
 ::-webkit-scrollbar-thumb:hover { background: #b0b0b0; }
 
 /* Setup / Marketplace pages */
+.setup-row{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;}
+.setup-col{padding:20px 22px;border-right:1px solid #EDF0F4;}
+.setup-col:last-child{border-right:none;}
+.setup-col-head{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#202123;margin-bottom:16px;}
 .setup-link{font-size:13px;color:#434D5E;padding:6px 0;cursor:pointer;}
 .setup-link:hover{color:#5464F2;}
-.mkt-zoho-card{padding:28px 26px;border-right:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;}
+.mkt-nav-group{margin-bottom:16px;}
+.mkt-nav-head{font-size:12px;font-weight:700;color:#202123;padding:6px 8px;}
+.mkt-nav-item{font-size:13px;color:#434D5E;padding:6px 8px 6px 20px;border-radius:6px;cursor:pointer;}
+.mkt-nav-item:hover{background:#F5F6FA;}
+.mkt-nav-item.active{background:#F0F1FF;color:#5464F2;font-weight:600;}
+.mkt-zoho-card{padding:26px 24px;border-right:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;}
 .mkt-zoho-card:nth-child(3n){border-right:none;}
-.mkt-zoho-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;}
+.mkt-zoho-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
 .mkt-zoho-title{font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;}
-.mkt-zoho-desc{font-size:12.5px;color:#616E88;line-height:1.5;margin-bottom:16px;min-height:56px;}
+.mkt-zoho-desc{font-size:12.5px;color:#616E88;line-height:1.55;margin-bottom:16px;min-height:56px;}
 .mkt-zoho-btn{height:30px;padding:0 14px;border:1px solid #FF4D5B;color:#F63648;background:#FFF2F3;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
 </style>
 </head>
@@ -11519,6 +11528,8 @@ function closeSetupPage() {
 }
 function openMarketplaceZohoPage() {
   document.getElementById('marketplace-zoho-page').style.display = 'block';
+  var navItem = document.getElementById('mkt-nav-zoho-item');
+  if (navItem) navItem.scrollIntoView({ block: 'center' });
 }
 function closeMarketplaceZohoPage() {
   document.getElementById('marketplace-zoho-page').style.display = 'none';
@@ -11635,57 +11646,73 @@ function closeMarketplaceZohoPage() {
 </div>
 
 <!-- ═══ SETUP PAGE ═══ -->
-<div id="setup-page" style="display:none;position:fixed;inset:0;z-index:900;overflow:auto;background:#fff;min-height:100vh;font-family:'Zoho Puvi',Arial,sans-serif;">
-  <div style="height:56px;border-bottom:1px solid #D6D6E3;display:flex;align-items:center;gap:14px;padding:0 24px;">
-    <svg onclick="closeSetupPage()" style="cursor:pointer;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    <span style="font-size:16px;font-weight:700;color:#202123;">Setup Home</span>
+<div id="setup-page" style="display:none;position:fixed;inset:0;z-index:900;overflow:auto;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+  <div class="topbar" style="border-bottom:1px solid #e0e0e0;">
+    <div class="topbar-row1">
+      <svg onclick="closeSetupPage()" style="cursor:pointer;flex-shrink:0;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <div class="topbar-icons">
+        <div class="search-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search records</div>
+        <div class="icon-btn-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="za-icon"><span class="z">Z</span><span class="a">A</span><div class="za-divider"></div></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge">83</div></div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg><div class="notif-badge">25</div></div>
+        <div class="chat-bubble"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="settings-btn" onclick="closeSetupPage()" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="avatar">M</div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#777"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></div>
+      </div>
+    </div>
   </div>
-  <div style="padding:28px 32px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-      <span style="font-size:20px;font-weight:700;color:#202123;">Setup</span>
-      <div style="width:280px;height:34px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8C91AB;font-size:13px;">
+  <div style="padding:28px 40px 60px;">
+    <div style="display:flex;align-items:center;margin-bottom:26px;">
+      <span style="font-size:21px;font-weight:700;color:#202123;margin-right:18px;">Setup</span>
+      <div style="width:300px;height:34px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8C91AB;font-size:13px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Search Setup
       </div>
+      <div style="flex:1;"></div>
+      <button style="height:34px;padding:0 16px;border:1px solid #C0C8E2;background:#fff;border-radius:6px;font-size:13px;font-weight:600;color:#313949;cursor:pointer;">Customize Setup</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">General</div>
+
+    <div class="setup-row">
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>General</div>
         <div class="setup-link">Personal Settings</div>
         <div class="setup-link">Users</div>
         <div class="setup-link">Company Settings</div>
         <div class="setup-link">Calendar Booking</div>
         <div class="setup-link">Motivator</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Security Control</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>Security Control</div>
         <div class="setup-link">Profiles</div>
         <div class="setup-link">Roles and Sharing</div>
         <div class="setup-link">Zoho Mail Add-on Users</div>
         <div class="setup-link">Compliance Settings</div>
         <div class="setup-link">Territory Management</div>
         <div class="setup-link">Trusted Domain</div>
-        <div class="setup-link">Single Sign-On (SAML)</div>
+        <div class="setup-link">Single Sign-On(SAML)</div>
         <div class="setup-link">Support Access</div>
         <div class="setup-link">Security Policies</div>
         <div class="setup-link">Active Directory Sync</div>
         <div class="setup-link">Login History</div>
         <div class="setup-link">Audit Log</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Customization</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Customization</div>
         <div class="setup-link">Modules and Fields</div>
         <div class="setup-link">Pipelines</div>
         <div class="setup-link">Wizards</div>
         <div class="setup-link">Kiosk Studio</div>
         <div class="setup-link">Canvas</div>
-        <div class="setup-link">Customize Home Page</div>
+        <div class="setup-link">Customize Home page</div>
         <div class="setup-link">Translations</div>
         <div class="setup-link">Templates</div>
         <div class="setup-link">Teamspace</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Channels</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Channels</div>
         <div class="setup-link">Email</div>
         <div class="setup-link">Telephony</div>
         <div class="setup-link">Business Messaging</div>
@@ -11695,8 +11722,8 @@ function closeMarketplaceZohoPage() {
         <div class="setup-link">Chat</div>
         <div class="setup-link">Portals</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Automation</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Automation</div>
         <div class="setup-link">Workflow Rules</div>
         <div class="setup-link">Actions</div>
         <div class="setup-link">Schedules</div>
@@ -11706,22 +11733,23 @@ function closeMarketplaceZohoPage() {
         <div class="setup-link">Cadences</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-top:34px;">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Process Management</div>
+
+    <div class="setup-row" style="margin-top:20px;">
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Process Management</div>
         <div class="setup-link">Blueprint</div>
         <div class="setup-link">Approval Processes</div>
         <div class="setup-link">Review Processes</div>
         <div class="setup-link">Connected Workflow</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Experience Center</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Experience Center</div>
         <div class="setup-link">Signals</div>
         <div class="setup-link">CommandCenter</div>
         <div class="setup-link">Segmentation</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Data Administration</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 5v14c0 1.66-4 3-9 3s-9-1.34-9-3V5"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/></svg>Data Administration</div>
         <div class="setup-link">Import</div>
         <div class="setup-link">Export</div>
         <div class="setup-link">Data Backup</div>
@@ -11731,8 +11759,8 @@ function closeMarketplaceZohoPage() {
         <div class="setup-link">Sandbox</div>
         <div class="setup-link">Copy Customization</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Marketplace</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Marketplace</div>
         <div class="setup-link">All</div>
         <div class="setup-link" onclick="openMarketplaceZohoPage()" style="color:#5464F2;font-weight:600;">Zoho</div>
         <div class="setup-link">Google</div>
@@ -11743,8 +11771,8 @@ function closeMarketplaceZohoPage() {
         <div class="setup-link">TikTok</div>
         <div class="setup-link">QuickBooks</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Developer Hub</div>
+      <div class="setup-col">
+        <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Developer Hub</div>
         <div class="setup-link">MCP for AI Agents</div>
         <div class="setup-link">APIs and SDKs</div>
         <div class="setup-link">Connections</div>
@@ -11758,47 +11786,135 @@ function closeMarketplaceZohoPage() {
 </div>
 
 <!-- ═══ MARKETPLACE — ZOHO PAGE ═══ -->
-<div id="marketplace-zoho-page" style="display:none;position:fixed;inset:0;z-index:901;overflow:auto;background:#fff;min-height:100vh;font-family:'Zoho Puvi',Arial,sans-serif;">
-  <div style="height:56px;border-bottom:1px solid #D6D6E3;display:flex;align-items:center;gap:14px;padding:0 24px;">
-    <svg onclick="closeMarketplaceZohoPage()" style="cursor:pointer;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    <span style="font-size:16px;font-weight:700;color:#202123;">Marketplace — Zoho</span>
+<div id="marketplace-zoho-page" style="display:none;position:fixed;inset:0;z-index:901;overflow:hidden;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+  <div class="topbar" style="border-bottom:1px solid #e0e0e0;">
+    <div class="topbar-row1">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0;" onclick="closeMarketplaceZohoPage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.4"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span style="font-size:15px;font-weight:700;color:#C2185B;">Setup Home</span>
+      </div>
+      <div class="topbar-icons">
+        <div class="search-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search records</div>
+        <div class="icon-btn-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="za-icon"><span class="z">Z</span><span class="a">A</span><div class="za-divider"></div></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge">83</div></div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg><div class="notif-badge">25</div></div>
+        <div class="chat-bubble"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="settings-btn" onclick="closeMarketplaceZohoPage()" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="avatar">M</div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#777"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></div>
+      </div>
+    </div>
   </div>
-  <div style="padding:28px 32px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;max-width:1200px;">
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#EEF0FF;">🗂️</div>
-      <div class="mkt-zoho-title">Zoho Backstage</div>
-      <div class="mkt-zoho-desc">Stay in sync with all your events from within Zoho CRM.</div>
-      <button class="mkt-zoho-btn">Manage</button>
+  <div style="display:flex;height:calc(100vh - 50px);">
+    <!-- Setup left nav -->
+    <div id="mkt-setup-nav" style="width:240px;flex-shrink:0;border-right:1px solid #EDF0F4;overflow-y:auto;padding:16px 14px;">
+      <div style="height:32px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:7px;padding:0 10px;color:#8C91AB;font-size:12.5px;margin-bottom:14px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">General</div>
+        <div class="mkt-nav-item">Personal Settings</div>
+        <div class="mkt-nav-item">Users</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Automation</div>
+        <div class="mkt-nav-item">Workflow Rules</div>
+        <div class="mkt-nav-item">Actions</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Experience Center</div>
+        <div class="mkt-nav-item">CommandCenter</div>
+        <div class="mkt-nav-item">Segmentation</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Data Administration</div>
+        <div class="mkt-nav-item">Import</div>
+        <div class="mkt-nav-item">Export</div>
+        <div class="mkt-nav-item">Data Backup</div>
+        <div class="mkt-nav-item">Storage</div>
+        <div class="mkt-nav-item">Recycle Bin</div>
+        <div class="mkt-nav-item">Admin Tools</div>
+        <div class="mkt-nav-item">Sandbox</div>
+        <div class="mkt-nav-item">Copy Customization</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Marketplace</div>
+        <div class="mkt-nav-item">All</div>
+        <div class="mkt-nav-item active" id="mkt-nav-zoho-item">Zoho</div>
+        <div class="mkt-nav-item">Google</div>
+        <div class="mkt-nav-item">Microsoft</div>
+        <div class="mkt-nav-item">Facebook</div>
+        <div class="mkt-nav-item">Extension Builder</div>
+        <div class="mkt-nav-item">LinkedIn</div>
+        <div class="mkt-nav-item">TikTok</div>
+        <div class="mkt-nav-item">QuickBooks</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Developer Hub</div>
+        <div class="mkt-nav-item">MCP for AI Agents</div>
+        <div class="mkt-nav-item">APIs and SDKs</div>
+        <div class="mkt-nav-item">Connections</div>
+        <div class="mkt-nav-item">Variables</div>
+        <div class="mkt-nav-item">Functions</div>
+        <div class="mkt-nav-item">Widgets</div>
+        <div class="mkt-nav-item">Client Script</div>
+      </div>
     </div>
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#EAF3FF;">🎥</div>
-      <div class="mkt-zoho-title">Zoho Meeting</div>
-      <div class="mkt-zoho-desc">With the Zoho integration, Zoho CRM users can conduct meetings online from Zoho CRM Meetings.</div>
-      <button class="mkt-zoho-btn">Setup now</button>
-    </div>
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#FFF3E0;">📋</div>
-      <div class="mkt-zoho-title">Zoho Projects</div>
-      <div class="mkt-zoho-desc">Plan, execute, and monitor customer projects from within your Zoho CRM account.</div>
-      <button class="mkt-zoho-btn">Manage</button>
-    </div>
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#E9FBF4;">🎧</div>
-      <div class="mkt-zoho-title">Zoho Desk</div>
-      <div class="mkt-zoho-desc">Let sales, marketing, and executive teams view and monitor customer support tickets from within your Zoho CRM account.</div>
-      <button class="mkt-zoho-btn">Continue</button>
-    </div>
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#FFF2F3;">✅</div>
-      <div class="mkt-zoho-title">Zoho Survey</div>
-      <div class="mkt-zoho-desc">Send surveys and view responses from contacts within your Zoho CRM. Build surveys, automate, and distribute them.</div>
-      <button class="mkt-zoho-btn">Manage</button>
-    </div>
-    <div class="mkt-zoho-card">
-      <div class="mkt-zoho-icon" style="background:#F0F1FF;">💬</div>
-      <div class="mkt-zoho-title">Zoho Cliq</div>
-      <div class="mkt-zoho-desc">Congregate a team or an individual in a Zoho Cliq Channel, or share a report chart and discuss it there.</div>
-      <button class="mkt-zoho-btn">Manage</button>
+    <!-- Content -->
+    <div style="flex:1;overflow-y:auto;padding:28px 32px;">
+      <div style="border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;display:grid;grid-template-columns:repeat(3,1fr);max-width:1140px;">
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#F0F1FF;color:#5464F2;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Backstage</div>
+          <div class="mkt-zoho-desc">Stay in sync with all your events from within Zoho CRM.</div>
+          <button class="mkt-zoho-btn">Manage</button>
+        </div>
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#EAF3FF;color:#2C5CC5;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Meeting</div>
+          <div class="mkt-zoho-desc">With the Zoho integration, Zoho CRM users can conduct meetings online from Zoho CRM Meetings.</div>
+          <button class="mkt-zoho-btn">Setup now</button>
+        </div>
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#FFF3E0;color:#E28C27;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Projects</div>
+          <div class="mkt-zoho-desc">Plan, execute, and monitor customer projects from within your Zoho CRM account.</div>
+          <button class="mkt-zoho-btn">Manage</button>
+        </div>
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#E9FBF4;color:#10975E;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Desk</div>
+          <div class="mkt-zoho-desc">Let sales, marketing, and executive teams view and monitor customer support tickets from within your Zoho CRM account.</div>
+          <button class="mkt-zoho-btn">Continue</button>
+        </div>
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#FFF2F3;color:#F63648;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Survey</div>
+          <div class="mkt-zoho-desc">Send surveys and view responses from contacts within your Zoho CRM. Build surveys, automate, and distribute them.</div>
+          <button class="mkt-zoho-btn">Manage</button>
+        </div>
+        <div class="mkt-zoho-card">
+          <div class="mkt-zoho-icon" style="background:#F0F1FF;color:#5464F2;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="mkt-zoho-title">Zoho Cliq</div>
+          <div class="mkt-zoho-desc">Congregate a team or an individual in a Zoho Cliq Channel, or share a report chart and discuss it there.</div>
+          <button class="mkt-zoho-btn">Manage</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
