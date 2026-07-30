@@ -4223,10 +4223,107 @@ tbody tr:hover{background:#f5f7ff;}
                   </div>
                 </div>
 
+                <!-- ── CARD 7: Pending Responses (NEW) ── -->
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Pending Responses</span>
+                    <button onclick="sdChartToggleTable('chart-tbl-7')" title="Expand table" style="background:none;border:1px solid #e0e0e0;border-radius:5px;cursor:pointer;padding:3px 7px;color:#666;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+                      Details
+                    </button>
+                  </div>
+                  <div style="padding:14px 14px 10px;flex:1;">
+                    <div style="display:flex;align-items:baseline;gap:6px;">
+                      <span style="font-size:26px;font-weight:800;color:#E65100;">24</span>
+                      <span style="font-size:11px;color:#888;">of 37 sent haven't responded</span>
+                    </div>
+                    <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:12px;background:#f0f0f0;">
+                      <div style="width:35%;background:#00BCD4;"></div>
+                      <div style="width:65%;background:#FFD180;"></div>
+                    </div>
+                    <div style="display:flex;gap:14px;margin-top:8px;font-size:10.5px;color:#555;">
+                      <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#00BCD4;display:inline-block;"></span>Responded (13)</span>
+                      <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#FFD180;display:inline-block;"></span>Pending (24)</span>
+                    </div>
+                  </div>
+                  <!-- Expandable table -->
+                  <div id="chart-tbl-7" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;max-height:220px;overflow-y:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                      <thead style="position:sticky;top:0;"><tr style="background:#f0f4ff;">
+                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Name</th>
+                        <th style="padding:8px 10px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Sent On</th>
+                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;"></th>
+                      </tr></thead>
+                      <tbody>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">William Souza <span style="color:#999;">(Leads)</span></td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Apr 1, 2026</td><td style="padding:5px 10px;border-bottom:1px solid #f0f0f0;text-align:center;"><button onclick="showToast('Reminder sent to William Souza')" style="border:1px solid #C0C8E2;background:#fff;border-radius:5px;padding:3px 9px;font-size:10.5px;color:#5464F2;cursor:pointer;font-family:inherit;font-weight:600;">Remind</button></td></tr>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">Isaac Mensah <span style="color:#999;">(Contacts)</span></td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Apr 2, 2026</td><td style="padding:5px 10px;border-bottom:1px solid #f0f0f0;text-align:center;"><button onclick="showToast('Reminder sent to Isaac Mensah')" style="border:1px solid #C0C8E2;background:#fff;border-radius:5px;padding:3px 9px;font-size:10.5px;color:#5464F2;cursor:pointer;font-family:inherit;font-weight:600;">Remind</button></td></tr>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">Bryan Fields <span style="color:#999;">(Leads)</span></td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Apr 2, 2026</td><td style="padding:5px 10px;border-bottom:1px solid #f0f0f0;text-align:center;"><button onclick="showToast('Reminder sent to Bryan Fields')" style="border:1px solid #C0C8E2;background:#fff;border-radius:5px;padding:3px 9px;font-size:10.5px;color:#5464F2;cursor:pointer;font-family:inherit;font-weight:600;">Remind</button></td></tr>
+                        <tr><td style="padding:7px 14px;font-size:11px;color:#333;">Olive Turner <span style="color:#999;">(Contacts)</span></td><td style="padding:7px 10px;color:#888;font-size:11px;">Apr 3, 2026</td><td style="padding:5px 10px;text-align:center;"><button onclick="showToast('Reminder sent to Olive Turner')" style="border:1px solid #C0C8E2;background:#fff;border-radius:5px;padding:3px 9px;font-size:10.5px;color:#5464F2;cursor:pointer;font-family:inherit;font-weight:600;">Remind</button></td></tr>
+                      </tbody>
+                      <tfoot><tr style="background:#f5f5f5;"><td colspan="2" style="padding:8px 14px;font-size:11px;color:#888;">+ 20 more pending</td><td style="padding:8px 10px;text-align:center;"><button onclick="showToast('Reminder sent to all 24 pending recipients')" style="border:none;background:#5464F2;border-radius:5px;padding:4px 10px;font-size:10.5px;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;">Remind All</button></td></tr></tfoot>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- ── CARD 8: CSAT & NPS by Account (NEW) ── -->
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;overflow:hidden;display:flex;flex-direction:column;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">CSAT &amp; NPS by Account</span>
+                    <button onclick="sdChartToggleTable('chart-tbl-8')" title="Expand table" style="background:none;border:1px solid #e0e0e0;border-radius:5px;cursor:pointer;padding:3px 7px;color:#666;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+                      Details
+                    </button>
+                  </div>
+                  <div style="padding:10px 14px;flex:1;">
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:11px;color:#333;width:58px;flex-shrink:0;">C001 · Priya</span>
+                        <div style="flex:1;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:#F44336;"></div></div>
+                        <span style="font-size:10.5px;color:#F44336;font-weight:700;width:44px;text-align:right;">0/5 &#8595;</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:11px;color:#333;width:58px;flex-shrink:0;">C004 · Nisha</span>
+                        <div style="flex:1;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#FF9800;"></div></div>
+                        <span style="font-size:10.5px;color:#E65100;font-weight:700;width:44px;text-align:right;">1/5 &#8595;</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:11px;color:#333;width:58px;flex-shrink:0;">C006 · Clara</span>
+                        <div style="flex:1;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden;"><div style="width:80%;height:100%;background:#4CAF50;"></div></div>
+                        <span style="font-size:10.5px;color:#2E7D32;font-weight:700;width:44px;text-align:right;">4/5 &#8593;</span>
+                      </div>
+                    </div>
+                    <div style="margin-top:10px;padding:6px 8px;background:#FFF3E0;border-radius:6px;font-size:10.5px;color:#E65100;display:flex;align-items:center;gap:6px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2.5" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      C004 (Enterprise) trending down — flagged for follow-up
+                    </div>
+                  </div>
+                  <!-- Expandable table -->
+                  <div id="chart-tbl-8" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;max-height:220px;overflow-y:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                      <thead style="position:sticky;top:0;"><tr style="background:#f0f4ff;">
+                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Account</th>
+                        <th style="padding:8px 10px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Type</th>
+                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">CSAT</th>
+                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">NPS</th>
+                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Trend</th>
+                      </tr></thead>
+                      <tbody>
+                        <tr style="background:#fff3f2;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">C001 · Priya</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Premium</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;color:#F44336;">0/5</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#333;">0/10</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#F44336;">&#8595; Down</td></tr>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">C002 · Raj</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Standard</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;color:#333;">3/5</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#333;">7/10</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#888;">&#8594; Flat</td></tr>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">C003 · Malar</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Premium</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;color:#2E7D32;">5/5</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#333;">9/10</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#2E7D32;">&#8593; Up</td></tr>
+                        <tr style="background:#fff3f2;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">C004 · Nisha</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Enterprise</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;color:#E65100;">1/5</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#333;">3/10</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#E65100;">&#8595; Down</td></tr>
+                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#333;">C005 · Divya</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#888;font-size:11px;">Standard</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;color:#2E7D32;">5/5</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#333;">9/10</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;color:#2E7D32;">&#8593; Up</td></tr>
+                        <tr><td style="padding:7px 14px;font-size:11px;color:#333;">C006 · Clara</td><td style="padding:7px 10px;color:#888;font-size:11px;">Premium</td><td style="padding:7px 10px;text-align:center;font-weight:700;color:#2E7D32;">4/5</td><td style="padding:7px 10px;text-align:center;color:#333;">7/10</td><td style="padding:7px 10px;text-align:center;color:#2E7D32;">&#8593; Up</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
               </div>
               <!-- Scroll indicator dots -->
               <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-bottom:12px;">
                 <div style="width:20px;height:3px;border-radius:2px;background:#7B1857;"></div>
+                <div style="width:6px;height:3px;border-radius:2px;background:#d0d0d0;"></div>
                 <div style="width:6px;height:3px;border-radius:2px;background:#d0d0d0;"></div>
                 <div style="width:6px;height:3px;border-radius:2px;background:#d0d0d0;"></div>
               </div>
