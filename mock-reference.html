@@ -3851,37 +3851,63 @@ tbody tr:hover{background:#f5f7ff;}
 
             <!-- 2. Survey Quota (shown only when quota enabled) -->
             <div id="sd-quota-strip" style="display:none;border-bottom:1px solid #e8e8e8;">
-              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;justify-content:space-between;">
-                <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Quota</span>
-                <span onclick="openQuotaConditionPanel()" style="font-size:11px;color:#2C5CC5;cursor:pointer;font-weight:600;border:1px solid #c5d3f0;border-radius:4px;padding:3px 10px;background:#f0f4ff;">View Conditions</span>
+              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Quota</span>
+                  <div style="position:relative;display:inline-block;">
+                    <span onclick="sdToggleQuotaConditionsView(event)" id="sd-quota-view-cond-btn" style="font-size:11px;color:#5464F2;cursor:pointer;font-weight:600;border:1px solid #C7CDFB;border-radius:6px;padding:4px 10px;background:#F0F1FF;display:inline-flex;align-items:center;gap:5px;">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                      View Conditions
+                    </span>
+                    <!-- Read-only condition popover -->
+                    <div id="sd-quota-cond-popover" style="display:none;position:absolute;top:calc(100% + 6px);left:0;width:320px;background:#fff;border:1px solid #D6D6E3;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.18);z-index:800;padding:14px 16px;">
+                      <div style="font-size:12px;font-weight:700;color:#202123;margin-bottom:8px;">Quota Condition</div>
+                      <div id="sd-quota-cond-body" style="display:flex;flex-direction:column;gap:6px;"></div>
+                      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #EDF0F4;display:flex;justify-content:flex-end;gap:8px;">
+                        <button onclick="sdToggleQuotaConditionsView(event)" style="height:28px;padding:0 12px;border:1px solid #D5D8E9;background:linear-gradient(#FFFFFF,#F1F0F7);border-radius:6px;font-size:12px;font-weight:500;color:#313949;cursor:pointer;">Close</button>
+                        <button onclick="openQuotaConditionPanel()" style="height:28px;padding:0 12px;border:none;background:linear-gradient(#5767F6,#124DC3);color:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;">Edit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span id="sd-quota-status-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;background:#E9FBF4;color:#10975E;">— % collected</span>
               </div>
-              <div style="padding:16px 20px 18px;">
-              <!-- Row 2: label + progress bar + fraction -->
-              <div style="margin-bottom:10px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                  <span style="font-size:12px;color:#555;">Responses collected</span>
-                  <span style="font-size:12px;font-weight:700;color:#1B1A2E;"><span id="sd-quota-collected">—</span> / <span id="sd-quota-limit-disp">—</span></span>
+              <div style="padding:6px 24px 20px;display:flex;align-items:center;gap:24px;">
+                <!-- Radial progress -->
+                <div style="position:relative;width:96px;height:96px;flex-shrink:0;">
+                  <svg width="96" height="96" viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="40" fill="none" stroke="#EEF0F4" stroke-width="10"/>
+                    <circle id="sd-quota-ring" cx="48" cy="48" r="40" fill="none" stroke="#5464F2" stroke-width="10" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" transform="rotate(-90 48 48)" style="transition:stroke-dashoffset .5s, stroke .3s;"/>
+                  </svg>
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+                    <span id="sd-quota-pct" style="font-size:18px;font-weight:800;color:#202123;">—</span>
+                    <span style="font-size:9px;color:#8C91AB;">collected</span>
+                  </div>
                 </div>
-                <div style="background:#ebebeb;border-radius:100px;height:7px;overflow:hidden;">
-                  <div id="sd-quota-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,#7B1857,#C2185B);transition:width .4s;width:0%;"></div>
+                <!-- Fraction + meta tiles -->
+                <div style="flex:1;">
+                  <div style="font-size:13px;color:#616E88;margin-bottom:10px;">
+                    <span id="sd-quota-collected" style="font-size:20px;font-weight:800;color:#202123;">—</span>
+                    <span style="color:#8C91AB;"> / </span>
+                    <span id="sd-quota-limit-disp" style="font-size:14px;font-weight:600;color:#616E88;">—</span>
+                    <span style="margin-left:4px;">responses collected</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #EDF0F4;border-radius:8px;overflow:hidden;">
+                    <div style="padding:10px 14px;border-right:1px solid #EDF0F4;">
+                      <div style="font-size:10.5px;color:#8C91AB;">Limit</div>
+                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-limit-meta">—</div>
+                    </div>
+                    <div style="padding:10px 14px;border-right:1px solid #EDF0F4;">
+                      <div style="font-size:10.5px;color:#8C91AB;">When Reached</div>
+                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-when-meta">—</div>
+                    </div>
+                    <div style="padding:10px 14px;">
+                      <div style="font-size:10.5px;color:#8C91AB;">Remaining</div>
+                      <div style="font-size:13px;font-weight:700;color:#202123;margin-top:2px;" id="sd-quota-remaining">—</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <!-- Row 3: meta labels -->
-              <div style="display:flex;gap:28px;margin-top:10px;">
-                <div>
-                  <div style="font-size:11px;color:#888;">Limit</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-limit-meta">—</div>
-                </div>
-                <div>
-                  <div style="font-size:11px;color:#888;">When Reached</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-when-meta">—</div>
-                </div>
-                <div>
-                  <div style="font-size:11px;color:#888;">Remaining</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-remaining">—</div>
-                </div>
-              </div>
-            </div><!-- /inner padding -->
             </div><!-- /Survey Quota -->
 
             <!-- 3. Survey Reports -->
@@ -5395,10 +5421,10 @@ tbody tr:hover{background:#f5f7ff;}
 <script>
 // ── Survey data ───────────────────────────────────────────────────────────────
 var surveys = [
-  { id:1, name:'Customer Satisfaction Survey Q1 2025', status:'Published', surveyStatus:'Active', responses:142, createdTime:'Mar 15, 2025 10:30 AM', createdBy:'Morrison Troy', modifiedBy:'Jay Suriya', quotaEnabled:'enabled', quotaLimit:'200', quotaWhen:'close' },
+  { id:1, name:'Customer Satisfaction Survey Q1 2025', status:'Published', surveyStatus:'Active', responses:142, createdTime:'Mar 15, 2025 10:30 AM', createdBy:'Morrison Troy', modifiedBy:'Jay Suriya', quotaEnabled:'enabled', quotaLimit:'200', quotaWhen:'close', quotaConditions:[{question:'Account Type',operator:'Equal to',value:'Premium'}] },
   { id:2, name:'Product Feedback — New Feature Rollout', status:'Published', surveyStatus:'Active', responses:87, createdTime:'Feb 28, 2025 02:15 PM', createdBy:'Priya Venkat', modifiedBy:'Priya Venkat', quotaEnabled:'disabled' },
-  { id:3, name:'Post-Webinar Attendee Experience Survey', status:'Draft', surveyStatus:'Inactive', responses:34, createdTime:'Apr 01, 2025 09:00 AM', createdBy:'Morrison Troy', modifiedBy:'Morrison Troy', quotaEnabled:'enabled', quotaLimit:'50', quotaWhen:'redirect' },
-  { id:4, name:'Employee NPS — Q1 2025', status:'Published', surveyStatus:'Active', responses:215, createdTime:'Jan 10, 2025 09:00 AM', createdBy:'Jay Suriya', modifiedBy:'Jay Suriya', quotaEnabled:'enabled', quotaLimit:'250', quotaWhen:'allow' },
+  { id:3, name:'Post-Webinar Attendee Experience Survey', status:'Draft', surveyStatus:'Inactive', responses:34, createdTime:'Apr 01, 2025 09:00 AM', createdBy:'Morrison Troy', modifiedBy:'Morrison Troy', quotaEnabled:'enabled', quotaLimit:'50', quotaWhen:'redirect', quotaConditions:[{question:'Country',operator:'Equal to',value:'India'}] },
+  { id:4, name:'Employee NPS — Q1 2025', status:'Published', surveyStatus:'Active', responses:215, createdTime:'Jan 10, 2025 09:00 AM', createdBy:'Jay Suriya', modifiedBy:'Jay Suriya', quotaEnabled:'enabled', quotaLimit:'250', quotaWhen:'allow', quotaConditions:[{question:'Department',operator:'Equal to',value:'Sales'},{question:'Tenure',operator:'Greater than',value:'6 months'}] },
   { id:5, name:'B2B Client Satisfaction Survey', status:'Draft', surveyStatus:'Inactive', responses:12, createdTime:'Mar 05, 2025 03:45 PM', createdBy:'Priya Venkat', modifiedBy:'Priya Venkat', quotaEnabled:'disabled' },
   { id:6, name:'Product Onboarding Feedback', status:'Published', surveyStatus:'Active', responses:56, createdTime:'Feb 14, 2025 08:20 AM', createdBy:'Morrison Troy', modifiedBy:'Jay Suriya', quotaEnabled:'enabled', quotaLimit:'100', quotaWhen:'close' },
   { id:7, name:'Healthcare Patient Experience Survey', status:'Draft', surveyStatus:'Inactive', responses:8, createdTime:'Apr 01, 2025 09:00 AM', createdBy:'Morrison Troy', modifiedBy:'Morrison Troy', quotaEnabled:'disabled' }
@@ -5624,9 +5650,20 @@ function openSurveyDetail(survey) {
       document.getElementById('sd-quota-limit-meta').textContent = qLimit === Infinity ? 'Unlimited' : qLimit;
       document.getElementById('sd-quota-when-meta').textContent = qWhenLabels[survey.quotaWhen] || 'Close the survey';
       document.getElementById('sd-quota-remaining').textContent = qLimit === Infinity ? '∞' : Math.max(0, qLimit - qCollected);
-      document.getElementById('sd-quota-bar').style.width = qPct + '%';
-      document.getElementById('sd-quota-bar').style.background = qReached ? '#e53935' : 'linear-gradient(90deg,#7B1857,#C2185B)';
-      // badge removed
+      document.getElementById('sd-quota-pct').textContent = (qLimit === Infinity ? 0 : qPct) + '%';
+      var ring = document.getElementById('sd-quota-ring');
+      var ringCirc = 251.3;
+      ring.style.strokeDashoffset = (qLimit === Infinity ? ringCirc : ringCirc - (ringCirc * qPct / 100));
+      ring.style.stroke = qReached ? '#E23041' : (qPct >= 75 ? '#F5973A' : '#5464F2');
+      var badge = document.getElementById('sd-quota-status-badge');
+      if (qReached) {
+        badge.textContent = 'Quota reached';
+        badge.style.background = '#FFF2F3'; badge.style.color = '#F63648';
+      } else {
+        badge.textContent = (qLimit === Infinity ? 0 : qPct) + '% collected';
+        badge.style.background = '#E9FBF4'; badge.style.color = '#10975E';
+      }
+      currentQuotaConditions = survey.quotaConditions || [];
     }
   }
   // Populate Hide Details section
@@ -7754,6 +7791,39 @@ var qcpOperators = {
   multiple: ['Any one of','Equal to','Not equal to'],
   matrix:   ['Equal to','Not equal to']
 };
+
+var currentQuotaConditions = [];
+
+function sdToggleQuotaConditionsView(e) {
+  if (e) e.stopPropagation();
+  var popover = document.getElementById('sd-quota-cond-popover');
+  var isOpen = popover.style.display === 'block';
+  if (isOpen) {
+    popover.style.display = 'none';
+    return;
+  }
+  var body = document.getElementById('sd-quota-cond-body');
+  if (!currentQuotaConditions || currentQuotaConditions.length === 0) {
+    body.innerHTML = '<div style="font-size:12px;color:#8C91AB;">No condition set — the quota limit applies to all incoming responses.</div>';
+  } else {
+    body.innerHTML = currentQuotaConditions.map(function(c, idx) {
+      var pill = idx > 0 ? '<div style="font-size:10px;font-weight:700;color:#8C91AB;margin:2px 0;">AND</div>' : '';
+      return pill + '<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12.5px;color:#313949;">' +
+        '<span style="background:#F4F4F6;border-radius:4px;padding:3px 8px;font-weight:600;">' + c.question + '</span>' +
+        '<span style="color:#616E88;">' + c.operator + '</span>' +
+        '<span style="background:#F0F1FF;color:#5464F2;border-radius:4px;padding:3px 8px;font-weight:600;">' + c.value + '</span>' +
+        '</div>';
+    }).join('');
+  }
+  popover.style.display = 'block';
+}
+document.addEventListener('click', function(e) {
+  var popover = document.getElementById('sd-quota-cond-popover');
+  var btn = document.getElementById('sd-quota-view-cond-btn');
+  if (popover && popover.style.display === 'block' && !popover.contains(e.target) && e.target !== btn) {
+    popover.style.display = 'none';
+  }
+});
 
 function openQuotaConditionPanel() {
   if (qcpConditions.length === 0) {
