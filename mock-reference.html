@@ -1980,6 +1980,16 @@ tbody tr:hover{background:#f5f7ff;}
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #b0b0b0; }
+
+/* Setup / Marketplace pages */
+.setup-link{font-size:13px;color:#434D5E;padding:6px 0;cursor:pointer;}
+.setup-link:hover{color:#5464F2;}
+.mkt-zoho-card{padding:28px 26px;border-right:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;}
+.mkt-zoho-card:nth-child(3n){border-right:none;}
+.mkt-zoho-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;}
+.mkt-zoho-title{font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;}
+.mkt-zoho-desc{font-size:12.5px;color:#616E88;line-height:1.5;margin-bottom:16px;min-height:56px;}
+.mkt-zoho-btn{height:30px;padding:0 14px;border:1px solid #FF4D5B;color:#F63648;background:#FFF2F3;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -2126,7 +2136,7 @@ tbody tr:hover{background:#f5f7ff;}
           <div class="chat-bubble">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
-          <div class="settings-btn">
+          <div class="settings-btn" onclick="openSetupPage()" style="cursor:pointer;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           </div>
           <div class="avatar" onclick="toggleUserMenu(event)">M</div>
@@ -2268,7 +2278,7 @@ tbody tr:hover{background:#f5f7ff;}
           <div class="chat-bubble">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
-          <div class="settings-btn">
+          <div class="settings-btn" onclick="openSetupPage()" style="cursor:pointer;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           </div>
           <div class="avatar" onclick="toggleUserMenu(event)">M</div>
@@ -11500,6 +11510,20 @@ function selectUmTheme(el) {
   document.querySelectorAll('.um-theme-swatch').forEach(function(s) { s.classList.remove('selected'); });
   el.classList.add('selected');
 }
+
+function openSetupPage() {
+  document.getElementById('setup-page').style.display = 'block';
+}
+function closeSetupPage() {
+  document.getElementById('setup-page').style.display = 'none';
+}
+function openMarketplaceZohoPage() {
+  document.getElementById('marketplace-zoho-page').style.display = 'block';
+}
+function closeMarketplaceZohoPage() {
+  document.getElementById('marketplace-zoho-page').style.display = 'none';
+  document.getElementById('setup-page').style.display = 'block';
+}
 </script>
 
 <!-- ═══ USER ACCOUNT MENU ═══ -->
@@ -11608,6 +11632,175 @@ function selectUmTheme(el) {
 <div id="sd-inv-row-menu" style="display:none;position:fixed;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:5000;min-width:150px;">
   <div class="sd-inv-dd-item" onclick="sdInvRowSendEmail()">Send Email</div>
   <div class="sd-inv-dd-item" id="sd-inv-row-reinvite-item" onclick="sdInvRowReInvite()">Re-Send Survey</div>
+</div>
+
+<!-- ═══ SETUP PAGE ═══ -->
+<div id="setup-page" style="display:none;position:fixed;inset:0;z-index:900;overflow:auto;background:#fff;min-height:100vh;font-family:'Zoho Puvi',Arial,sans-serif;">
+  <div style="height:56px;border-bottom:1px solid #D6D6E3;display:flex;align-items:center;gap:14px;padding:0 24px;">
+    <svg onclick="closeSetupPage()" style="cursor:pointer;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    <span style="font-size:16px;font-weight:700;color:#202123;">Setup Home</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <span style="font-size:20px;font-weight:700;color:#202123;">Setup</span>
+      <div style="width:280px;height:34px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8C91AB;font-size:13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search Setup
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">General</div>
+        <div class="setup-link">Personal Settings</div>
+        <div class="setup-link">Users</div>
+        <div class="setup-link">Company Settings</div>
+        <div class="setup-link">Calendar Booking</div>
+        <div class="setup-link">Motivator</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Security Control</div>
+        <div class="setup-link">Profiles</div>
+        <div class="setup-link">Roles and Sharing</div>
+        <div class="setup-link">Zoho Mail Add-on Users</div>
+        <div class="setup-link">Compliance Settings</div>
+        <div class="setup-link">Territory Management</div>
+        <div class="setup-link">Trusted Domain</div>
+        <div class="setup-link">Single Sign-On (SAML)</div>
+        <div class="setup-link">Support Access</div>
+        <div class="setup-link">Security Policies</div>
+        <div class="setup-link">Active Directory Sync</div>
+        <div class="setup-link">Login History</div>
+        <div class="setup-link">Audit Log</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Customization</div>
+        <div class="setup-link">Modules and Fields</div>
+        <div class="setup-link">Pipelines</div>
+        <div class="setup-link">Wizards</div>
+        <div class="setup-link">Kiosk Studio</div>
+        <div class="setup-link">Canvas</div>
+        <div class="setup-link">Customize Home Page</div>
+        <div class="setup-link">Translations</div>
+        <div class="setup-link">Templates</div>
+        <div class="setup-link">Teamspace</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Channels</div>
+        <div class="setup-link">Email</div>
+        <div class="setup-link">Telephony</div>
+        <div class="setup-link">Business Messaging</div>
+        <div class="setup-link">Notification SMS</div>
+        <div class="setup-link">Webforms</div>
+        <div class="setup-link">Social</div>
+        <div class="setup-link">Chat</div>
+        <div class="setup-link">Portals</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Automation</div>
+        <div class="setup-link">Workflow Rules</div>
+        <div class="setup-link">Actions</div>
+        <div class="setup-link">Schedules</div>
+        <div class="setup-link">Assignment</div>
+        <div class="setup-link">Case Escalation Rules</div>
+        <div class="setup-link">Scoring Rules</div>
+        <div class="setup-link">Cadences</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-top:34px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Process Management</div>
+        <div class="setup-link">Blueprint</div>
+        <div class="setup-link">Approval Processes</div>
+        <div class="setup-link">Review Processes</div>
+        <div class="setup-link">Connected Workflow</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Experience Center</div>
+        <div class="setup-link">Signals</div>
+        <div class="setup-link">CommandCenter</div>
+        <div class="setup-link">Segmentation</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Data Administration</div>
+        <div class="setup-link">Import</div>
+        <div class="setup-link">Export</div>
+        <div class="setup-link">Data Backup</div>
+        <div class="setup-link">Storage</div>
+        <div class="setup-link">Recycle Bin</div>
+        <div class="setup-link">Admin Tools</div>
+        <div class="setup-link">Sandbox</div>
+        <div class="setup-link">Copy Customization</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Marketplace</div>
+        <div class="setup-link">All</div>
+        <div class="setup-link" onclick="openMarketplaceZohoPage()" style="color:#5464F2;font-weight:600;">Zoho</div>
+        <div class="setup-link">Google</div>
+        <div class="setup-link">Microsoft</div>
+        <div class="setup-link">Facebook</div>
+        <div class="setup-link">Extension Builder</div>
+        <div class="setup-link">LinkedIn</div>
+        <div class="setup-link">TikTok</div>
+        <div class="setup-link">QuickBooks</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:14px;">Developer Hub</div>
+        <div class="setup-link">MCP for AI Agents</div>
+        <div class="setup-link">APIs and SDKs</div>
+        <div class="setup-link">Connections</div>
+        <div class="setup-link">Variables</div>
+        <div class="setup-link">Functions</div>
+        <div class="setup-link">Widgets</div>
+        <div class="setup-link">Client Script</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MARKETPLACE — ZOHO PAGE ═══ -->
+<div id="marketplace-zoho-page" style="display:none;position:fixed;inset:0;z-index:901;overflow:auto;background:#fff;min-height:100vh;font-family:'Zoho Puvi',Arial,sans-serif;">
+  <div style="height:56px;border-bottom:1px solid #D6D6E3;display:flex;align-items:center;gap:14px;padding:0 24px;">
+    <svg onclick="closeMarketplaceZohoPage()" style="cursor:pointer;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    <span style="font-size:16px;font-weight:700;color:#202123;">Marketplace — Zoho</span>
+  </div>
+  <div style="padding:28px 32px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;max-width:1200px;">
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#EEF0FF;">🗂️</div>
+      <div class="mkt-zoho-title">Zoho Backstage</div>
+      <div class="mkt-zoho-desc">Stay in sync with all your events from within Zoho CRM.</div>
+      <button class="mkt-zoho-btn">Manage</button>
+    </div>
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#EAF3FF;">🎥</div>
+      <div class="mkt-zoho-title">Zoho Meeting</div>
+      <div class="mkt-zoho-desc">With the Zoho integration, Zoho CRM users can conduct meetings online from Zoho CRM Meetings.</div>
+      <button class="mkt-zoho-btn">Setup now</button>
+    </div>
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#FFF3E0;">📋</div>
+      <div class="mkt-zoho-title">Zoho Projects</div>
+      <div class="mkt-zoho-desc">Plan, execute, and monitor customer projects from within your Zoho CRM account.</div>
+      <button class="mkt-zoho-btn">Manage</button>
+    </div>
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#E9FBF4;">🎧</div>
+      <div class="mkt-zoho-title">Zoho Desk</div>
+      <div class="mkt-zoho-desc">Let sales, marketing, and executive teams view and monitor customer support tickets from within your Zoho CRM account.</div>
+      <button class="mkt-zoho-btn">Continue</button>
+    </div>
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#FFF2F3;">✅</div>
+      <div class="mkt-zoho-title">Zoho Survey</div>
+      <div class="mkt-zoho-desc">Send surveys and view responses from contacts within your Zoho CRM. Build surveys, automate, and distribute them.</div>
+      <button class="mkt-zoho-btn">Manage</button>
+    </div>
+    <div class="mkt-zoho-card">
+      <div class="mkt-zoho-icon" style="background:#F0F1FF;">💬</div>
+      <div class="mkt-zoho-title">Zoho Cliq</div>
+      <div class="mkt-zoho-desc">Congregate a team or an individual in a Zoho Cliq Channel, or share a report chart and discuss it there.</div>
+      <button class="mkt-zoho-btn">Manage</button>
+    </div>
+  </div>
 </div>
 
 </body>
