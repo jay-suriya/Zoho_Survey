@@ -162,6 +162,7 @@ from scratch.
 Reverse-chronological log of edits made to `mock-reference.html`. Each entry: date,
 one-line summary, why.
 
+- 2026-07-30 — Reverted the "Pending Responses" and "CSAT & NPS by Account" cards added earlier the same day. Why: user asked to remove them after reviewing.
 - 2026-07-30 — Added two new Survey Reports cards on the survey detail page: "Pending Responses" (sent-but-not-responded count + preview list + per-row "Remind"/"Remind All") and "CSAT & NPS by Account" (per-account CSAT/NPS snapshot with a trend arrow and a flagged-account callout). Why: closes gaps against the persona doc's stated needs ("who hasn't responded yet", "CSAT/NPS trends per account") that weren't covered by the existing aggregate-only cards.
 - 2026-07-29 — Fixed Night-mode dark theme to cover every page, not just the survey list. Root cause: the invert+hue-rotate filter was scoped to `.app` (sidebar+list only) — `#create-survey-page`, `#form-builder-page`, `#survey-detail-page`, and the various modal overlays are separate top-level siblings of `.app` under `<body>`, so they were untouched. Rescoped the dark-mode rule to `body.app-dark-mode > *:not(#um-overlay)` so it covers every top-level page/overlay while leaving the (already-dark) account menu panel alone. Why: user reported only the list page went dark.
 
