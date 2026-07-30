@@ -162,6 +162,8 @@ from scratch.
 Reverse-chronological log of edits made to `mock-reference.html`. Each entry: date,
 one-line summary, why.
 
+- 2026-07-30 — Extended chart-to-table cross-filtering into the "Details" expandable tables of Overall CSAT Score and Average Ratings. Replaced their dummy travel-themed question rows with the survey's real questions (qSatisfied/qMeeting/qLimitations/qFollowup/qRate) and real Yes/No/rating counts computed from `sdRespData`; clicking a Yes/No/rating count now filters All Respondents the same way the other charts do. Why: user asked that clicking a question in these two cards' expanded Details should filter the table too.
+
 - 2026-07-30 — Made the first 4 Survey Reports charts (Responses by Module, Responses by Collector, Daily Responses Trend, Overall CSAT Score) cross-filter the All Respondents table: clicking a legend/bar/point/row scrolls to and filters the table to matching respondents, with a dismissible chip ("Module: Leads ×") replacing the earlier plan of a plain Clear link. Reconciled each chart's mock numbers/colors to actually match `sdRespData` (6 respondents) so the filtered counts are truthful instead of the old illustrative-only totals. Skipped the 5th chart (Average Ratings, per-question) — it has no per-respondent field to filter by (all 6 respondents answer every question), so a row filter there wouldn't narrow anything; flagged to user rather than faking it. Why: user asked for chart-to-table cross-filtering with an X-to-clear affordance.
 
 - 2026-07-30 — Reverted the "Pending Responses" and "CSAT & NPS by Account" cards added earlier the same day. Why: user asked to remove them after reviewing.
