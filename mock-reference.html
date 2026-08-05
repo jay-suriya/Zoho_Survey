@@ -11774,16 +11774,18 @@ function openViewResponseModal(i) {
   });
   card.innerHTML = html;
 
-  var qtbody = document.getElementById('ld-vr-questions-tbody');
+  var qlist = document.getElementById('ld-vr-questions-list');
   var qhtml = '';
-  ldQuestionBank.forEach(function(q) {
-    qhtml += '<tr style="border-bottom:1px solid #F5F6FA;">' +
-      '<td style="padding:9px 12px;color:#202123;">' + q.q + '</td>' +
-      '<td style="padding:9px 12px;"><span style="background:' + q.scoringColor + '1A;color:' + q.scoringColor + ';font-weight:700;border-radius:6px;padding:2px 8px;font-size:12px;">' + q.scoring + '</span></td>' +
-      '<td style="padding:9px 12px;color:#313949;">' + q.answer + '</td>' +
-      '</tr>';
+  ldQuestionBank.forEach(function(q, qi) {
+    qhtml += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 4px;' + (qi > 0 ? 'border-top:1px solid #F5F6FA;' : '') + '">' +
+      '<div style="flex:1;">' +
+      '<div style="font-size:13px;color:#616E88;margin-bottom:6px;">Q' + (qi + 1) + '. ' + q.q + '</div>' +
+      '<div style="font-size:13.5px;color:#202123;font-weight:500;">' + q.answer + '</div>' +
+      '</div>' +
+      '<span style="flex-shrink:0;background:' + q.scoringColor + '1A;color:' + q.scoringColor + ';font-weight:700;border-radius:6px;padding:3px 10px;font-size:12.5px;white-space:nowrap;">' + q.scoring + '</span>' +
+      '</div>';
   });
-  qtbody.innerHTML = qhtml;
+  qlist.innerHTML = qhtml;
 
   document.getElementById('ld-view-response-modal').style.display = 'flex';
 }
@@ -12552,18 +12554,7 @@ function closeMarketplaceZohoPage() {
     <div style="padding:22px;">
       <div style="border:1px solid #EDF0F4;border-radius:10px;padding:18px 22px;margin-bottom:22px;" id="ld-vr-detail-card"></div>
       <div style="font-size:14px;font-weight:700;color:#202123;margin-bottom:10px;">Questions</div>
-      <div style="border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">
-        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
-          <thead>
-            <tr style="background:#FAFAFC;border-bottom:1px solid #EDF0F4;">
-              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Questions</th>
-              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Question Scoring</th>
-              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Answer</th>
-            </tr>
-          </thead>
-          <tbody id="ld-vr-questions-tbody"></tbody>
-        </table>
-      </div>
+      <div id="ld-vr-questions-list" style="border-top:2px solid #5464F2;border-bottom:1px solid #EDF0F4;"></div>
     </div>
   </div>
 </div>
