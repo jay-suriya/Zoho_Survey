@@ -11736,10 +11736,8 @@ function ldRenderZohoSurveyTable() {
   var html = '';
   ldSentSurveys.forEach(function(s, i) {
     html += '<tr style="border-bottom:1px solid #F5F6FA;">' +
-      '<td style="padding:9px 10px;color:#313949;">' +
-        '<span style="font-weight:600;">' + s.title + '</span>' +
-        ' <span style="color:#5464F2;font-weight:600;cursor:pointer;margin-left:8px;" onclick="openViewResponseModal(' + i + ')">View Response</span>' +
-      '</td>' +
+      '<td style="padding:9px 10px;color:#313949;font-weight:600;">' + s.title + '</td>' +
+      '<td style="padding:9px 10px;"><span style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="openViewResponseModal(' + i + ')">View Response</span></td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentDate + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + (s.respondedDate || '—') + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentBy + '</td>' +
@@ -12478,6 +12476,7 @@ function closeMarketplaceZohoPage() {
             <thead>
               <tr style="border-bottom:1px solid #EDF0F4;">
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Title</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Response</th>
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Sent Date</th>
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Responded Date</th>
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Sent By</th>
