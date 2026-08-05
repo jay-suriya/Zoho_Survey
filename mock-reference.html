@@ -2008,9 +2008,25 @@ tbody tr:hover{background:#f5f7ff;}
 .leads-filter-cb input{width:14px;height:14px;accent-color:#5464F2;}
 .leads-row{border-bottom:1px solid #f1f1f1;cursor:pointer;}
 .leads-row:hover{background:#FFF0F3;}
+.leads-row.leads-row-selected{background:#FDE8ED;}
 .leads-row td{padding:9px 12px;color:#313949;white-space:nowrap;}
 .leads-row .leads-name-link{color:#313949;}
 .leads-row:hover .leads-name-link{color:#C2185B;}
+.leads-bulk-btn{height:32px;padding:0 14px;border:1px solid #C0C8E2;background:#fff;border-radius:6px;font-size:13px;font-weight:600;color:#313949;cursor:pointer;}
+.leads-bulk-btn:hover{background:#F5F6FA;}
+
+/* Lead detail page */
+.ld-btn{height:32px;padding:0 14px;border:1px solid #C0C8E2;background:#fff;border-radius:6px;font-size:13px;font-weight:600;color:#313949;cursor:pointer;white-space:nowrap;}
+.ld-btn:hover{background:#F5F6FA;}
+.ld-btn-primary{border:none;background:linear-gradient(#5767F6,#124DC3);color:#fff;}
+.ld-btn-outline{height:28px;padding:0 10px;font-size:12px;border:1px solid #FF4D5B;color:#F63648;background:#FFF2F3;}
+.ld-rel-item{font-size:13px;color:#434D5E;padding:6px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.ld-rel-item:hover{background:#F5F6FA;}
+.ld-rel-item-survey{color:#C2185B;font-weight:600;background:#FFF0F5;}
+.ld-rel-badge{font-size:10px;background:#EDF0F4;color:#616E88;border-radius:100px;padding:0 6px;}
+.ld-section{border-top:1px solid #EDF0F4;padding:18px 4px;}
+.ld-section-head{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#202123;margin-bottom:12px;}
+.ld-section-empty{font-size:13px;color:#8C91AB;}
 </style>
 </head>
 <body>
@@ -11570,9 +11586,12 @@ function renderLeadsListTable() {
   var tbody = document.getElementById('leads-list-tbody');
   var html = '';
   leadsListData.forEach(function(l, i) {
-    html += '<tr class="leads-row">' +
-      '<td onclick="event.stopPropagation();"><input type="checkbox"></td>' +
-      '<td><span class="leads-name-link">' + l.name + '</span></td>' +
+    var nameCell = l.name === 'Mi Mau'
+      ? '<span class="leads-name-link" style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="event.stopPropagation();openLeadDetailPage(\'' + l.name + '\');">' + l.name + '</span>'
+      : '<span class="leads-name-link">' + l.name + '</span>';
+    html += '<tr class="leads-row" data-idx="' + i + '">' +
+      '<td onclick="event.stopPropagation();"><input type="checkbox" class="leads-row-cb" onchange="leadsUpdateBulkBar()"></td>' +
+      '<td>' + nameCell + '</td>' +
       '<td>' + l.owner + '</td>' +
       '<td style="color:#5464F2;">' + (l.email || '') + '</td>' +
       '<td>' + (l.first || '') + '</td>' +
@@ -11583,12 +11602,46 @@ function renderLeadsListTable() {
   tbody.innerHTML = html;
 }
 
+function leadsUpdateBulkBar() {
+  var boxes = document.querySelectorAll('.leads-row-cb');
+  var checked = document.querySelectorAll('.leads-row-cb:checked').length;
+  boxes.forEach(function(cb) {
+    var row = cb.closest('tr');
+    row.classList.toggle('leads-row-selected', cb.checked);
+  });
+  document.getElementById('leads-select-all-cb').checked = checked > 0 && checked === boxes.length;
+  document.getElementById('leads-bulk-count').textContent = checked;
+  document.getElementById('leads-bulk-bar').style.display = checked > 0 ? 'flex' : 'none';
+  document.getElementById('leads-toolbar-row').style.display = checked > 0 ? 'none' : 'flex';
+}
+function leadsToggleSelectAll(checked) {
+  document.querySelectorAll('.leads-row-cb').forEach(function(cb) { cb.checked = checked; });
+  leadsUpdateBulkBar();
+}
+function leadsSelectAllInView() {
+  document.querySelectorAll('.leads-row-cb').forEach(function(cb) { cb.checked = true; });
+  leadsUpdateBulkBar();
+}
+function leadsClearSelection() {
+  document.querySelectorAll('.leads-row-cb').forEach(function(cb) { cb.checked = false; });
+  leadsUpdateBulkBar();
+}
+
 function openLeadsListPage() {
   renderLeadsListTable();
+  leadsUpdateBulkBar();
   document.getElementById('leads-list-page').style.display = 'block';
 }
 function closeLeadsListPage() {
   document.getElementById('leads-list-page').style.display = 'none';
+}
+
+function openLeadDetailPage(name) {
+  document.getElementById('lead-detail-page').style.display = 'block';
+  document.getElementById('lead-detail-page').scrollTop = 0;
+}
+function closeLeadDetailPage() {
+  document.getElementById('lead-detail-page').style.display = 'none';
 }
 function closeMarketplaceZohoPage() {
   document.getElementById('marketplace-zoho-page').style.display = 'none';
@@ -12009,7 +12062,7 @@ function closeMarketplaceZohoPage() {
   </div>
 
   <!-- Toolbar row -->
-  <div style="display:flex;align-items:center;gap:18px;padding:10px 24px;border-bottom:1px solid #e8e8e8;">
+  <div id="leads-toolbar-row" style="display:flex;align-items:center;gap:18px;padding:10px 24px;border-bottom:1px solid #e8e8e8;">
     <div class="leads-tool-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</div>
     <div class="leads-tool-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Sort</div>
     <div style="display:flex;align-items:center;gap:10px;color:#8C91AB;margin-left:6px;">
@@ -12026,6 +12079,17 @@ function closeMarketplaceZohoPage() {
     </div>
     <div class="leads-tool-btn" style="border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;height:32px;">Map View <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2.5" style="margin-left:2px;"><polyline points="6 9 12 15 18 9"/></svg></div>
     <div class="leads-tool-btn" style="border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;height:32px;color:#8C91AB;">&#8943;</div>
+  </div>
+
+  <!-- Bulk action bar (shown when rows are checked) -->
+  <div id="leads-bulk-bar" style="display:none;align-items:center;gap:16px;padding:10px 24px;border-bottom:1px solid #e8e8e8;background:#fff;">
+    <span style="font-size:13px;color:#313949;"><b id="leads-bulk-count">0</b> Records Selected. <a href="#" onclick="event.preventDefault();leadsClearSelection();" style="color:#5464F2;font-weight:600;">Clear</a></span>
+    <a href="#" onclick="event.preventDefault();leadsSelectAllInView();" style="font-size:13px;color:#5464F2;font-weight:600;">Select All records in this view</a>
+    <div style="flex:1;"></div>
+    <button class="leads-bulk-btn">Send Mail</button>
+    <button class="leads-bulk-btn">Tags &#9662;</button>
+    <button class="leads-bulk-btn">Send with Zoho Sign &#9662;</button>
+    <button class="leads-bulk-btn" style="width:32px;">&#8943;</button>
   </div>
 
   <div style="display:flex;height:calc(100vh - 155px);">
@@ -12063,7 +12127,7 @@ function closeMarketplaceZohoPage() {
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <thead>
           <tr style="border-bottom:1px solid #e8e8e8;">
-            <th style="width:40px;padding:10px 12px;"><input type="checkbox"></th>
+            <th style="width:40px;padding:10px 12px;"><input type="checkbox" id="leads-select-all-cb" onchange="leadsToggleSelectAll(this.checked)"></th>
             <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Lead Name <span style="color:#8C91AB;font-weight:400;">All &#9662;</span></th>
             <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Lead Owner</th>
             <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Email</th>
@@ -12081,6 +12145,176 @@ function closeMarketplaceZohoPage() {
           1 to 100
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2.5" style="cursor:pointer;"><polyline points="9 18 15 12 9 6"/></svg>
         </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEAD DETAIL PAGE (Mi Mau) ═══ -->
+<div id="lead-detail-page" style="display:none;position:fixed;inset:0;z-index:903;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:auto;">
+  <div class="topbar" style="border-bottom:1px solid #e0e0e0;">
+    <div class="topbar-row1">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <svg onclick="closeLeadDetailPage()" style="cursor:pointer;flex-shrink:0;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span class="page-title">Leads</span>
+      </div>
+      <div class="topbar-icons">
+        <div class="search-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search records</div>
+        <div class="icon-btn-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="za-icon"><span class="z">Z</span><span class="a">A</span><div class="za-divider"></div></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge">83</div></div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg><div class="notif-badge">25</div></div>
+        <div class="chat-bubble"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="settings-btn" onclick="openSetupPage()" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="avatar">M</div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#777"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Record header -->
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #e8e8e8;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#E9EAF0;color:#616E88;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;">M</div>
+    <div style="flex:1;">
+      <div style="font-size:18px;font-weight:700;color:#202123;">Mi Mau</div>
+      <div style="font-size:12px;color:#5464F2;cursor:pointer;">&#128278; Add Tags</div>
+    </div>
+    <button class="ld-btn ld-btn-primary">Send Mail</button>
+    <button class="ld-btn">Convert</button>
+    <button class="ld-btn">Edit</button>
+    <button class="ld-btn">Add File to Dropbox &#9662;</button>
+    <button class="ld-btn" style="width:34px;">&#8943;</button>
+  </div>
+
+  <div style="display:flex;">
+    <!-- Related List nav -->
+    <div style="width:220px;flex-shrink:0;border-right:1px solid #EDF0F4;padding:16px 16px;height:calc(100vh - 122px);overflow-y:auto;">
+      <div style="font-size:12px;font-weight:700;color:#202123;margin-bottom:10px;">Related List</div>
+      <div class="ld-rel-item">Notes</div>
+      <div class="ld-rel-item">Connected Records <span class="ld-rel-badge">1</span></div>
+      <div class="ld-rel-item">Approval Records</div>
+      <div class="ld-rel-item">Lead Status History <span class="ld-rel-badge">1</span></div>
+      <div class="ld-rel-item">Cadences</div>
+      <div class="ld-rel-item">Open Activities</div>
+      <div class="ld-rel-item">Emails</div>
+      <div class="ld-rel-item">Products</div>
+      <div class="ld-rel-item">Attachments <span class="ld-rel-badge">1</span></div>
+      <div class="ld-rel-item">Closed Activities</div>
+      <div class="ld-rel-item">Invited Meetings</div>
+      <div class="ld-rel-item">Campaigns</div>
+      <div class="ld-rel-item">Social</div>
+      <div class="ld-rel-item">Related List Name 2</div>
+      <div class="ld-rel-item" onclick="document.getElementById('ld-sec-visits').scrollIntoView({behavior:'smooth',block:'start'});">Visits - Zoho SalesIQ</div>
+      <div class="ld-rel-item" onclick="document.getElementById('ld-sec-zohosign').scrollIntoView({behavior:'smooth',block:'start'});">ZohoSign Documents</div>
+      <div class="ld-rel-item" onclick="document.getElementById('ld-sec-solutions').scrollIntoView({behavior:'smooth',block:'start'});">solutions</div>
+      <div class="ld-rel-item" onclick="document.getElementById('ld-sec-dropbox').scrollIntoView({behavior:'smooth',block:'start'});">Dropbox Files</div>
+      <div class="ld-rel-item" onclick="document.getElementById('ld-sec-remote-assist').scrollIntoView({behavior:'smooth',block:'start'});">Remote Assist</div>
+      <div class="ld-rel-item ld-rel-item-survey" onclick="document.getElementById('ld-sec-zoho-survey').scrollIntoView({behavior:'smooth',block:'start'});">Zoho Survey</div>
+      <div class="ld-rel-item" style="color:#5464F2;font-weight:600;">Add Related List</div>
+      <div style="font-size:12px;font-weight:700;color:#202123;margin:18px 0 10px;">Links</div>
+      <div class="ld-rel-item" style="color:#5464F2;">Link 1</div>
+      <div class="ld-rel-item" style="color:#5464F2;">Link 2</div>
+      <div class="ld-rel-item" style="color:#5464F2;font-weight:600;">Add Link</div>
+    </div>
+
+    <!-- Main content -->
+    <div style="flex:1;padding:20px 24px;">
+      <!-- Tabs -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;gap:6px;">
+          <div class="leads-tab active" style="padding:6px 16px;border:1px solid #EBEDFF;background:#F0F1FF;border-radius:100px;">Overview</div>
+          <div class="leads-tab" style="padding:6px 16px;">Timeline</div>
+          <div class="leads-tab" style="padding:6px 16px;">Data Privacy</div>
+        </div>
+        <span style="font-size:12px;color:#8C91AB;">&#128337; Last Update : 55 day(s) ago</span>
+      </div>
+
+      <!-- Overview fields -->
+      <div style="background:#FAFAFC;border:1px solid #EDF0F4;border-radius:10px;padding:20px 24px;margin-bottom:20px;display:flex;gap:60px;">
+        <div>
+          <div style="font-size:11.5px;color:#8C91AB;margin-bottom:4px;">Mobile</div>
+          <div style="font-size:13.5px;color:#202123;font-weight:600;display:flex;align-items:center;gap:8px;">(987) 654-3210 <span style="width:20px;height:20px;border-radius:50%;background:#E9FBF4;color:#10975E;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">&#9742;</span></div>
+        </div>
+        <div>
+          <div style="font-size:11.5px;color:#8C91AB;margin-bottom:4px;">Lead Source</div>
+          <div style="font-size:13.5px;color:#8C91AB;">&#8212;</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:20px;">
+        <!-- Best time to -->
+        <div style="flex:1;border:1px solid #EDF0F4;border-radius:10px;padding:18px 22px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <span style="font-size:14px;font-weight:700;color:#202123;">Best time to</span>
+            <span style="font-size:12px;color:#F63648;">Today</span>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12.5px;color:#616E88;margin-bottom:4px;">Call</div>
+            <div style="font-size:13px;color:#8C91AB;">No best time for the day</div>
+          </div>
+          <div>
+            <div style="font-size:12.5px;color:#616E88;margin-bottom:4px;">Email</div>
+            <div style="font-size:13px;color:#8C91AB;">No best time for the day</div>
+          </div>
+        </div>
+
+        <!-- Similar Leads -->
+        <div style="flex:1;border:1px solid #EDF0F4;border-radius:10px;padding:18px 22px;">
+          <div style="font-size:14px;font-weight:700;color:#202123;margin-bottom:14px;">Similar Leads</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:30px;height:30px;border-radius:50%;background:#5464F2;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">A</div>
+            <div>
+              <div style="font-size:13px;color:#5464F2;font-weight:600;">Ashokumar</div>
+              <span style="font-size:10.5px;border:1px solid #D6D6E3;border-radius:100px;padding:1px 8px;color:#616E88;">Similarity score 74</span>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#202123;margin-bottom:6px;">Why this Lead is similar?</div>
+          <ul style="margin:0 0 14px;padding-left:18px;font-size:12px;color:#616E88;line-height:1.7;">
+            <li>Industry is ASP</li><li>Remove Tag is false</li><li>Currency is usd</li><li>Interested in is Commission based</li><li>Email Opt Out is false</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Visits - Zoho SalesIQ -->
+      <div id="ld-sec-visits" class="ld-section">
+        <div class="ld-section-head">Visits - Zoho SalesIQ</div>
+        <div class="ld-section-empty">No records found</div>
+      </div>
+
+      <!-- ZohoSign Documents -->
+      <div id="ld-sec-zohosign" class="ld-section">
+        <div class="ld-section-head">ZohoSign Documents <span style="flex:1;"></span><button class="ld-btn ld-btn-outline">Assign</button><button class="ld-btn ld-btn-outline">New</button></div>
+        <div class="ld-section-empty">No records found</div>
+      </div>
+
+      <!-- solutions -->
+      <div id="ld-sec-solutions" class="ld-section">
+        <div class="ld-section-head">solutions <span style="flex:1;"></span><button class="ld-btn ld-btn-outline">Assign</button><button class="ld-btn ld-btn-outline">New</button></div>
+        <div class="ld-section-empty">No records found</div>
+      </div>
+
+      <!-- Dropbox Files -->
+      <div id="ld-sec-dropbox" class="ld-section">
+        <div class="ld-section-head">Dropbox Files</div>
+        <div class="ld-section-empty">No files exists for this record.</div>
+      </div>
+
+      <!-- Remote Assist -->
+      <div id="ld-sec-remote-assist" class="ld-section">
+        <div class="ld-section-head">Remote Assist <span style="flex:1;"></span><button class="ld-btn ld-btn-outline">Assign</button><button class="ld-btn ld-btn-outline">New</button></div>
+        <div class="ld-section-empty">No records found</div>
+      </div>
+
+      <!-- Zoho Survey -->
+      <div id="ld-sec-zoho-survey" class="ld-section">
+        <div class="ld-section-head">Zoho Survey</div>
+        <div class="ld-section-empty" style="display:flex;align-items:center;gap:10px;">
+          No records found
+          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Create Survey</button>
+          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Send Survey</button>
+          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Take Survey</button>
+        </div>
       </div>
     </div>
   </div>
