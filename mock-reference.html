@@ -1999,6 +1999,18 @@ tbody tr:hover{background:#f5f7ff;}
 .mkt-zoho-title{font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;}
 .mkt-zoho-desc{font-size:12.5px;color:#616E88;line-height:1.55;margin-bottom:16px;min-height:56px;}
 .mkt-zoho-btn{height:30px;padding:0 14px;border:1px solid #FF4D5B;color:#F63648;background:#FFF2F3;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+
+/* Leads list page */
+.leads-tab{font-size:13px;font-weight:600;color:#616E88;padding:8px 14px;cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;}
+.leads-tab.active{color:#202123;border-bottom-color:#5464F2;}
+.leads-tool-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:#434D5E;cursor:pointer;}
+.leads-filter-cb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#434D5E;padding:5px 0;cursor:pointer;}
+.leads-filter-cb input{width:14px;height:14px;accent-color:#5464F2;}
+.leads-row{border-bottom:1px solid #f1f1f1;cursor:pointer;}
+.leads-row:hover{background:#FFF0F3;}
+.leads-row td{padding:9px 12px;color:#313949;white-space:nowrap;}
+.leads-row .leads-name-link{color:#313949;}
+.leads-row:hover .leads-name-link{color:#C2185B;}
 </style>
 </head>
 <body>
@@ -2036,7 +2048,7 @@ tbody tr:hover{background:#f5f7ff;}
     <div class="sb-nav">
       <div class="sb-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</div>
-      <div class="sb-item">
+      <div class="sb-item" onclick="openLeadsListPage()" style="cursor:pointer;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Leads</div>
       <div class="sb-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Deals</div>
@@ -11531,6 +11543,53 @@ function openMarketplaceZohoPage() {
   var navItem = document.getElementById('mkt-nav-zoho-item');
   if (navItem) navItem.scrollIntoView({ block: 'center' });
 }
+
+var leadsListData = [
+  {name:'MiBonban', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'MiBon', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'Ashokumar', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'Rao Priya', owner:'Rao Priya', email:'ssunderjans@gmail.com', first:'Priya', createdBy:'Rao Priya'},
+  {name:'Mi Mau', owner:'Rao Priya', email:'maushmims@gmail.com', first:'Mau', createdBy:'Rao Priya'},
+  {name:'asdas', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'Jayasuriya', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'Bateman', owner:'Rao Priya', email:'', first:'', createdBy:'Rao Priya'},
+  {name:'Nice Karen', owner:'Gerry Scott', email:'k.nice@nanotech.com', first:'Karen', createdBy:'Gerry Scott'},
+  {name:"Drowned Jack'who", owner:'Gerry Scott', email:'jackwho@palelabs.com', first:"Jack'who", createdBy:'Gerry Scott'},
+  {name:'Mitchell Johnson', owner:'Gerry Scott', email:'mitch.johnson@biosphere.com', first:'Johnson', createdBy:'Gerry Scott'},
+  {name:'Gracey Joy', owner:'Gerry Scott', email:'gracey.joy@nanotech.com', first:'Joy', createdBy:'Gerry Scott'},
+  {name:'Wells Jean', owner:'Gerry Scott', email:'j.wells@basecamp.com', first:'Jean', createdBy:'Gerry Scott'},
+  {name:'Moraria Jay', owner:'Gerry Scott', email:'j.moraria@palelabs.com', first:'Jay', createdBy:'Gerry Scott'},
+  {name:'Wells Gloria', owner:'Gerry Scott', email:'g.wells@basecamp.com', first:'Gloria', createdBy:'Gerry Scott'},
+  {name:'Jay Givanni', owner:'Gerry Scott', email:'givanni.j@nanotech.com', first:'Givanni', createdBy:'Gerry Scott'},
+  {name:'Ritchie Guy', owner:'Gerry Scott', email:'ritchie.guy@palelabs.com', first:'Guy', createdBy:'Gerry Scott'},
+  {name:'Baskar Gladis', owner:'Gerry Scott', email:'gladis.b@nanotech.com', first:'Gladis', createdBy:'Gerry Scott'},
+  {name:'Jose Gero', owner:'Gerry Scott', email:'gero.j@palelabs.com', first:'Gero', createdBy:'Gerry Scott'}
+];
+
+function renderLeadsListTable() {
+  var tbody = document.getElementById('leads-list-tbody');
+  var html = '';
+  leadsListData.forEach(function(l, i) {
+    html += '<tr class="leads-row">' +
+      '<td onclick="event.stopPropagation();"><input type="checkbox"></td>' +
+      '<td><span class="leads-name-link">' + l.name + '</span></td>' +
+      '<td>' + l.owner + '</td>' +
+      '<td style="color:#5464F2;">' + (l.email || '') + '</td>' +
+      '<td>' + (l.first || '') + '</td>' +
+      '<td>' + l.createdBy + '</td>' +
+      '<td style="color:#8C91AB;">&#8943;</td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function openLeadsListPage() {
+  renderLeadsListTable();
+  document.getElementById('leads-list-page').style.display = 'block';
+}
+function closeLeadsListPage() {
+  document.getElementById('leads-list-page').style.display = 'none';
+}
 function closeMarketplaceZohoPage() {
   document.getElementById('marketplace-zoho-page').style.display = 'none';
   document.getElementById('setup-page').style.display = 'block';
@@ -11914,6 +11973,114 @@ function closeMarketplaceZohoPage() {
           <div class="mkt-zoho-desc">Congregate a team or an individual in a Zoho Cliq Channel, or share a report chart and discuss it there.</div>
           <button class="mkt-zoho-btn">Manage</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEADS LIST PAGE ═══ -->
+<div id="leads-list-page" style="display:none;position:fixed;inset:0;z-index:902;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+  <div class="topbar" style="border-bottom:1px solid #e0e0e0;">
+    <div class="topbar-row1">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <svg onclick="closeLeadsListPage()" style="cursor:pointer;flex-shrink:0;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span class="page-title">Leads</span>
+      </div>
+      <div class="topbar-icons">
+        <div class="search-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search records</div>
+        <div class="icon-btn-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="za-icon"><span class="z">Z</span><span class="a">A</span><div class="za-divider"></div></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge">83</div></div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg><div class="notif-badge">25</div></div>
+        <div class="chat-bubble"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="settings-btn" onclick="openSetupPage()" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="avatar">M</div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#777"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs row -->
+  <div style="display:flex;align-items:center;gap:6px;padding:10px 24px 0;border-bottom:1px solid #e8e8e8;">
+    <div class="leads-tab active">All Leads</div>
+    <div class="leads-tab">Converted Leads <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#F5973A" stroke-width="2.5" style="margin-left:4px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+    <div class="leads-tab" style="padding:0 10px;color:#8C91AB;">&#8943;</div>
+  </div>
+
+  <!-- Toolbar row -->
+  <div style="display:flex;align-items:center;gap:18px;padding:10px 24px;border-bottom:1px solid #e8e8e8;">
+    <div class="leads-tool-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</div>
+    <div class="leads-tool-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Sort</div>
+    <div style="display:flex;align-items:center;gap:10px;color:#8C91AB;margin-left:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5464F2" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="10"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;align-items:center;">
+      <button style="height:32px;padding:0 16px;border:none;border-radius:6px 0 0 6px;background:linear-gradient(#5767F6,#124DC3);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Create Lead</button>
+      <button style="height:32px;width:26px;border:none;border-left:1px solid rgba(255,255,255,0.3);border-radius:0 6px 6px 0;background:linear-gradient(#5767F6,#124DC3);color:#fff;cursor:pointer;">&#9662;</button>
+    </div>
+    <div class="leads-tool-btn" style="border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;height:32px;">Map View <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2.5" style="margin-left:2px;"><polyline points="6 9 12 15 18 9"/></svg></div>
+    <div class="leads-tool-btn" style="border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;height:32px;color:#8C91AB;">&#8943;</div>
+  </div>
+
+  <div style="display:flex;height:calc(100vh - 155px);">
+    <!-- Filter sidebar -->
+    <div style="width:230px;flex-shrink:0;border-right:1px solid #EDF0F4;overflow-y:auto;padding:16px 18px;">
+      <div style="font-size:13px;font-weight:700;color:#202123;margin-bottom:12px;">Filter Leads by</div>
+      <div style="height:32px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:7px;padding:0 10px;color:#8C91AB;font-size:12.5px;margin-bottom:16px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </div>
+      <div style="font-size:11.5px;font-weight:700;color:#616E88;letter-spacing:.3px;margin-bottom:10px;">SYSTEM DEFINED FILT... &#9662;</div>
+      <label class="leads-filter-cb"><input type="checkbox">Activities</label>
+      <label class="leads-filter-cb"><input type="checkbox">Best Time to Contact</label>
+      <label class="leads-filter-cb"><input type="checkbox">Cadences</label>
+      <label class="leads-filter-cb"><input type="checkbox">Campaigns</label>
+      <label class="leads-filter-cb"><input type="checkbox">Email Sentiment</label>
+      <label class="leads-filter-cb"><input type="checkbox">Latest Email Status</label>
+      <label class="leads-filter-cb"><input type="checkbox">Locked</label>
+      <label class="leads-filter-cb"><input type="checkbox">Record Action</label>
+      <label class="leads-filter-cb"><input type="checkbox">Related Records Action</label>
+      <label class="leads-filter-cb"><input type="checkbox">Scoring Rules</label>
+      <label class="leads-filter-cb"><input type="checkbox">Similarity recommendation</label>
+      <label class="leads-filter-cb"><input type="checkbox">Touched Records</label>
+      <label class="leads-filter-cb"><input type="checkbox">Untouched Records</label>
+      <div style="font-size:11.5px;font-weight:700;color:#616E88;letter-spacing:.3px;margin:18px 0 10px;">WEBSITE ACTIVITY &#9662;</div>
+      <label class="leads-filter-cb"><input type="checkbox">Average Time Spent (Minutes)</label>
+      <label class="leads-filter-cb"><input type="checkbox">Days Visited</label>
+      <label class="leads-filter-cb"><input type="checkbox">First Page Visited</label>
+      <label class="leads-filter-cb"><input type="checkbox">First Visit</label>
+      <label class="leads-filter-cb"><input type="checkbox">Most Recent Visit</label>
+    </div>
+
+    <!-- Table -->
+    <div style="flex:1;overflow:auto;display:flex;flex-direction:column;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:1px solid #e8e8e8;">
+            <th style="width:40px;padding:10px 12px;"><input type="checkbox"></th>
+            <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Lead Name <span style="color:#8C91AB;font-weight:400;">All &#9662;</span></th>
+            <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Lead Owner</th>
+            <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Email</th>
+            <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">First Name</th>
+            <th style="text-align:left;padding:10px 12px;color:#616E88;font-weight:600;">Created By</th>
+            <th style="width:40px;"></th>
+          </tr>
+        </thead>
+        <tbody id="leads-list-tbody"></tbody>
+      </table>
+      <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid #e8e8e8;font-size:12.5px;color:#616E88;">
+        <span>Total Records <b style="color:#202123;">3606</b></span>
+        <span style="display:flex;align-items:center;gap:10px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5" style="cursor:pointer;"><polyline points="15 18 9 12 15 6"/></svg>
+          1 to 100
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2.5" style="cursor:pointer;"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
       </div>
     </div>
   </div>
