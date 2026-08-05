@@ -11639,9 +11639,156 @@ function closeLeadsListPage() {
 function openLeadDetailPage(name) {
   document.getElementById('lead-detail-page').style.display = 'block';
   document.getElementById('lead-detail-page').scrollTop = 0;
+  ldRenderZohoSurveyTable();
 }
 function closeLeadDetailPage() {
   document.getElementById('lead-detail-page').style.display = 'none';
+}
+
+var ldSentSurveys = [];
+var ldSurveyLinkMap = {
+  'Customer Satisfaction Survey Q1 2025': 'https://survey.zohopublic.com/zs/ktBB99?fromservice=ZC',
+  'Employee NPS — Q1 2025': 'https://survey.zohopublic.com/zs/npQ4e2?fromservice=ZC',
+  'Product Onboarding Feedback': 'https://survey.zohopublic.com/zs/obFd71?fromservice=ZC',
+  'Custom Variables': 'https://survey.zohopublic.com/zs/cvAr93?fromservice=ZC',
+  'this is a test': 'https://survey.zohopublic.com/zs/ktBB99?fromservice=ZC'
+};
+var ldQuestionBank = [
+  {q:'How satisfied are you with the product overall?', scoring:'42/5', scoringColor:'#10975E', answer:'4/5'},
+  {q:'Is the product meeting your current business needs?', scoring:'45/5', scoringColor:'#10975E', answer:'5/5'},
+  {q:'How likely are you to recommend us?', scoring:'87/10', scoringColor:'#10975E', answer:'7/10'},
+  {q:'What is the biggest challenge you face with the product today?', scoring:'8/13', scoringColor:'#E28C27', answer:'Pricing tier is confusing'},
+  {q:'Any additional comments or suggestions?', scoring:'5/13', scoringColor:'#E28C27', answer:'Would like a mobile app'}
+];
+
+function openSendSurveyModal() {
+  document.getElementById('ld-send-survey-select').value = '';
+  document.getElementById('ld-send-survey-link').value = '';
+  document.getElementById('ld-send-survey-preview').style.display = 'none';
+  document.getElementById('ld-send-survey-text').value = '';
+  document.getElementById('ld-send-survey-insert-btn').disabled = true;
+  document.getElementById('ld-send-survey-insert-btn').style.opacity = '.5';
+  document.getElementById('ld-send-survey-insert-btn').style.cursor = 'not-allowed';
+  document.getElementById('ld-send-survey-modal').style.display = 'flex';
+}
+function closeSendSurveyModal() {
+  document.getElementById('ld-send-survey-modal').style.display = 'none';
+}
+function ldOnSurveySelectChange() {
+  var val = document.getElementById('ld-send-survey-select').value;
+  var linkInput = document.getElementById('ld-send-survey-link');
+  var previewEl = document.getElementById('ld-send-survey-preview');
+  var insertBtn = document.getElementById('ld-send-survey-insert-btn');
+  var textInput = document.getElementById('ld-send-survey-text');
+  if (val) {
+    linkInput.value = ldSurveyLinkMap[val] || 'https://survey.zohopublic.com/zs/xxxxx?fromservice=ZC';
+    previewEl.style.display = 'block';
+    insertBtn.disabled = false;
+    insertBtn.style.opacity = '1';
+    insertBtn.style.cursor = 'pointer';
+    if (!textInput.value) textInput.value = val === 'this is a test' ? 'test' : val;
+  } else {
+    linkInput.value = '';
+    previewEl.style.display = 'none';
+    insertBtn.disabled = true;
+    insertBtn.style.opacity = '.5';
+    insertBtn.style.cursor = 'not-allowed';
+  }
+}
+function ldInsertSurveyLink() {
+  var survey = document.getElementById('ld-send-survey-select').value;
+  if (!survey) return;
+  var text = document.getElementById('ld-send-survey-text').value || survey;
+  window._ldPendingSurvey = survey;
+  document.getElementById('ld-mail-body-link').textContent = text;
+  document.getElementById('ld-mail-subject').value = '';
+  closeSendSurveyModal();
+  document.getElementById('ld-mail-compose-modal').style.display = 'block';
+}
+function closeMailComposeModal() {
+  document.getElementById('ld-mail-compose-modal').style.display = 'none';
+}
+function ldSendMailCompose() {
+  var survey = window._ldPendingSurvey || 'Custom Variables';
+  var now = 'Aug 5, 2026, 2:10 PM';
+  ldSentSurveys.push({ title: survey, sentDate: now, respondedDate: '', sentBy: 'ssunderjan@gmail.com', source: 'Send Email Option (Individual)' });
+  closeMailComposeModal();
+  ldRenderZohoSurveyTable();
+}
+function ldRenderZohoSurveyTable() {
+  var empty = document.getElementById('ld-survey-empty');
+  var wrap = document.getElementById('ld-survey-table-wrap');
+  var badge = document.getElementById('ld-survey-count-badge');
+  if (ldSentSurveys.length === 0) {
+    empty.style.display = 'block';
+    wrap.style.display = 'none';
+    badge.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  wrap.style.display = 'block';
+  badge.style.display = 'inline-block';
+  badge.textContent = ldSentSurveys.length;
+  var tbody = document.getElementById('ld-survey-tbody');
+  var html = '';
+  ldSentSurveys.forEach(function(s, i) {
+    html += '<tr style="border-bottom:1px solid #F5F6FA;">' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.title + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.sentDate + '</td>' +
+      '<td style="padding:9px 10px;color:#8C91AB;">' + (s.respondedDate || '—') + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.sentBy + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.source + '</td>' +
+      '<td style="padding:9px 10px;"><span style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="openViewResponseModal(' + i + ')">View Response</span></td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function openViewResponseModal(i) {
+  var s = ldSentSurveys[i];
+  var card = document.getElementById('ld-vr-detail-card');
+  var rows = [
+    ['Name', 'Mi Mau'],
+    ['Email', 'maushmims@gmail.com'],
+    ['Module', 'Leads'],
+    ['Response ID', 'n1jYTjWd'],
+    ['IP address', '223.178.80.34'],
+    ['User agent', '<span style="color:#5464F2;cursor:pointer;">View</span>'],
+    ['Survey URL accessed by the respondent', '<span style="color:#5464F2;cursor:pointer;">View</span>'],
+    ['Start time', 'Aug 5, 2026 2:08:10 PM'],
+    ['Completion time', 'Aug 5, 2026 2:08:42 PM'],
+    ['Time taken', '32 secs'],
+    ['Collector', 'Default'],
+    ['Total rating', '5/100'],
+    ['Net Promoter Score', '0/10'],
+    ['CSAT Score', '0'],
+    ['Average rating', '0.5/10'],
+    ['Score', '3/6 (50%)']
+  ];
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div style="display:flex;padding:6px 0;border-bottom:1px solid #F5F6FA;font-size:13px;">' +
+      '<div style="width:260px;color:#616E88;">' + r[0] + '</div>' +
+      '<div style="color:#202123;font-weight:600;">' + r[1] + '</div>' +
+      '</div>';
+  });
+  card.innerHTML = html;
+
+  var qtbody = document.getElementById('ld-vr-questions-tbody');
+  var qhtml = '';
+  ldQuestionBank.forEach(function(q) {
+    qhtml += '<tr style="border-bottom:1px solid #F5F6FA;">' +
+      '<td style="padding:9px 12px;color:#202123;">' + q.q + '</td>' +
+      '<td style="padding:9px 12px;"><span style="background:' + q.scoringColor + '1A;color:' + q.scoringColor + ';font-weight:700;border-radius:6px;padding:2px 8px;font-size:12px;">' + q.scoring + '</span></td>' +
+      '<td style="padding:9px 12px;color:#313949;">' + q.answer + '</td>' +
+      '</tr>';
+  });
+  qtbody.innerHTML = qhtml;
+
+  document.getElementById('ld-view-response-modal').style.display = 'flex';
+}
+function closeViewResponseModal() {
+  document.getElementById('ld-view-response-modal').style.display = 'none';
 }
 function closeMarketplaceZohoPage() {
   document.getElementById('marketplace-zoho-page').style.display = 'none';
@@ -12308,13 +12455,114 @@ function closeMarketplaceZohoPage() {
 
       <!-- Zoho Survey -->
       <div id="ld-sec-zoho-survey" class="ld-section">
-        <div class="ld-section-head">Zoho Survey</div>
-        <div class="ld-section-empty" style="display:flex;align-items:center;gap:10px;">
-          No records found
-          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Create Survey</button>
-          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Send Survey</button>
-          <button class="ld-btn ld-btn-outline" onclick="closeLeadDetailPage();">Take Survey</button>
+        <div class="ld-section-head">
+          Zoho Survey <span id="ld-survey-count-badge" class="ld-rel-badge" style="display:none;"></span>
+          <span style="flex:1;"></span>
+          <button class="ld-btn ld-btn-outline">Create Survey</button>
+          <button class="ld-btn ld-btn-outline" onclick="openSendSurveyModal()">Send Survey</button>
+          <button class="ld-btn ld-btn-outline">Take Survey</button>
         </div>
+        <div id="ld-survey-empty" class="ld-section-empty">No records found</div>
+        <div id="ld-survey-table-wrap" style="display:none;overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead>
+              <tr style="border-bottom:1px solid #EDF0F4;">
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Title</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Sent Date</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Responded Date</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Sent By</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Source</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Response</th>
+              </tr>
+            </thead>
+            <tbody id="ld-survey-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEND SURVEY MODAL ═══ -->
+<div id="ld-send-survey-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(49,57,73,0.5);align-items:center;justify-content:center;">
+  <div style="background:#fff;width:560px;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #EDF0F4;">
+      <span style="font-size:16px;font-weight:700;color:#202123;">Send Survey</span>
+      <span style="color:#8C91AB;cursor:pointer;" onclick="closeSendSurveyModal()">&#10005;</span>
+    </div>
+    <div style="padding:22px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:140px;font-size:13px;color:#616E88;text-align:right;">Select the Survey</label>
+        <select id="ld-send-survey-select" onchange="ldOnSurveySelectChange()" style="flex:1;height:34px;border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;">
+          <option value="">-None-</option>
+          <option value="Customer Satisfaction Survey Q1 2025">Customer Satisfaction Survey Q1 2025</option>
+          <option value="Employee NPS — Q1 2025">Employee NPS — Q1 2025</option>
+          <option value="Product Onboarding Feedback">Product Onboarding Feedback</option>
+          <option value="Custom Variables">Custom Variables</option>
+          <option value="this is a test">this is a test</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:140px;font-size:13px;color:#616E88;text-align:right;">Survey Link</label>
+        <div style="flex:1;">
+          <input id="ld-send-survey-link" readonly style="width:100%;height:34px;border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;font-size:12.5px;color:#616E88;background:#FAFAFC;">
+          <div id="ld-send-survey-preview" style="display:none;text-align:right;font-size:11.5px;color:#5464F2;margin-top:4px;cursor:pointer;">Preview</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:140px;font-size:13px;color:#616E88;text-align:right;">Text To Display (Optional)</label>
+        <input id="ld-send-survey-text" style="flex:1;height:34px;border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid #EDF0F4;">
+      <button class="ld-btn" onclick="closeSendSurveyModal()">Cancel</button>
+      <button id="ld-send-survey-insert-btn" class="ld-btn ld-btn-primary" disabled style="opacity:.5;cursor:not-allowed;" onclick="ldInsertSurveyLink()">Insert</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIL COMPOSE MODAL ═══ -->
+<div id="ld-mail-compose-modal" style="display:none;position:fixed;right:24px;bottom:0;z-index:1001;width:640px;background:#fff;border-radius:10px 10px 0 0;box-shadow:0 -4px 24px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
+  <div style="background:#C2185B;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:13px;font-weight:700;">New Message</span>
+    <span style="cursor:pointer;" onclick="closeMailComposeModal()">&#10005;</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <div style="font-size:13px;color:#313949;margin-bottom:10px;">To <span id="ld-mail-to-chip" style="background:#F0F1FF;color:#313949;border-radius:100px;padding:3px 10px;margin-left:8px;">Mi Mau</span></div>
+    <input id="ld-mail-subject" placeholder="Subject" style="width:100%;border:none;border-bottom:1px solid #EDF0F4;padding:8px 0;font-size:13px;margin-bottom:12px;outline:none;">
+    <div style="font-size:13px;color:#313949;line-height:1.7;min-height:90px;">
+      <a href="#" id="ld-mail-body-link" style="color:#5464F2;text-decoration:underline;" onclick="return false;">test</a>
+      <div style="margin-top:14px;color:#616E88;">
+        Sunderjan Siddharth<br>Zoho CRM support<br>Zoho Expert.
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;padding:12px 18px;border-top:1px solid #EDF0F4;">
+    <button class="ld-btn ld-btn-primary" onclick="ldSendMailCompose()">Send</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW RESPONSE MODAL ═══ -->
+<div id="ld-view-response-modal" style="display:none;position:fixed;inset:0;z-index:1002;background:rgba(49,57,73,0.5);align-items:center;justify-content:center;overflow:auto;">
+  <div style="background:#fff;width:760px;max-height:85vh;overflow-y:auto;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;margin:40px 0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #EDF0F4;">
+      <span style="font-size:16px;font-weight:700;color:#202123;">Response Details</span>
+      <span style="color:#8C91AB;cursor:pointer;" onclick="closeViewResponseModal()">&#10005;</span>
+    </div>
+    <div style="padding:22px;">
+      <div style="border:1px solid #EDF0F4;border-radius:10px;padding:18px 22px;margin-bottom:22px;" id="ld-vr-detail-card"></div>
+      <div style="font-size:14px;font-weight:700;color:#202123;margin-bottom:10px;">Questions</div>
+      <div style="border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+          <thead>
+            <tr style="background:#FAFAFC;border-bottom:1px solid #EDF0F4;">
+              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Questions</th>
+              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Question Scoring</th>
+              <th style="text-align:left;padding:9px 12px;color:#616E88;font-weight:700;">Answer</th>
+            </tr>
+          </thead>
+          <tbody id="ld-vr-questions-tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
