@@ -11711,7 +11711,10 @@ function closeMailComposeModal() {
 function ldSendMailCompose() {
   var survey = window._ldPendingSurvey || 'Custom Variables';
   var now = 'Aug 5, 2026, 2:10 PM';
-  ldSentSurveys.push({ title: survey, sentDate: now, respondedDate: '', sentBy: 'ssunderjan@gmail.com', source: 'Send Email Option (Individual)' });
+  ldSentSurveys.push({
+    title: survey, sentDate: now, respondedDate: 'Aug 5, 2026, 2:08 PM', sentBy: 'ssunderjan@gmail.com',
+    source: 'Send Email Option (Individual)', nps: '0/10', csat: '0', totalRating: '5/100'
+  });
   closeMailComposeModal();
   ldRenderZohoSurveyTable();
 }
@@ -11733,12 +11736,17 @@ function ldRenderZohoSurveyTable() {
   var html = '';
   ldSentSurveys.forEach(function(s, i) {
     html += '<tr style="border-bottom:1px solid #F5F6FA;">' +
-      '<td style="padding:9px 10px;color:#313949;">' + s.title + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' +
+        '<span style="font-weight:600;">' + s.title + '</span>' +
+        ' <span style="color:#5464F2;font-weight:600;cursor:pointer;margin-left:8px;" onclick="openViewResponseModal(' + i + ')">View Response</span>' +
+      '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentDate + '</td>' +
-      '<td style="padding:9px 10px;color:#8C91AB;">' + (s.respondedDate || '—') + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + (s.respondedDate || '—') + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentBy + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.source + '</td>' +
-      '<td style="padding:9px 10px;"><span style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="openViewResponseModal(' + i + ')">View Response</span></td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.nps + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.csat + '</td>' +
+      '<td style="padding:9px 10px;color:#313949;">' + s.totalRating + '</td>' +
       '</tr>';
   });
   tbody.innerHTML = html;
@@ -12474,7 +12482,9 @@ function closeMarketplaceZohoPage() {
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Responded Date</th>
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Sent By</th>
                 <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Source</th>
-                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Response</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">NPS Score</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">CSAT Score</th>
+                <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Total Rating</th>
               </tr>
             </thead>
             <tbody id="ld-survey-tbody"></tbody>
