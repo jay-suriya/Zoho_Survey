@@ -10731,6 +10731,8 @@ function ssOpenRecipientPicker() {
 // ── Step navigation ────────────────────────────────────────────────────────
 function ssGoStep3() {
   document.getElementById('ss-step2-overlay').classList.remove('open');
+  var addBtn = document.getElementById('ss-add-recipient-btn');
+  if (addBtn) addBtn.style.display = '';
   ssUpdateToField();
   document.getElementById('ss-step3-overlay').classList.add('open');
 }
@@ -11627,6 +11629,41 @@ function leadsClearSelection() {
   leadsUpdateBulkBar();
 }
 
+function leadsOpenSendSurveyMassEmail() {
+  var checkedIdx = [];
+  document.querySelectorAll('.leads-row-cb:checked').forEach(function(cb) {
+    var row = cb.closest('tr');
+    checkedIdx.push(parseInt(row.getAttribute('data-idx'), 10));
+  });
+  var names = checkedIdx.map(function(i) { return leadsListData[i].name; });
+
+  // Reset Mass Email modal state (same reset as openSendSurveyFlow)
+  ssParamRows = [];
+  ssParamIdCounter = 0;
+  var container = document.getElementById('ss-param-rows');
+  if (container) container.innerHTML = '';
+  var sel = document.getElementById('ss-collector-select');
+  if (sel) sel.selectedIndex = 0;
+  ssUpdateCollectorLink();
+  var advBody = document.getElementById('ss-adv-body');
+  if (advBody) advBody.style.display = 'none';
+  var chevron = document.getElementById('ss-adv-chevron');
+  if (chevron) chevron.style.transform = 'rotate(0deg)';
+  ssSelectedTemplate = null;
+  document.getElementById('ss-selected-tpl-name').textContent = '';
+  document.getElementById('ss-send-btn').disabled = true;
+
+  // Fixed "To" list from the Leads list bulk selection — no Add Recipient picker in this context
+  var toEl = document.getElementById('ss-to-field');
+  var display = names.slice(0, 4).join(', ');
+  if (names.length > 4) display += ' & ' + (names.length - 4) + ' more';
+  toEl.textContent = display;
+  var addBtn = document.getElementById('ss-add-recipient-btn');
+  if (addBtn) addBtn.style.display = 'none';
+
+  document.getElementById('ss-step3-overlay').classList.add('open');
+}
+
 function openLeadsListPage() {
   renderLeadsListTable();
   leadsUpdateBulkBar();
@@ -12307,6 +12344,7 @@ function closeMarketplaceZohoPage() {
     <a href="#" onclick="event.preventDefault();leadsSelectAllInView();" style="font-size:13px;color:#5464F2;font-weight:600;">Select All records in this view</a>
     <div style="flex:1;"></div>
     <button class="leads-bulk-btn">Send Mail</button>
+    <button class="leads-bulk-btn" onclick="leadsOpenSendSurveyMassEmail()">Send Survey</button>
     <button class="leads-bulk-btn">Tags &#9662;</button>
     <button class="leads-bulk-btn">Send with Zoho Sign &#9662;</button>
     <button class="leads-bulk-btn" style="width:32px;">&#8943;</button>
