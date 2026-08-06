@@ -11708,12 +11708,143 @@ document.addEventListener('click', function(e) {
   if (card && !card.contains(e.target)) closeWfAddActionFlyout();
 });
 function wfFlyoutPick(typeName) {
-  var rule = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; });
-  if (rule && typeName === 'Send Survey') {
-    rule.actions.push({ type: 'Send Survey', detail: 'Customer Satisfaction Survey Q1 2025' });
-    renderWfActionsList();
-  }
   closeWfAddActionFlyout();
+  if (typeName === 'Send Survey') {
+    openWfSurveyListModal();
+  }
+}
+
+// ── Send Survey action config (list -> new -> advanced settings) ──────────
+var wfSurveySendConfigs = [
+  {name:'CSAT Follow-up', survey:'Customer Satisfaction Survey Q1 2025', modified:'08-06-26'},
+  {name:'NPS Check-in', survey:'Employee NPS — Q1 2025', modified:'06-15-23'}
+];
+var wfSelectedSurveyConfigIdx = null;
+
+function openWfSurveyListModal() {
+  wfSelectedSurveyConfigIdx = null;
+  var moduleName = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; }).module;
+  document.getElementById('wf-sl-module-badge').textContent = moduleName;
+  var tbody = document.getElementById('wf-sl-tbody');
+  var html = '';
+  wfSurveySendConfigs.forEach(function(c, i) {
+    html += '<tr onclick="wfSelectSurveyConfig(' + i + ')" id="wf-sl-row-' + i + '" style="cursor:pointer;border-bottom:1px solid #F5F6FA;">' +
+      '<td style="padding:11px 16px;color:#313949;">' + c.name + '</td>' +
+      '<td style="padding:11px 16px;color:#313949;">' + c.survey + '</td>' +
+      '<td style="padding:11px 16px;color:#616E88;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:#E9EAF0;display:inline-block;"></span>' + c.modified + '</td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+  document.getElementById('wf-sl-associate-btn').disabled = true;
+  document.getElementById('wf-sl-associate-btn').style.opacity = '.5';
+  document.getElementById('wf-survey-list-modal').style.display = 'flex';
+}
+function closeWfSurveyListModal() {
+  document.getElementById('wf-survey-list-modal').style.display = 'none';
+}
+function wfSelectSurveyConfig(i) {
+  wfSelectedSurveyConfigIdx = i;
+  wfSurveySendConfigs.forEach(function(c, idx) {
+    document.getElementById('wf-sl-row-' + idx).style.background = idx === i ? '#FFF0F5' : '';
+  });
+  document.getElementById('wf-sl-associate-btn').disabled = false;
+  document.getElementById('wf-sl-associate-btn').style.opacity = '1';
+}
+function wfAssociateSelectedSurvey() {
+  if (wfSelectedSurveyConfigIdx === null) return;
+  var c = wfSurveySendConfigs[wfSelectedSurveyConfigIdx];
+  var rule = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; });
+  if (rule) rule.actions.push({ type: 'Send Survey', detail: c.survey });
+  renderWfActionsList();
+  closeWfSurveyListModal();
+}
+
+function openWfSurveyNewModal() {
+  closeWfSurveyListModal();
+  var rule = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; });
+  document.getElementById('wf-sn-module-badge').textContent = rule ? rule.module : '';
+  document.getElementById('wf-sn-name').value = '';
+  document.getElementById('wf-sn-survey-select').value = '';
+  document.getElementById('wf-sn-collector-select').value = 'rLmnwZ';
+  wfParamRows = [];
+  wfRenderParamRows();
+  document.getElementById('wf-sn-adv-body').style.display = 'none';
+  document.getElementById('wf-sn-adv-chevron').style.transform = 'rotate(0deg)';
+  document.getElementById('wf-survey-new-modal').style.display = 'flex';
+}
+function closeWfSurveyNewModal() {
+  document.getElementById('wf-survey-new-modal').style.display = 'none';
+}
+function wfToggleSnAdvanced() {
+  var body = document.getElementById('wf-sn-adv-body');
+  var chevron = document.getElementById('wf-sn-adv-chevron');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+var wfParamRows = [];
+var wfParamIdCounter = 0;
+function wfAddUrlParam() {
+  wfParamIdCounter++;
+  wfParamRows.push({ id: wfParamIdCounter, paramKey: '', valueKey: '' });
+  wfRenderParamRows();
+}
+function wfRemoveParam(id) {
+  wfParamRows = wfParamRows.filter(function(r) { return r.id !== id; });
+  wfRenderParamRows();
+}
+function wfOnParamChange(id, val) {
+  var row = wfParamRows.find(function(r) { return r.id === id; });
+  if (row) row.paramKey = val;
+}
+function wfOnValueChange(id, val) {
+  var row = wfParamRows.find(function(r) { return r.id === id; });
+  if (row) row.valueKey = val;
+}
+function wfRenderParamRows() {
+  var container = document.getElementById('wf-sn-param-rows');
+  container.innerHTML = '';
+  if (wfParamRows.length === 0) return;
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0 8px;padding-left:120px;';
+  hdr.innerHTML = '<span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Name</span><span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Value</span><span style="width:56px;"></span>';
+  container.appendChild(hdr);
+  var moduleName = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; }).module;
+  var fields = ssModuleFields[moduleName] || ssModuleFields['Leads'];
+  var selStyle = 'flex:1;height:32px;padding:0 30px 0 10px;border:1px solid #C0C8E2;border-radius:6px;font-size:12.5px;color:#202123;background:#fff;appearance:none;-webkit-appearance:none;font-family:inherit;' +
+    "background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23888%27 stroke-width=%273%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center;";
+  wfParamRows.forEach(function(row) {
+    var r = document.createElement('div');
+    r.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-left:120px;';
+    var paramHtml = '<select onchange="wfOnParamChange(' + row.id + ',this.value)" style="' + selStyle + '">';
+    paramHtml += '<option value="">Select Param</option>';
+    ssCustomVars.forEach(function(cv) {
+      paramHtml += '<option value="' + cv.key + '"' + (row.paramKey === cv.key ? ' selected' : '') + '>' + cv.label + '</option>';
+    });
+    paramHtml += '</select>';
+    var valHtml = '<select onchange="wfOnValueChange(' + row.id + ',this.value)" style="' + selStyle + '">';
+    valHtml += '<option value="">Select value</option>';
+    fields.forEach(function(f) {
+      valHtml += '<option value="' + f.key + '"' + (row.valueKey === f.key ? ' selected' : '') + '>' + f.label + '</option>';
+    });
+    valHtml += '</select>';
+    var actHtml = '<div style="display:flex;align-items:center;gap:5px;width:56px;flex-shrink:0;">';
+    actHtml += '<button onclick="wfAddUrlParam()" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:#616E88;padding:0;">+</button>';
+    actHtml += '<button onclick="wfRemoveParam(' + row.id + ')" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#8C91AB;padding:0;">&#10005;</button>';
+    actHtml += '</div>';
+    r.innerHTML = paramHtml + valHtml + actHtml;
+    container.appendChild(r);
+  });
+}
+function wfSaveAndAssociateSurvey() {
+  var name = document.getElementById('wf-sn-name').value.trim() || 'New Send Survey Action';
+  var surveySelect = document.getElementById('wf-sn-survey-select');
+  var surveyName = surveySelect.value || surveySelect.options[0].text;
+  wfSurveySendConfigs.push({ name: name, survey: surveyName, modified: '08-06-26' });
+  var rule = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; });
+  if (rule) rule.actions.push({ type: 'Send Survey', detail: surveyName });
+  renderWfActionsList();
+  closeWfSurveyNewModal();
 }
 
 function openActionTypesListPage() {
@@ -13090,6 +13221,115 @@ function closeMarketplaceZohoPage() {
   <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid #EDF0F4;padding:14px 32px;display:flex;gap:10px;">
     <button style="height:34px;padding:0 24px;border:none;border-radius:6px;background:#FBDCE7;color:#F2A8C1;font-size:13px;font-weight:600;cursor:not-allowed;">Save</button>
     <button onclick="closeWorkflowRuleSetupPage()" style="height:34px;padding:0 20px;border:1px solid #C0C8E2;border-radius:6px;background:#fff;color:#313949;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══ SEND SURVEY ACTION — LIST MODAL ═══ -->
+<div id="wf-survey-list-modal" style="display:none;position:fixed;inset:0;z-index:1010;background:rgba(49,57,73,0.5);align-items:center;justify-content:center;">
+  <div style="background:#fff;width:900px;max-width:94vw;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+    <div style="padding:22px 28px 0;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;font-weight:700;color:#202123;">Send Survey -</span>
+      <span id="wf-sl-module-badge" style="font-size:12px;font-weight:600;color:#616E88;background:#F5F6FA;border-radius:6px;padding:3px 10px;">Contacts</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 0;">
+      <div style="width:280px;height:34px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8C91AB;font-size:13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </div>
+      <button onclick="openWfSurveyNewModal()" style="height:34px;padding:0 20px;border:none;border-radius:6px;background:#A02059;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">New</button>
+    </div>
+    <div style="padding:18px 28px 0;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:1px solid #EDF0F4;">
+            <th style="text-align:left;padding:10px 16px;color:#616E88;font-weight:600;">Name</th>
+            <th style="text-align:left;padding:10px 16px;color:#616E88;font-weight:600;">Survey</th>
+            <th style="text-align:left;padding:10px 16px;color:#616E88;font-weight:600;">Modified On <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align:middle;"><polyline points="6 9 12 15 18 9"/></svg></th>
+          </tr>
+        </thead>
+        <tbody id="wf-sl-tbody"></tbody>
+      </table>
+    </div>
+    <label style="display:flex;align-items:center;gap:10px;background:#FAFAFC;border-top:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;padding:14px 28px;font-size:13px;color:#313949;margin-top:18px;cursor:pointer;">
+      <input type="checkbox" style="width:15px;height:15px;accent-color:#5464F2;">
+      Skip this respondent if they were already sent this survey in the last 30 days.
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    </label>
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding:20px 28px;">
+      <button onclick="closeWfSurveyListModal()" style="height:34px;padding:0 20px;border:1px solid #C0C8E2;border-radius:6px;background:#fff;color:#313949;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button id="wf-sl-associate-btn" onclick="wfAssociateSelectedSurvey()" style="height:34px;padding:0 22px;border:none;border-radius:6px;background:#A02059;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Associate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEND SURVEY ACTION — NEW / CONFIGURE MODAL ═══ -->
+<div id="wf-survey-new-modal" style="display:none;position:fixed;inset:0;z-index:1011;background:rgba(49,57,73,0.5);align-items:center;justify-content:center;overflow:auto;">
+  <div style="background:#fff;width:620px;max-width:94vw;max-height:88vh;overflow-y:auto;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;margin:30px 0;">
+    <div style="padding:22px 28px 0;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;font-weight:700;color:#202123;">Send Survey -</span>
+      <span id="wf-sn-module-badge" style="font-size:12px;font-weight:600;color:#616E88;background:#F5F6FA;border-radius:6px;padding:3px 10px;">Contacts</span>
+    </div>
+    <div style="padding:22px 28px 0;display:flex;flex-direction:column;gap:18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:120px;font-size:13px;color:#616E88;">Name</label>
+        <input id="wf-sn-name" style="flex:1;height:34px;border:1.5px solid #F06292;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;">
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input id="wf-sn-mass" type="checkbox" style="width:15px;height:15px;accent-color:#5464F2;flex-shrink:0;">
+        <label for="wf-sn-mass" style="font-size:13px;color:#313949;">Skip this respondent if they were already sent this survey in the last 30 days</label>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:120px;font-size:13px;color:#616E88;">Select Survey</label>
+        <select id="wf-sn-survey-select" style="flex:1;height:34px;border:1.5px solid #F06292;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;background:#fff;">
+          <option value="Customer Satisfaction Survey Q1 2025">Customer Satisfaction Survey Q1 2025</option>
+          <option value="Employee NPS — Q1 2025">Employee NPS — Q1 2025</option>
+          <option value="Product Onboarding Feedback">Product Onboarding Feedback</option>
+          <option value="Custom Variables">Custom Variables</option>
+          <option value="this is a test">this is a test</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="padding:18px 28px 0;">
+      <label style="display:flex;align-items:center;gap:10px;background:#FAFAFC;border:1px solid #EDF0F4;border-radius:6px;padding:12px 16px;font-size:13px;color:#313949;cursor:pointer;">
+        <input type="checkbox" style="width:15px;height:15px;accent-color:#5464F2;flex-shrink:0;">
+        Send this survey at Best Time to the respondent.
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </label>
+    </div>
+
+    <div style="padding:18px 28px 22px;">
+      <div id="wf-sn-adv-toggle" onclick="wfToggleSnAdvanced()" style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#5464F2;user-select:none;">
+        <svg id="wf-sn-adv-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .15s;"><polyline points="9 6 15 12 9 18"/></svg>
+        Advanced Settings
+      </div>
+      <div id="wf-sn-adv-body" style="display:none;margin-top:14px;padding:16px;background:#FAFAFC;border-radius:6px;border:1px solid #EDF0F4;">
+        <!-- Choose Collector -->
+        <div style="display:flex;align-items:center;margin-bottom:16px;">
+          <label style="width:120px;font-size:13px;color:#616E88;flex-shrink:0;">Choose Collector</label>
+          <select id="wf-sn-collector-select" style="flex:1;height:34px;padding:0 10px;border:1px solid #C0C8E2;border-radius:6px;font-size:13px;color:#202123;background:#fff;">
+            <option value="rLmnwZ">All Respondents</option>
+            <option value="mOjriU">Age 15–30</option>
+            <option value="pQkstX">Age 31–50</option>
+          </select>
+        </div>
+        <!-- Custom Variable / Url Parameter -->
+        <div style="display:flex;align-items:flex-start;margin-bottom:8px;">
+          <label style="width:120px;font-size:13px;color:#616E88;flex-shrink:0;padding-top:8px;">Custom Variable</label>
+          <button onclick="wfAddUrlParam()" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 14px;border:1px solid #D5D8E9;border-radius:6px;font-size:13px;cursor:pointer;background:linear-gradient(#FFFFFF,#F1F0F7);font-family:inherit;color:#313949;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add parameter
+          </button>
+        </div>
+        <div id="wf-sn-param-rows"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 28px;border-top:1px solid #EDF0F4;">
+      <button onclick="closeWfSurveyNewModal()" style="height:34px;padding:0 20px;border:1px solid #C0C8E2;border-radius:6px;background:#fff;color:#313949;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="wfSaveAndAssociateSurvey()" style="height:34px;padding:0 22px;border:none;border-radius:6px;background:#A02059;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Save and Associate</button>
+    </div>
   </div>
 </div>
 
