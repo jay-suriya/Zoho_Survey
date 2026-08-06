@@ -2003,6 +2003,10 @@ tbody tr:hover{background:#f5f7ff;}
 .wf-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,0.25);}
 .wf-toggle.on{background:#11B670;}
 .wf-toggle.on::after{left:18px;}
+.wf-flyout-item{padding:8px 14px;font-size:13px;color:#202123;cursor:pointer;display:flex;align-items:center;justify-content:space-between;}
+.wf-flyout-item:hover{background:#FFF0F5;}
+.wf-flyout-item:first-child{background:#FFF0F5;}
+.wf-flyout-arrow{color:#8C91AB;font-size:10px;}
 
 /* Leads list page */
 .leads-tab{font-size:13px;font-weight:600;color:#616E88;padding:8px 14px;cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;}
@@ -11685,32 +11689,31 @@ function wfRemoveAction(i) {
   renderWfActionsList();
 }
 
-function openWfAddActionOverlay() {
-  var container = document.getElementById('wf-add-action-list');
-  var html = '';
-  actionTypesData.forEach(function(t) {
-    html += '<div onclick="wfPickActionType(\'' + t.name + '\')" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:8px;cursor:pointer;" onmouseenter="this.style.background=\'#FAFAFC\'" onmouseleave="this.style.background=\'\'">' +
-      '<div style="width:36px;height:36px;border-radius:8px;background:' + t.bg + ';color:' + t.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + t.svg + '</svg></div>' +
-      '<div style="flex:1;">' +
-      '<div style="font-size:13px;font-weight:700;color:#202123;display:flex;align-items:center;gap:8px;">' + t.name + (t.isNew ? '<span style="font-size:10px;font-weight:700;color:#C2185B;background:#FFF0F5;border-radius:100px;padding:1px 8px;">New</span>' : '') + '</div>' +
-      '<div style="font-size:12px;color:#616E88;">' + t.desc + '</div>' +
-      '</div>' +
-      '</div>';
-  });
-  container.innerHTML = html;
-  document.getElementById('wf-add-action-overlay').style.display = 'flex';
+function toggleWfAddActionFlyout(e) {
+  if (e) e.stopPropagation();
+  var flyout = document.getElementById('wf-action-flyout');
+  var card = document.getElementById('wf-actions-card');
+  var open = flyout.style.display === 'block';
+  flyout.style.display = open ? 'none' : 'block';
+  card.style.border = open ? '1px solid #EDF0F4' : '1.5px solid #F06292';
 }
-function closeWfAddActionOverlay() {
-  document.getElementById('wf-add-action-overlay').style.display = 'none';
+function closeWfAddActionFlyout() {
+  var flyout = document.getElementById('wf-action-flyout');
+  var card = document.getElementById('wf-actions-card');
+  if (flyout) flyout.style.display = 'none';
+  if (card) card.style.border = '1px solid #EDF0F4';
 }
-function wfPickActionType(typeName) {
+document.addEventListener('click', function(e) {
+  var card = document.getElementById('wf-actions-card');
+  if (card && !card.contains(e.target)) closeWfAddActionFlyout();
+});
+function wfFlyoutPick(typeName) {
   var rule = workflowRulesData.find(function(r) { return r.id === wfActiveRuleId; });
-  if (rule) {
-    var detail = typeName === 'Send Survey' ? 'Customer Satisfaction Survey Q1 2025' : 'Configure this action';
-    rule.actions.push({ type: typeName, detail: detail });
+  if (rule && typeName === 'Send Survey') {
+    rule.actions.push({ type: 'Send Survey', detail: 'Customer Satisfaction Survey Q1 2025' });
+    renderWfActionsList();
   }
-  closeWfAddActionOverlay();
-  renderWfActionsList();
+  closeWfAddActionFlyout();
 }
 
 function openActionTypesListPage() {
@@ -13049,15 +13052,31 @@ function closeMarketplaceZohoPage() {
       <div style="width:2px;height:40px;background:#8C91AB;margin-left:48px;"></div>
       <!-- Actions row -->
       <div style="display:flex;align-items:flex-start;gap:0;margin-left:96px;">
-        <div style="width:340px;border:1px solid #EDF0F4;border-radius:10px;background:#fff;overflow:hidden;">
-          <div style="padding:14px 18px;border-bottom:1px solid #F5F6FA;">
-            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#202123;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Instant Actions
+        <div id="wf-actions-card" style="position:relative;width:340px;border:1px solid #EDF0F4;border-radius:10px;background:#fff;overflow:visible;">
+          <div style="border-radius:10px 10px 0 0;overflow:hidden;">
+            <div style="padding:14px 18px;border-bottom:1px solid #F5F6FA;">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#202123;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Instant Actions
+              </div>
+              <div id="wf-setup-actions-list" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;"></div>
             </div>
-            <div id="wf-setup-actions-list" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;"></div>
+            <div onclick="toggleWfAddActionFlyout(event)" style="padding:11px 18px;font-size:13px;font-weight:600;color:#C2185B;cursor:pointer;background:#FFF0F5;border-radius:0 0 10px 10px;">+ Action</div>
           </div>
-          <div onclick="openWfAddActionOverlay()" style="padding:11px 18px;font-size:13px;font-weight:600;color:#C2185B;cursor:pointer;background:#FFF0F5;">+ Action</div>
+          <!-- Inline flyout menu -->
+          <div id="wf-action-flyout" style="display:none;position:absolute;top:100%;left:0;width:210px;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.15);z-index:20;padding:6px 0;">
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Field Update')">Field Update</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Assign Owner')">Assign Owner</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Tags')">Tags <span class="wf-flyout-arrow">&#9656;</span></div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Notify')">Notify <span class="wf-flyout-arrow">&#9656;</span></div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Activities')">Activities <span class="wf-flyout-arrow">&#9656;</span></div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Create Record')">Create Record</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Create Connected Record')">Create Connected Record</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Webhook')">Webhook</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Function')">Function</div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Send Survey')" style="color:#C2185B;font-weight:600;">Send Survey <span style="font-size:9.5px;font-weight:700;color:#C2185B;background:#FFF0F5;border-radius:100px;padding:1px 7px;margin-left:4px;">New</span></div>
+            <div class="wf-flyout-item" onclick="wfFlyoutPick('Actions By Zoho Flow')">Actions By Zoho Flow</div>
+          </div>
         </div>
         <div style="width:36px;height:2px;background:#D6D6E3;margin-top:24px;flex-shrink:0;"></div>
         <div style="width:220px;border:1.5px dashed #D6D6E3;border-radius:10px;padding:14px 18px;margin-top:0;color:#B7BCCB;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
@@ -13071,17 +13090,6 @@ function closeMarketplaceZohoPage() {
   <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid #EDF0F4;padding:14px 32px;display:flex;gap:10px;">
     <button style="height:34px;padding:0 24px;border:none;border-radius:6px;background:#FBDCE7;color:#F2A8C1;font-size:13px;font-weight:600;cursor:not-allowed;">Save</button>
     <button onclick="closeWorkflowRuleSetupPage()" style="height:34px;padding:0 20px;border:1px solid #C0C8E2;border-radius:6px;background:#fff;color:#313949;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
-  </div>
-</div>
-
-<!-- ═══ ADD ACTION OVERLAY (from within a workflow rule) ═══ -->
-<div id="wf-add-action-overlay" style="display:none;position:fixed;inset:0;z-index:1003;background:rgba(49,57,73,0.5);align-items:center;justify-content:center;">
-  <div style="background:#fff;width:520px;max-height:80vh;overflow-y:auto;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.3);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #EDF0F4;">
-      <span style="font-size:16px;font-weight:700;color:#202123;">Choose Action Type</span>
-      <span style="color:#8C91AB;cursor:pointer;" onclick="closeWfAddActionOverlay()">&#10005;</span>
-    </div>
-    <div id="wf-add-action-list" style="padding:10px;"></div>
   </div>
 </div>
 
