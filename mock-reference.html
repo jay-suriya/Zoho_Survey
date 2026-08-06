@@ -1999,6 +1999,10 @@ tbody tr:hover{background:#f5f7ff;}
 .mkt-zoho-title{font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;}
 .mkt-zoho-desc{font-size:12.5px;color:#616E88;line-height:1.55;margin-bottom:16px;min-height:56px;}
 .mkt-zoho-btn{height:30px;padding:0 14px;border:1px solid #FF4D5B;color:#F63648;background:#FFF2F3;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.wf-toggle{display:inline-block;width:34px;height:18px;border-radius:100px;background:#D2D9F1;position:relative;cursor:pointer;transition:background .15s;flex-shrink:0;}
+.wf-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,0.25);}
+.wf-toggle.on{background:#11B670;}
+.wf-toggle.on::after{left:18px;}
 
 /* Leads list page */
 .leads-tab{font-size:13px;font-weight:600;color:#616E88;padding:8px 14px;cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;}
@@ -11573,12 +11577,16 @@ var actionTypesData = [
 ];
 
 var workflowRulesData = [
-  {id:1, name:'Send CSAT Survey after Deal Closed-Won', module:'Deals', when:'On Create or Edit', status:'Active', executed:128,
+  {id:1, name:'Send CSAT Survey after Deal Closed-Won', module:'Deals', when:'Create or Edit', modified:'08-06-26', status:'Active',
     actions:[{type:'Send Survey', detail:'Customer Satisfaction Survey Q1 2025'}]},
-  {id:2, name:'Welcome New Lead', module:'Leads', when:'On Create', status:'Active', executed:342,
-    actions:[{type:'Email Notification', detail:'Welcome Email to Lead'}]},
-  {id:3, name:'Renewal Reminder', module:'Deals', when:'On Edit', status:'Inactive', executed:12,
-    actions:[{type:'Task', detail:'Follow up with account owner'}]}
+  {id:2, name:'create_dbx_folder_for_lead', module:'Leads', when:'Create', modified:'06-28-19', status:'Active', actions:[{type:'Function', detail:'Create Dropbox folder'}]},
+  {id:3, name:'create_dbx_folder_for_contact', module:'Contacts', when:'Create', modified:'06-28-19', status:'Active', actions:[{type:'Function', detail:'Create Dropbox folder'}]},
+  {id:4, name:'create_dbx_folder_for_account', module:'Accounts', when:'Create', modified:'06-28-19', status:'Active', actions:[{type:'Function', detail:'Create Dropbox folder'}]},
+  {id:5, name:'addEventsToBookings', module:'Meetings', when:'Create or Edit', modified:'02-07-23', status:'Active', actions:[{type:'Webhook', detail:'Sync to Zoho Bookings'}]},
+  {id:6, name:'Notify when call is created or modified', module:'Calls', when:'—', modified:'03-02-24', status:'Active', actions:[{type:'Email Notification', detail:'Notify call owner'}]},
+  {id:7, name:'Create lead', module:'Leads', when:'Create or Edit', modified:'02-24-26', status:'Active', actions:[{type:'Field Update', detail:'Update Lead Status'},{type:'Task', detail:'Follow-up call'},{type:'Email Notification', detail:'Notify owner'}]},
+  {id:8, name:'Create Edit', module:'Contacts', when:'Create or Edit', modified:'11-01-22', status:'Inactive', actions:[{type:'Task', detail:'Review contact'}]},
+  {id:9, name:'Renewal Reminder', module:'Deals', when:'Edit', modified:'06-15-23', status:'Inactive', actions:[{type:'Task', detail:'Follow up with account owner'}]}
 ];
 var wfActiveRuleId = null;
 
@@ -11586,18 +11594,23 @@ function openWorkflowRulesListPage() {
   var tbody = document.getElementById('wf-rules-tbody');
   var html = '';
   workflowRulesData.forEach(function(r) {
-    var statusBg = r.status === 'Active' ? '#E9FBF4' : '#F5F6FA';
-    var statusColor = r.status === 'Active' ? '#10975E' : '#8C91AB';
-    html += '<tr onclick="openWorkflowRuleSetupPage(' + r.id + ')" style="border-bottom:1px solid #F5F6FA;cursor:pointer;" onmouseenter="this.style.background=\'#FAFAFC\'" onmouseleave="this.style.background=\'\'">' +
-      '<td style="padding:11px 14px;color:#5464F2;font-weight:600;">' + r.name + '</td>' +
+    html += '<tr style="border-bottom:1px solid #F5F6FA;" onmouseenter="this.style.background=\'#FAFAFC\'" onmouseleave="this.style.background=\'\'">' +
+      '<td style="padding:11px 14px;" onclick="event.stopPropagation();"><input type="checkbox"></td>' +
+      '<td style="padding:11px 14px;color:#C2185B;font-weight:600;cursor:pointer;" onclick="openWorkflowRuleSetupPage(' + r.id + ')">' + r.name + '</td>' +
       '<td style="padding:11px 14px;color:#313949;">' + r.module + '</td>' +
       '<td style="padding:11px 14px;color:#313949;">' + r.when + '</td>' +
-      '<td style="padding:11px 14px;color:#313949;">' + r.executed + '</td>' +
-      '<td style="padding:11px 14px;"><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:' + statusBg + ';color:' + statusColor + ';">' + r.status + '</span></td>' +
+      '<td style="padding:11px 14px;color:#313949;">' + r.actions.length + '</td>' +
+      '<td style="padding:11px 14px;color:#616E88;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:#E9EAF0;display:inline-block;flex-shrink:0;"></span>' + r.modified + '</td>' +
+      '<td style="padding:11px 14px;"><span class="wf-toggle ' + (r.status === 'Active' ? 'on' : '') + '" onclick="event.stopPropagation();wfToggleStatus(' + r.id + ')"></span></td>' +
       '</tr>';
   });
   tbody.innerHTML = html;
   document.getElementById('workflow-rules-list-page').style.display = 'block';
+}
+function wfToggleStatus(id) {
+  var rule = workflowRulesData.find(function(r) { return r.id === id; });
+  if (rule) rule.status = rule.status === 'Active' ? 'Inactive' : 'Active';
+  openWorkflowRulesListPage();
 }
 function closeWorkflowRulesListPage() {
   document.getElementById('workflow-rules-list-page').style.display = 'none';
@@ -12832,29 +12845,121 @@ function closeMarketplaceZohoPage() {
 </div>
 
 <!-- ═══ WORKFLOW RULES LIST PAGE ═══ -->
-<div id="workflow-rules-list-page" style="display:none;position:fixed;inset:0;z-index:904;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:auto;">
-  <div style="height:56px;border-bottom:1px solid #D6D6E3;display:flex;align-items:center;gap:14px;padding:0 24px;">
-    <svg onclick="closeWorkflowRulesListPage()" style="cursor:pointer;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#313949" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    <span style="font-size:16px;font-weight:700;color:#202123;">Workflow Rules</span>
-  </div>
-  <div style="padding:24px 32px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-      <span style="font-size:13px;color:#616E88;">Automate actions based on record events across your CRM modules.</span>
-      <button style="height:34px;padding:0 18px;border:none;border-radius:6px;background:linear-gradient(#5767F6,#124DC3);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Create Rule</button>
+<div id="workflow-rules-list-page" style="display:none;position:fixed;inset:0;z-index:904;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
+  <div class="topbar" style="border-bottom:1px solid #e0e0e0;">
+    <div class="topbar-row1">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0;" onclick="closeWorkflowRulesListPage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.4"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span style="font-size:15px;font-weight:700;color:#C2185B;">Setup Home</span>
+      </div>
+      <div class="topbar-icons">
+        <div class="search-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search records</div>
+        <div class="icon-btn-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2185B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="za-icon"><span class="z">Z</span><span class="a">A</span><div class="za-divider"></div></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge">83</div></div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="notif-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg><div class="notif-badge">25</div></div>
+        <div class="chat-bubble"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9c4dcc" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="settings-btn" onclick="closeWorkflowRulesListPage()" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="avatar">M</div>
+        <div style="cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#777"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg></div>
+      </div>
     </div>
-    <div style="border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">
-      <table style="width:100%;border-collapse:collapse;font-size:13px;">
-        <thead>
-          <tr style="background:#FAFAFC;border-bottom:1px solid #EDF0F4;">
-            <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Rule Name</th>
-            <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Module</th>
-            <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">When</th>
-            <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Executed On</th>
-            <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Status</th>
-          </tr>
-        </thead>
-        <tbody id="wf-rules-tbody"></tbody>
-      </table>
+  </div>
+
+  <div style="display:flex;height:calc(100vh - 50px);">
+    <!-- Setup left nav -->
+    <div style="width:220px;flex-shrink:0;border-right:1px solid #EDF0F4;overflow-y:auto;padding:16px 14px;">
+      <div style="height:32px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:7px;padding:0 10px;color:#8C91AB;font-size:12.5px;margin-bottom:14px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Customization</div>
+        <div class="mkt-nav-item">Translations</div>
+        <div class="mkt-nav-item">Templates</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Channels</div>
+        <div class="mkt-nav-item">Email</div>
+        <div class="mkt-nav-item">Telephony</div>
+        <div class="mkt-nav-item">Business Messaging</div>
+        <div class="mkt-nav-item">Notification SMS</div>
+        <div class="mkt-nav-item">Webforms</div>
+        <div class="mkt-nav-item">Social</div>
+        <div class="mkt-nav-item">Chat</div>
+        <div class="mkt-nav-item">Portals</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Automation</div>
+        <div class="mkt-nav-item active">Workflow Rules</div>
+        <div class="mkt-nav-item">Actions</div>
+        <div class="mkt-nav-item">Schedules</div>
+        <div class="mkt-nav-item">Assignment</div>
+        <div class="mkt-nav-item">Case Escalation Rules</div>
+        <div class="mkt-nav-item">Scoring Rules</div>
+        <div class="mkt-nav-item">Cadences</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Process Management</div>
+        <div class="mkt-nav-item">Blueprint</div>
+        <div class="mkt-nav-item">Approval Processes</div>
+        <div class="mkt-nav-item">Review Processes</div>
+        <div class="mkt-nav-item">Connected Workflow</div>
+      </div>
+      <div class="mkt-nav-group">
+        <div class="mkt-nav-head">Experience Center</div>
+        <div class="mkt-nav-item">Signals</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;overflow-y:auto;padding:24px 32px;">
+      <div style="display:flex;gap:22px;border-bottom:1px solid #EDF0F4;margin-bottom:18px;">
+        <div style="font-size:14px;font-weight:700;color:#202123;padding-bottom:10px;border-bottom:2px solid #5464F2;">Rules</div>
+        <div style="font-size:14px;font-weight:600;color:#8C91AB;padding-bottom:10px;">Usage</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:#202123;margin-bottom:6px;">Workflow Rules</div>
+          <div style="font-size:13px;color:#616E88;max-width:640px;">Workflow rules allow you to perform certain automatic actions on specific records based on filter criteria. Workflow automations can send emails, update fields, create records and much more.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:14px;background:#FFF9ED;border:1px solid #FCE8C4;border-radius:8px;padding:12px 16px;margin:16px 0;">
+        <span style="font-size:18px;flex-shrink:0;">📣</span>
+        <div style="font-size:13px;color:#616E88;flex:1;"><b style="color:#202123;">Simply Build Data Processing!</b> Introducing our Catalyst-powered solution for build CRM Operations, automating workflows with serverless functions and simplifying data handling.</div>
+        <button style="height:32px;padding:0 16px;border:none;border-radius:6px;background:linear-gradient(#F5973A,#DB842F);color:#fff;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Explore Now</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+        <div style="width:260px;height:34px;border:1px solid #C0C8E2;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8C91AB;font-size:13px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search
+        </div>
+        <span style="font-size:13px;color:#5464F2;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Workflow Creation using Zia</span>
+        <div style="flex:1;"></div>
+        <button style="height:34px;padding:0 16px;border:1px solid #D2D9F1;border-radius:6px;background:#F5F6FB;color:#9394AF;font-size:13px;font-weight:600;cursor:not-allowed;">Reorder Rules</button>
+        <button style="height:34px;padding:0 18px;border:none;border-radius:6px;background:linear-gradient(#5767F6,#124DC3);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Create Rule</button>
+      </div>
+
+      <div style="border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#FAFAFC;border-bottom:1px solid #EDF0F4;">
+              <th style="width:36px;padding:10px 14px;"><input type="checkbox"></th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Rule Name</th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">All <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align:middle;"><polyline points="6 9 12 15 18 9"/></svg></th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Execute On</th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Actions</th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Modified On</th>
+              <th style="text-align:left;padding:10px 14px;color:#616E88;font-weight:600;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="wf-rules-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
