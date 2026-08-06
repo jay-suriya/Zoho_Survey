@@ -11669,7 +11669,72 @@ function openSendSurveyModal() {
   document.getElementById('ld-send-survey-insert-btn').disabled = true;
   document.getElementById('ld-send-survey-insert-btn').style.opacity = '.5';
   document.getElementById('ld-send-survey-insert-btn').style.cursor = 'not-allowed';
+  document.getElementById('ld-collector-select').value = 'rLmnwZ';
+  ldParamRows = [];
+  document.getElementById('ld-adv-body').style.display = 'none';
+  document.getElementById('ld-adv-chevron').style.transform = 'rotate(0deg)';
+  ldRenderParamRows();
   document.getElementById('ld-send-survey-modal').style.display = 'flex';
+}
+function ldToggleAdvancedSettings() {
+  var body = document.getElementById('ld-adv-body');
+  var chevron = document.getElementById('ld-adv-chevron');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+var ldParamRows = [];
+var ldParamIdCounter = 0;
+function ldAddUrlParam() {
+  ldParamIdCounter++;
+  ldParamRows.push({ id: ldParamIdCounter, paramKey: '', valueKey: '' });
+  ldRenderParamRows();
+}
+function ldRemoveParam(id) {
+  ldParamRows = ldParamRows.filter(function(r) { return r.id !== id; });
+  ldRenderParamRows();
+}
+function ldOnParamChange(id, val) {
+  var row = ldParamRows.find(function(r) { return r.id === id; });
+  if (row) row.paramKey = val;
+}
+function ldOnValueChange(id, val) {
+  var row = ldParamRows.find(function(r) { return r.id === id; });
+  if (row) row.valueKey = val;
+}
+function ldRenderParamRows() {
+  var container = document.getElementById('ld-param-rows');
+  container.innerHTML = '';
+  if (ldParamRows.length === 0) return;
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0 8px;padding-left:120px;';
+  hdr.innerHTML = '<span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Name</span><span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Value</span><span style="width:56px;"></span>';
+  container.appendChild(hdr);
+  var fields = ssModuleFields['Leads'];
+  var selStyle = 'flex:1;height:32px;padding:0 30px 0 10px;border:1px solid #C0C8E2;border-radius:6px;font-size:12.5px;color:#202123;background:#fff;appearance:none;-webkit-appearance:none;font-family:inherit;' +
+    "background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23888%27 stroke-width=%273%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center;";
+  ldParamRows.forEach(function(row) {
+    var r = document.createElement('div');
+    r.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-left:120px;';
+    var paramHtml = '<select onchange="ldOnParamChange(' + row.id + ',this.value)" style="' + selStyle + '">';
+    paramHtml += '<option value="">Select Param</option>';
+    ssCustomVars.forEach(function(cv) {
+      paramHtml += '<option value="' + cv.key + '"' + (row.paramKey === cv.key ? ' selected' : '') + '>' + cv.label + '</option>';
+    });
+    paramHtml += '</select>';
+    var valHtml = '<select onchange="ldOnValueChange(' + row.id + ',this.value)" style="' + selStyle + '">';
+    valHtml += '<option value="">Select value</option>';
+    fields.forEach(function(f) {
+      valHtml += '<option value="' + f.key + '"' + (row.valueKey === f.key ? ' selected' : '') + '>' + f.label + '</option>';
+    });
+    valHtml += '</select>';
+    var actHtml = '<div style="display:flex;align-items:center;gap:5px;width:56px;flex-shrink:0;">';
+    actHtml += '<button onclick="ldAddUrlParam()" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:#616E88;padding:0;">+</button>';
+    actHtml += '<button onclick="ldRemoveParam(' + row.id + ')" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#8C91AB;padding:0;">&#10005;</button>';
+    actHtml += '</div>';
+    r.innerHTML = paramHtml + valHtml + actHtml;
+    container.appendChild(r);
+  });
 }
 function closeSendSurveyModal() {
   document.getElementById('ld-send-survey-modal').style.display = 'none';
@@ -12521,6 +12586,32 @@ function closeMarketplaceZohoPage() {
       <div style="display:flex;align-items:center;gap:16px;">
         <label style="width:140px;font-size:13px;color:#616E88;text-align:right;">Text To Display (Optional)</label>
         <input id="ld-send-survey-text" style="flex:1;height:34px;border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;">
+      </div>
+      <div style="border-top:1px solid #EDF0F4;padding-top:14px;">
+        <div id="ld-adv-toggle" onclick="ldToggleAdvancedSettings()" style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#5464F2;user-select:none;">
+          <svg id="ld-adv-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .15s;"><polyline points="9 6 15 12 9 18"/></svg>
+          Advanced Settings
+        </div>
+        <div id="ld-adv-body" style="display:none;margin-top:14px;padding:16px;background:#FAFAFC;border-radius:6px;border:1px solid #EDF0F4;">
+          <!-- Choose Collector -->
+          <div style="display:flex;align-items:center;margin-bottom:16px;">
+            <label style="width:120px;font-size:13px;color:#616E88;flex-shrink:0;">Choose Collector</label>
+            <select id="ld-collector-select" style="flex:1;height:34px;padding:0 10px;border:1px solid #C0C8E2;border-radius:6px;font-size:13px;color:#202123;background:#fff;">
+              <option value="rLmnwZ">All Respondents</option>
+              <option value="mOjriU">Age 15–30</option>
+              <option value="pQkstX">Age 31–50</option>
+            </select>
+          </div>
+          <!-- Url Parameter -->
+          <div style="display:flex;align-items:flex-start;margin-bottom:8px;">
+            <label style="width:120px;font-size:13px;color:#616E88;flex-shrink:0;padding-top:8px;">Url Parameter</label>
+            <button onclick="ldAddUrlParam()" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 14px;border:1px solid #D5D8E9;border-radius:6px;font-size:13px;cursor:pointer;background:linear-gradient(#FFFFFF,#F1F0F7);font-family:inherit;color:#313949;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add parameter
+            </button>
+          </div>
+          <div id="ld-param-rows"></div>
+        </div>
       </div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid #EDF0F4;">
