@@ -13250,12 +13250,7 @@ function closeMarketplaceZohoPage() {
         <tbody id="wf-sl-tbody"></tbody>
       </table>
     </div>
-    <label style="display:flex;align-items:center;gap:10px;background:#FAFAFC;border-top:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;padding:14px 28px;font-size:13px;color:#313949;margin-top:18px;cursor:pointer;">
-      <input type="checkbox" style="width:15px;height:15px;accent-color:#5464F2;">
-      Skip this respondent if they were already sent this survey in the last 30 days.
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-    </label>
-    <div style="display:flex;justify-content:flex-end;gap:10px;padding:20px 28px;">
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding:20px 28px;margin-top:18px;border-top:1px solid #EDF0F4;">
       <button onclick="closeWfSurveyListModal()" style="height:34px;padding:0 20px;border:1px solid #C0C8E2;border-radius:6px;background:#fff;color:#313949;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
       <button id="wf-sl-associate-btn" onclick="wfAssociateSelectedSurvey()" style="height:34px;padding:0 22px;border:none;border-radius:6px;background:#A02059;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Associate</button>
     </div>
@@ -13275,13 +13270,13 @@ function closeMarketplaceZohoPage() {
         <input id="wf-sn-name" style="flex:1;height:34px;border:1.5px solid #F06292;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;">
       </div>
 
-      <div style="display:flex;align-items:center;gap:10px;">
-        <input id="wf-sn-mass" type="checkbox" style="width:15px;height:15px;accent-color:#5464F2;flex-shrink:0;">
-        <label for="wf-sn-mass" style="font-size:13px;color:#313949;">Skip this respondent if they were already sent this survey in the last 30 days</label>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="width:120px;font-size:13px;color:#616E88;">To</label>
+        <input id="wf-sn-to" value="respondent@example.com" style="flex:1;height:34px;border:1px solid #C0C8E2;border-radius:6px;padding:0 10px;font-size:13px;color:#616E88;background:#FAFAFC;">
       </div>
 
       <div style="display:flex;align-items:center;gap:16px;">
-        <label style="width:120px;font-size:13px;color:#616E88;">Select Survey</label>
+        <label style="width:120px;font-size:13px;color:#616E88;">Select Template</label>
         <select id="wf-sn-survey-select" style="flex:1;height:34px;border:1.5px solid #F06292;border-radius:6px;padding:0 10px;font-size:13px;color:#202123;background:#fff;">
           <option value="Customer Satisfaction Survey Q1 2025">Customer Satisfaction Survey Q1 2025</option>
           <option value="Employee NPS — Q1 2025">Employee NPS — Q1 2025</option>
