@@ -12095,6 +12095,7 @@ var dealSurveysData = [
   { id:'sv3', name:'Relationship NPS', trigger:'Post-delivery (time-based)', wf:'WF-4',
     sent:'—', responded:'', status:'pending', norm:null, metrics:[], verbatim:'', questions:[] }
 ];
+var dealSurveyMeta = { teamAvgCsat:3.8, lastAgo:'2h ago', speed:'4 min', newResp:true, newRespText:'Proposal Fit Score came back 58% (Weak)' };
 var dealSurveyExpanded = {};
 function dsBand(n){ if(n==null) return {c:'#8C91AB',l:'—'}; if(n<=0.4) return {c:'#C8324A',l:'At Risk'}; if(n<=0.6) return {c:'#DB842F',l:'Weak'}; if(n<0.75) return {c:'#B8791A',l:'Neutral'}; return {c:'#1F8A54',l:'Positive'}; }
 function renderDealSurveys(){
@@ -12103,9 +12104,56 @@ function renderDealSurveys(){
   var pending = dealSurveysData.filter(function(s){return s.status==='pending';});
   document.getElementById('dd-survey-subtitle').textContent = dealSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
 
+  // ===== FLASH CARDS (hooky glance) — approved set: 1,2,7,9,10,11,12,13,14,15 =====
+  var html = '';
+  // gather signals across responded surveys
+  var overallNorm = responded.length ? Math.min.apply(null, responded.map(function(s){return s.norm;})) : null;
+  var npsVal = null, csatVal = null;
+  responded.forEach(function(s){ s.metrics.forEach(function(m){
+    if(m.label==='NPS') npsVal = parseInt(m.value,10);
+    if(m.label==='CSAT') csatVal = parseFloat(m.value);
+  }); });
+  var allQ = []; responded.forEach(function(s){ s.questions.forEach(function(q){ allQ.push({q:q.q,r:q.val/q.out,disp:q.val+' / '+q.out}); }); });
+  allQ.sort(function(a,b){return a.r-b.r;});
+  var topNeg = allQ[0], topPos = allQ[allQ.length-1];
+
+  var ob = (overallNorm==null)?{l:'—',c:'#8C91AB',e:'⚪'}:(overallNorm<=0.4?{l:'At Risk',c:'#C8324A',e:'🔴'}:(overallNorm<=0.65?{l:'Watch',c:'#DB842F',e:'🟠'}:{l:'Healthy',c:'#1F8A54',e:'🟢'}));
+  var npsC = (npsVal==null)?null:(npsVal<=6?{l:'Detractor',c:'#C8324A'}:(npsVal<=8?{l:'Passive',c:'#B8791A'}:{l:'Promoter',c:'#1F8A54'}));
+  var ref = (npsVal==null)?null:(npsVal>=9?{l:'Very likely 👍',c:'#1F8A54'}:(npsVal>=7?{l:'Likely 👍',c:'#B8791A'}:{l:'Unlikely 👎',c:'#C8324A'}));
+
+  // (11) pulsing new-response alert
+  if(dealSurveyMeta.newResp){
+    html += '<div class="cv-alert" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#FBEBEE;border:1px solid #F3C6CF;border-radius:10px;margin-bottom:12px;">'+
+      '<span class="cv-live" style="background:#C8324A;"></span>'+
+      '<div style="flex:1;font-size:12.5px;color:#8A2233;"><b>New response · '+dealSurveyMeta.lastAgo+'</b> — '+dealSurveyMeta.newRespText+'. Notified: Jay Suriya.</div>'+
+      '<span style="font-size:11px;font-weight:700;color:#fff;background:#C8324A;border-radius:5px;padding:3px 8px;">REVIEW</span></div>';
+  }
+
+  // flash-card grid
+  var cards = [];
+  // (1) overall sentiment badge
+  cards.push('<div class="cv-fcard" style="border-top:3px solid '+ob.c+';"><div class="fl">'+ob.e+' Sentiment</div><div class="fv" style="color:'+ob.c+';">'+ob.l+'</div><div class="fs">worst-active across '+responded.length+' surveys</div></div>');
+  // (2) detractor/promoter tag
+  if(npsC) cards.push('<div class="cv-fcard" style="border-top:3px solid '+npsC.c+';"><div class="fl">NPS class</div><div class="fv" style="color:'+npsC.c+';">'+npsC.l+'</div><div class="fs">from NPS '+npsVal+' / 10</div></div>');
+  // (14) referral willingness
+  if(ref) cards.push('<div class="cv-fcard" style="border-top:3px solid '+ref.c+';"><div class="fl">Referral</div><div class="fv" style="font-size:16px;color:'+ref.c+';">'+ref.l+'</div><div class="fs">would recommend us</div></div>');
+  // (13) benchmark
+  if(csatVal!=null){ var up=csatVal>=dealSurveyMeta.teamAvgCsat; cards.push('<div class="cv-fcard" style="border-top:3px solid '+(up?'#1F8A54':'#C8324A')+';"><div class="fl">CSAT vs your avg</div><div class="fv" style="color:'+(up?'#1F8A54':'#C8324A')+';">'+csatVal.toFixed(1)+' '+(up?'▲':'▼')+'</div><div class="fs">team avg '+dealSurveyMeta.teamAvgCsat.toFixed(1)+' / 5</div></div>'); }
+  // (9) coverage
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+dealSurveysData.length+'</div><div class="fs">'+pending.length+' pending response</div></div>');
+  // (10) recency + live dot
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.lastAgo+'</div><div class="fs">live &amp; fresh</div></div>');
+  // (12) response speed
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">⏱ Reply speed</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.speed+'</div><div class="fs">engaged respondent</div></div>');
+  // (15) touchpoints
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+dealSurveysData.length+'</div><div class="fs">surveys over this deal</div></div>');
+  // (7) top positive / top negative
+  if(topPos) cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">✓ Loved</div><div class="fv" style="font-size:13px;color:#1F8A54;">'+topPos.disp+'</div><div class="fs">'+topPos.q+'</div></div>');
+  if(topNeg) cards.push('<div class="cv-fcard" style="border-top:3px solid #C8324A;"><div class="fl">✗ Weakest</div><div class="fv" style="font-size:13px;color:#C8324A;">'+topNeg.disp+'</div><div class="fs">'+topNeg.q+'</div></div>');
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">'+cards.join('')+'</div>';
+
   // ---- actionable insight strip (latest responded survey drives it; no trend) ----
   var latest = responded[responded.length-1];
-  var html = '';
   if(latest){
     var weak = latest.questions.slice().sort(function(a,b){return (a.val/a.out)-(b.val/b.out);})[0];
     var lb = dsBand(latest.norm);
@@ -13870,6 +13918,16 @@ function closeMarketplaceZohoPage() {
 .an-kpi{flex:1;min-width:120px;border:1px solid #EDEEF3;border-radius:8px;padding:11px 13px;}
 .an-kpi-v{font-size:22px;font-weight:800;color:#1F2733;line-height:1;}
 .an-kpi-l{font-size:11px;color:#8C91AB;margin-top:5px;text-transform:uppercase;letter-spacing:.03em;}
+/* Deal survey flash cards */
+@keyframes cvPulse{0%{box-shadow:0 0 0 0 rgba(200,50,74,.45);}70%{box-shadow:0 0 0 10px rgba(200,50,74,0);}100%{box-shadow:0 0 0 0 rgba(200,50,74,0);}}
+@keyframes cvDot{0%{box-shadow:0 0 0 0 rgba(31,138,84,.5);}70%{box-shadow:0 0 0 7px rgba(31,138,84,0);}100%{box-shadow:0 0 0 0 rgba(31,138,84,0);}}
+@keyframes cvRise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.cv-fcard{flex:1;min-width:138px;border:1px solid #EDF0F4;border-radius:11px;padding:12px 14px;background:#fff;animation:cvRise .35s ease both;}
+.cv-fcard .fv{font-size:19px;font-weight:800;line-height:1.05;margin-top:3px;}
+.cv-fcard .fl{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8C91AB;display:flex;align-items:center;gap:5px;}
+.cv-fcard .fs{font-size:10.5px;color:#97A0B0;margin-top:3px;}
+.cv-alert{animation:cvPulse 2s infinite;}
+.cv-live{width:9px;height:9px;border-radius:50%;background:#1F8A54;animation:cvDot 1.8s infinite;display:inline-block;}
 </style>
 
 <script>
