@@ -12131,12 +12131,8 @@ function renderDealSurveys(){
 
   // flash-card grid
   var cards = [];
-  // (1) overall sentiment badge
-  cards.push('<div class="cv-fcard" style="border-top:3px solid '+ob.c+';"><div class="fl">'+ob.e+' Sentiment</div><div class="fv" style="color:'+ob.c+';">'+ob.l+'</div><div class="fs">worst-active across '+responded.length+' surveys</div></div>');
   // (2) detractor/promoter tag
   if(npsC) cards.push('<div class="cv-fcard" style="border-top:3px solid '+npsC.c+';"><div class="fl">NPS class</div><div class="fv" style="color:'+npsC.c+';">'+npsC.l+'</div><div class="fs">from NPS '+npsVal+' / 10</div></div>');
-  // (14) referral willingness
-  if(ref) cards.push('<div class="cv-fcard" style="border-top:3px solid '+ref.c+';"><div class="fl">Referral</div><div class="fv" style="font-size:16px;color:'+ref.c+';">'+ref.l+'</div><div class="fs">would recommend us</div></div>');
   // (13) benchmark
   if(csatVal!=null){ var up=csatVal>=dealSurveyMeta.teamAvgCsat; cards.push('<div class="cv-fcard" style="border-top:3px solid '+(up?'#1F8A54':'#C8324A')+';"><div class="fl">CSAT vs your avg</div><div class="fv" style="color:'+(up?'#1F8A54':'#C8324A')+';">'+csatVal.toFixed(1)+' '+(up?'▲':'▼')+'</div><div class="fs">team avg '+dealSurveyMeta.teamAvgCsat.toFixed(1)+' / 5</div></div>'); }
   // (9) coverage
@@ -12147,56 +12143,8 @@ function renderDealSurveys(){
   cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">⏱ Reply speed</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.speed+'</div><div class="fs">engaged respondent</div></div>');
   // (15) touchpoints
   cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+dealSurveysData.length+'</div><div class="fs">surveys over this deal</div></div>');
-  // (7) top positive / top negative
-  if(topPos) cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">✓ Loved</div><div class="fv" style="font-size:13px;color:#1F8A54;">'+topPos.disp+'</div><div class="fs">'+topPos.q+'</div></div>');
-  if(topNeg) cards.push('<div class="cv-fcard" style="border-top:3px solid #C8324A;"><div class="fl">✗ Weakest</div><div class="fv" style="font-size:13px;color:#C8324A;">'+topNeg.disp+'</div><div class="fs">'+topNeg.q+'</div></div>');
-  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">'+cards.join('')+'</div>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
 
-  // ---- actionable insight strip (latest responded survey drives it; no trend) ----
-  var latest = responded[responded.length-1];
-  if(latest){
-    var weak = latest.questions.slice().sort(function(a,b){return (a.val/a.out)-(b.val/b.out);})[0];
-    var lb = dsBand(latest.norm);
-    html += '<div style="padding:13px 16px;background:#FAFAFC;border:1px solid #EDF0F4;border-radius:10px;margin-bottom:14px;">'+
-      '<div style="font-size:12px;color:#616E88;margin-bottom:6px;"><b style="color:#202123;">Latest:</b> '+latest.name+' — <b style="color:'+lb.c+';">'+(latest.metrics[0]?latest.metrics[0].value:'')+' · '+lb.l+'</b></div>'+
-      '<div style="font-size:12px;color:#616E88;margin-bottom:6px;">&#9888;&#65039; <b style="color:#202123;">Weakest answer:</b> "'+weak.q+'" &nbsp;<b style="color:#C8324A;">'+weak.val+' / '+weak.out+'</b></div>'+
-      (latest.verbatim?'<div style="font-size:12px;color:#313949;font-style:italic;margin-bottom:8px;">&#8220;'+latest.verbatim+'&#8221;</div>':'')+
-      '<div style="display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#3441C8;background:#F0F1FF;border:1px solid #D2D7FF;border-radius:7px;padding:7px 12px;">&#9889; <b>Next step:</b> Counter on price and offer a priority-delivery slot.</div>'+
-      '</div>';
-  }
-
-  // ---- survey timeline (each expandable to per-question) ----
-  html += '<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8C91AB;margin-bottom:8px;">Surveys sent to this deal</div>';
-  dealSurveysData.forEach(function(s){
-    var b = dsBand(s.norm); var open = !!dealSurveyExpanded[s.id];
-    var chips = s.metrics.map(function(m){ var mb=dsBand(m.norm); return '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px;background:'+mb.c+'14;color:'+mb.c+';">'+m.label+' '+m.value+'</span>'; }).join(' ');
-    var canExpand = s.status==='responded';
-    html += '<div style="border:1px solid #EDF0F4;border-radius:9px;margin-bottom:8px;overflow:hidden;">'+
-      '<div '+(canExpand?'onclick="dsToggle(\''+s.id+'\')" style="cursor:pointer;"':'style="opacity:.7;"')+' style="display:flex;align-items:center;gap:10px;padding:11px 14px;'+(canExpand?'cursor:pointer;':'')+'">'+
-        (canExpand?'<span style="color:#8C91AB;transform:rotate('+(open?'90':'0')+'deg);transition:.15s;">&#9656;</span>':'<span style="width:9px;"></span>')+
-        '<div style="min-width:0;"><div style="font-size:13px;font-weight:650;color:#202123;">'+s.name+'</div>'+
-          '<div style="font-size:11px;color:#8C91AB;">'+s.trigger+' · '+s.wf+' · sent '+s.sent+(s.responded?' · responded '+s.responded:'')+'</div></div>'+
-        '<span style="flex:1;"></span>'+
-        (s.status==='responded'? '<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;">'+chips+'</div>'
-          : '<span style="font-size:11.5px;color:#8C91AB;">Yet to respond</span>')+
-      '</div>';
-    if(open){
-      var rows = s.questions.map(function(q){ var r=q.val/q.out; var qb=dsBand(r);
-        return '<tr style="border-top:1px solid #F2F3F7;">'+
-          '<td style="padding:8px 12px;color:#313949;font-size:12px;">'+q.q+'</td>'+
-          '<td style="padding:8px 12px;width:120px;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:6px;border-radius:100px;background:#EDF0F4;overflow:hidden;"><div style="width:'+(r*100)+'%;height:100%;background:'+qb.c+';"></div></div><b style="font-size:12px;color:'+qb.c+';white-space:nowrap;">'+q.val+' / '+q.out+'</b></div></td>'+
-          '</tr>'; }).join('');
-      html += '<div style="background:#FCFCFE;border-top:1px solid #EDF0F4;padding:4px 0;">'+
-        '<table style="width:100%;border-collapse:collapse;"><thead><tr>'+
-          '<th style="text-align:left;padding:7px 12px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8C91AB;">Question</th>'+
-          '<th style="text-align:left;padding:7px 12px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8C91AB;">Answer / Score</th>'+
-        '</tr></thead><tbody>'+rows+'</tbody></table>'+
-        (s.verbatim?'<div style="padding:8px 12px 12px;font-size:11.5px;color:#616E88;font-style:italic;">Open text: &#8220;'+s.verbatim+'&#8221;</div>':'')+
-        '</div>';
-    }
-    html += '</div>';
-  });
-  html += '<div style="font-size:11.5px;color:#97A0B0;margin-top:10px;">Each survey shows only the metrics it collected. Expand a survey to see which question is dragging the score — that\'s what to act on.</div>';
   body.innerHTML = html;
 }
 function dsToggle(id){ dealSurveyExpanded[id] = !dealSurveyExpanded[id]; renderDealSurveys(); }
