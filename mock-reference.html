@@ -12108,10 +12108,11 @@ function renderDealSurveys(){
   var html = '';
   // gather signals across responded surveys
   var overallNorm = responded.length ? Math.min.apply(null, responded.map(function(s){return s.norm;})) : null;
-  var npsVal = null, csatVal = null;
+  var npsVal = null, csatVal = null, ratingVal = null;
   responded.forEach(function(s){ s.metrics.forEach(function(m){
     if(m.label==='NPS') npsVal = parseInt(m.value,10);
     if(m.label==='CSAT') csatVal = parseFloat(m.value);
+    if(m.label==='Rating') ratingVal = parseFloat(m.value);
   }); });
   var allQ = []; responded.forEach(function(s){ s.questions.forEach(function(q){ allQ.push({q:q.q,r:q.val/q.out,disp:q.val+' / '+q.out}); }); });
   allQ.sort(function(a,b){return a.r-b.r;});
@@ -12131,10 +12132,12 @@ function renderDealSurveys(){
 
   // flash-card grid
   var cards = [];
-  // (2) detractor/promoter tag
-  if(npsC) cards.push('<div class="cv-fcard" style="border-top:3px solid '+npsC.c+';"><div class="fl">NPS class</div><div class="fv" style="color:'+npsC.c+';">'+npsC.l+'</div><div class="fs">from NPS '+npsVal+' / 10</div></div>');
-  // (13) benchmark
-  if(csatVal!=null){ var up=csatVal>=dealSurveyMeta.teamAvgCsat; cards.push('<div class="cv-fcard" style="border-top:3px solid '+(up?'#1F8A54':'#C8324A')+';"><div class="fl">CSAT vs your avg</div><div class="fv" style="color:'+(up?'#1F8A54':'#C8324A')+';">'+csatVal.toFixed(1)+' '+(up?'▲':'▼')+'</div><div class="fs">team avg '+dealSurveyMeta.teamAvgCsat.toFixed(1)+' / 5</div></div>'); }
+  // NPS (raw value)
+  if(npsVal!=null){ var nb=dsBand(npsVal/10); cards.push('<div class="cv-fcard" style="border-top:3px solid '+nb.c+';"><div class="fl">NPS</div><div class="fv" style="color:'+nb.c+';">'+npsVal+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 10</span></div><div class="fs">'+nb.l+'</div></div>'); }
+  // CSAT (raw value)
+  if(csatVal!=null){ var cb=dsBand(csatVal/5); cards.push('<div class="cv-fcard" style="border-top:3px solid '+cb.c+';"><div class="fl">CSAT</div><div class="fv" style="color:'+cb.c+';">'+csatVal.toFixed(1)+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5</span></div><div class="fs">'+cb.l+'</div></div>'); }
+  // Avg Rating (raw value)
+  if(ratingVal!=null){ var rb=dsBand(ratingVal/5); cards.push('<div class="cv-fcard" style="border-top:3px solid '+rb.c+';"><div class="fl">Avg Rating</div><div class="fv" style="color:'+rb.c+';">'+ratingVal.toFixed(1)+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5 ★</span></div><div class="fs">'+rb.l+'</div></div>'); }
   // (9) coverage
   cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+dealSurveysData.length+'</div><div class="fs">'+pending.length+' pending response</div></div>');
   // (10) recency + live dot
