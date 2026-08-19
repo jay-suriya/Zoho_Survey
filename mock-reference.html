@@ -12073,29 +12073,19 @@ function closeDealDetailPage() {
 // ── Deal · multi-survey signals (timeline + per-question drill-down) ──────────
 // Each survey sent to the deal carries only the metrics it collected (show-if-present),
 // plus a per-question breakdown — the actionable layer (which question is weak).
+// Chronological order matters: for each metric, the LAST survey that measured it = latest.
 var dealSurveysData = [
   { id:'sv1', name:'Test-Drive Experience', trigger:'Field: Test Drive logged', wf:'WF-1',
-    sent:'13 Aug', responded:'13 Aug', status:'responded', norm:0.80,
-    metrics:[{label:'Rating',value:'4.0 / 5',norm:0.80},{label:'CSAT',value:'4.2 / 5',norm:0.84},{label:'NPS',value:'8 / 10',norm:0.80}],
-    verbatim:'Loved the drive — smooth and responsive.',
-    questions:[
-      {q:'Overall, how would you rate your test-drive experience?', val:8, out:10},
-      {q:'How knowledgeable and helpful was your sales consultant?', val:4, out:5},
-      {q:"How satisfied were you with the car's performance & comfort?", val:4, out:5}
-    ]},
+    sent:'13 Aug', responded:'13 Aug', status:'responded', norm:0.90,
+    metrics:[{label:'NPS',value:'9 / 10',norm:0.90},{label:'CSAT',value:'4.6 / 5',norm:0.92},{label:'Rating',value:'4.5 / 5',norm:0.90}] },
   { id:'sv2', name:'Proposal Fit Score', trigger:'Stage → Value Proposition', wf:'WF-2',
     sent:'18 Aug', responded:'18 Aug', status:'responded', norm:0.58,
-    metrics:[{label:'Score',value:'58%',norm:0.58}],
-    verbatim:'Price is higher than the competitor and the delivery timeline you quoted is too long for us.',
-    questions:[
-      {q:'Pricing vs. your budget fit', val:2, out:5},
-      {q:'Feature / variant match', val:3, out:5},
-      {q:'Is the delivery timeline acceptable?', val:2, out:5}
-    ]},
-  { id:'sv3', name:'Relationship NPS', trigger:'Post-delivery (time-based)', wf:'WF-4',
-    sent:'—', responded:'', status:'pending', norm:null, metrics:[], verbatim:'', questions:[] }
+    metrics:[{label:'Score',value:'58%',norm:0.58}] },
+  { id:'sv3', name:'Post-Delivery CSAT', trigger:'Stage → Closed Won (Delivered)', wf:'WF-3',
+    sent:'22 Aug', responded:'22 Aug', status:'responded', norm:0.62,
+    metrics:[{label:'CSAT',value:'3.1 / 5',norm:0.62},{label:'Rating',value:'3.0 / 5',norm:0.60}] }
 ];
-var dealSurveyMeta = { teamAvgCsat:3.8, lastAgo:'2h ago', speed:'4 min', newResp:true, newRespText:'Proposal Fit Score came back 58% (Weak)' };
+var dealSurveyMeta = { lastAgo:'2h ago', speed:'4 min' };
 var dealSurveyExpanded = {};
 function dsBand(n){ if(n==null) return {c:'#8C91AB',l:'—'}; if(n<=0.4) return {c:'#C8324A',l:'At Risk'}; if(n<=0.6) return {c:'#DB842F',l:'Weak'}; if(n<0.75) return {c:'#B8791A',l:'Neutral'}; return {c:'#1F8A54',l:'Positive'}; }
 function renderDealSurveys(){
@@ -12104,47 +12094,32 @@ function renderDealSurveys(){
   var pending = dealSurveysData.filter(function(s){return s.status==='pending';});
   document.getElementById('dd-survey-subtitle').textContent = dealSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
 
-  // ===== FLASH CARDS (hooky glance) — approved set: 1,2,7,9,10,11,12,13,14,15 =====
+  // ===== FLASH CARDS — latest-per-metric across all surveys on this deal =====
   var html = '';
-  // gather signals across responded surveys
-  var overallNorm = responded.length ? Math.min.apply(null, responded.map(function(s){return s.norm;})) : null;
-  var npsVal = null, csatVal = null, ratingVal = null;
+  // Aggregate each metric across responded surveys (chronological): last one wins = latest.
+  var agg = {}; // label -> {value, norm, count}
   responded.forEach(function(s){ s.metrics.forEach(function(m){
-    if(m.label==='NPS') npsVal = parseInt(m.value,10);
-    if(m.label==='CSAT') csatVal = parseFloat(m.value);
-    if(m.label==='Rating') ratingVal = parseFloat(m.value);
+    var e = agg[m.label] || {count:0}; e.count++; e.value=m.value; e.norm=m.norm; agg[m.label]=e;
   }); });
-  var allQ = []; responded.forEach(function(s){ s.questions.forEach(function(q){ allQ.push({q:q.q,r:q.val/q.out,disp:q.val+' / '+q.out}); }); });
-  allQ.sort(function(a,b){return a.r-b.r;});
-  var topNeg = allQ[0], topPos = allQ[allQ.length-1];
-
-  var ob = (overallNorm==null)?{l:'—',c:'#8C91AB',e:'⚪'}:(overallNorm<=0.4?{l:'At Risk',c:'#C8324A',e:'🔴'}:(overallNorm<=0.65?{l:'Watch',c:'#DB842F',e:'🟠'}:{l:'Healthy',c:'#1F8A54',e:'🟢'}));
-  var npsC = (npsVal==null)?null:(npsVal<=6?{l:'Detractor',c:'#C8324A'}:(npsVal<=8?{l:'Passive',c:'#B8791A'}:{l:'Promoter',c:'#1F8A54'}));
-  var ref = (npsVal==null)?null:(npsVal>=9?{l:'Very likely 👍',c:'#1F8A54'}:(npsVal>=7?{l:'Likely 👍',c:'#B8791A'}:{l:'Unlikely 👎',c:'#C8324A'}));
-
-  // (11) pulsing new-response alert
-  if(dealSurveyMeta.newResp){
-    html += '<div class="cv-alert" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#FBEBEE;border:1px solid #F3C6CF;border-radius:10px;margin-bottom:12px;">'+
-      '<span class="cv-live" style="background:#C8324A;"></span>'+
-      '<div style="flex:1;font-size:12.5px;color:#8A2233;"><b>New response · '+dealSurveyMeta.lastAgo+'</b> — '+dealSurveyMeta.newRespText+'. Notified: Jay Suriya.</div>'+
-      '<span style="font-size:11px;font-weight:700;color:#fff;background:#C8324A;border-radius:5px;padding:3px 8px;">REVIEW</span></div>';
+  function metricSub(e){ return e.count>1 ? 'latest · '+e.count+' surveys' : '1 survey'; }
+  function metricCard(key, title){
+    var e = agg[key]; if(!e) return; var b = dsBand(e.norm);
+    cards.push('<div class="cv-fcard" style="border-top:3px solid '+b.c+';"><div class="fl">'+title+'</div>'+
+      '<div class="fv" style="color:'+b.c+';">'+e.value+'</div><div class="fs">'+metricSub(e)+'</div></div>');
   }
 
-  // flash-card grid
   var cards = [];
-  // NPS (raw value)
-  if(npsVal!=null){ var nb=dsBand(npsVal/10); cards.push('<div class="cv-fcard" style="border-top:3px solid '+nb.c+';"><div class="fl">NPS</div><div class="fv" style="color:'+nb.c+';">'+npsVal+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 10</span></div><div class="fs">'+nb.l+'</div></div>'); }
-  // CSAT (raw value)
-  if(csatVal!=null){ var cb=dsBand(csatVal/5); cards.push('<div class="cv-fcard" style="border-top:3px solid '+cb.c+';"><div class="fl">CSAT</div><div class="fv" style="color:'+cb.c+';">'+csatVal.toFixed(1)+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5</span></div><div class="fs">'+cb.l+'</div></div>'); }
-  // Avg Rating (raw value)
-  if(ratingVal!=null){ var rb=dsBand(ratingVal/5); cards.push('<div class="cv-fcard" style="border-top:3px solid '+rb.c+';"><div class="fl">Avg Rating</div><div class="fv" style="color:'+rb.c+';">'+ratingVal.toFixed(1)+'<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5 ★</span></div><div class="fs">'+rb.l+'</div></div>'); }
-  // (9) coverage
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+dealSurveysData.length+'</div><div class="fs">'+pending.length+' pending response</div></div>');
-  // (10) recency + live dot
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.lastAgo+'</div><div class="fs">live &amp; fresh</div></div>');
-  // (12) response speed
+  metricCard('NPS','NPS');
+  metricCard('CSAT','CSAT');
+  metricCard('Rating','Avg Rating');
+  metricCard('Score','Score');
+  // coverage
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+dealSurveysData.length+'</div><div class="fs">'+(pending.length? pending.length+' pending response':'all responded')+'</div></div>');
+  // recency + live dot
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.lastAgo+'</div><div class="fs">most recent of '+responded.length+'</div></div>');
+  // response speed
   cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">⏱ Reply speed</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.speed+'</div><div class="fs">engaged respondent</div></div>');
-  // (15) touchpoints
+  // touchpoints
   cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+dealSurveysData.length+'</div><div class="fs">surveys over this deal</div></div>');
   html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
 
