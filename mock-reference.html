@@ -12059,11 +12059,34 @@ function renderDealSignalsTable() {
 }
 function openDealDetailPage(name) {
   renderDealSignalsTable();
+  cvResetDealPanel();
   document.getElementById('deal-detail-page').style.display = 'block';
   document.getElementById('deal-detail-page').scrollTop = 0;
 }
 function closeDealDetailPage() {
   document.getElementById('deal-detail-page').style.display = 'none';
+}
+// PR-5 / RV-8 — rep logs recovery → signal clears, deal drops off at-risk (loop close)
+function cvDealRecover() {
+  var badge = document.getElementById('dd-health-badge');
+  if (badge) { badge.style.background = '#E7F5EC'; badge.style.color = '#1F8A54'; badge.innerHTML = '&#9679; Recovered &#9650;'; }
+  var val = document.getElementById('dd-atrisk-value');
+  if (val) { val.innerHTML = '<span style="text-decoration:line-through;color:#C5C4D3;font-size:18px;">$6,300</span> &#8594; $0'; val.style.color = '#1F8A54'; }
+  var alert = document.getElementById('dd-alert-banner');
+  if (alert) { alert.style.background = '#E7F5EC'; alert.style.borderColor = '#BFE6CE'; alert.innerHTML = '<span style="font-size:15px;line-height:1;">&#9989;</span><div style="flex:1;font-size:12.5px;color:#1F6E45;line-height:1.45;"><b>Recovery logged.</b> This deal is cleared from the at-risk list — the manager\'s Revenue-at-Risk total drops by $6,300.</div>'; }
+  var btn = document.getElementById('dd-recover-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Recovery logged ✓'; btn.style.background = '#C5C4D3'; btn.style.cursor = 'default'; }
+  showToast('Recovery logged — deal removed from at-risk');
+}
+function cvResetDealPanel() {
+  var badge = document.getElementById('dd-health-badge');
+  if (badge) { badge.style.background = '#FBEBEE'; badge.style.color = '#C8324A'; badge.innerHTML = '&#9679; At Risk &#9660;'; }
+  var val = document.getElementById('dd-atrisk-value');
+  if (val) { val.innerHTML = '$6,300'; val.style.color = '#C8324A'; }
+  var alert = document.getElementById('dd-alert-banner');
+  if (alert) { alert.style.background = '#FBEBEE'; alert.style.borderColor = '#F3C6CF'; alert.innerHTML = '<span style="font-size:15px;line-height:1;">&#9888;&#65039;</span><div style="flex:1;font-size:12.5px;color:#8A2233;line-height:1.45;"><b>New response 2h ago · this deal needs attention.</b> Proposal-fit came back <b>58% (At Risk)</b> — sentiment dropped from the test-drive high. <span style="color:#B36A75;">Notified: Jay Suriya (owner).</span></div>'; }
+  var btn = document.getElementById('dd-recover-btn');
+  if (btn) { btn.disabled = false; btn.textContent = 'Log recovery & clear flag'; btn.style.background = 'linear-gradient(#11B670,#0F935B)'; btn.style.cursor = 'pointer'; }
 }
 
 function openLeadsListPage() {
@@ -13648,18 +13671,94 @@ function closeMarketplaceZohoPage() {
           <span id="dd-health-badge" style="font-size:12px;font-weight:700;padding:4px 11px;border-radius:100px;background:#FBEBEE;color:#C8324A;">● At Risk ▼</span>
           <span style="font-size:11.5px;color:#8C91AB;margin-left:auto;">3 touchpoints · updated 1d ago</span>
         </div>
+
+        <!-- PR-2: real-time negative-response alert -->
+        <div id="dd-alert-banner" style="display:flex;align-items:flex-start;gap:10px;margin:10px 0 4px;padding:11px 14px;background:#FBEBEE;border:1px solid #F3C6CF;border-radius:9px;">
+          <span style="font-size:15px;line-height:1;">&#9888;&#65039;</span>
+          <div style="flex:1;font-size:12.5px;color:#8A2233;line-height:1.45;">
+            <b>New response 2h ago · this deal needs attention.</b> Proposal-fit came back <b>58% (At Risk)</b> — sentiment dropped from the test-drive high.
+            <span style="color:#B36A75;">Notified: Jay Suriya (owner).</span>
+          </div>
+        </div>
+
         <div style="display:flex;align-items:center;gap:14px;margin:12px 0;padding:13px 16px;background:#FAFAFC;border:1px solid #EDF0F4;border-radius:10px;">
           <div style="width:120px;height:8px;border-radius:100px;background:linear-gradient(90deg,#C8324A,#B8791A,#1F8A54);position:relative;flex-shrink:0;"><span style="position:absolute;top:-4px;left:58%;width:4px;height:16px;border-radius:2px;background:#202123;"></span></div>
           <div style="font-size:22px;font-weight:800;color:#202123;">60<span style="font-size:12px;color:#8C91AB;font-weight:600;">/100</span></div>
           <div style="font-size:12px;color:#616E88;line-height:1.4;"><b style="color:#202123;">Composite 60 · "Watch"</b> — but the <b style="color:#202123;">worst-active</b> signal (Proposal-fit score 58%) sets the At-Risk flag. The test drive delighted them; the fit deep-dive did not.</div>
         </div>
+
+        <!-- PR-3: revenue-weighted — THIS deal's ₹ at risk + PR-7 trend -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;">
+          <div style="flex:1;min-width:190px;padding:14px 16px;background:#fff;border:1px solid #F3C6CF;border-left:3px solid #C8324A;border-radius:9px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8C91AB;margin-bottom:4px;">Revenue at Risk · this deal</div>
+            <div style="font-size:26px;font-weight:800;color:#C8324A;line-height:1;" id="dd-atrisk-value">$6,300</div>
+            <div style="font-size:11.5px;color:#8C91AB;margin-top:5px;">Deal Amount <b style="color:#616E88;">$15,000</b> × (1 − 0.58 sentiment)</div>
+          </div>
+          <div style="flex:1;min-width:190px;padding:14px 16px;background:#fff;border:1px solid #EDF0F4;border-radius:9px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8C91AB;margin-bottom:6px;">Sentiment trend</div>
+            <div style="display:flex;align-items:flex-end;gap:8px;">
+              <div style="display:flex;align-items:flex-end;gap:5px;height:34px;">
+                <div title="Test-Drive CSAT 84%" style="width:12px;height:29px;background:#1F8A54;border-radius:2px;"></div>
+                <div title="Offer rating 60%" style="width:12px;height:20px;background:#B8791A;border-radius:2px;"></div>
+                <div title="Proposal-fit 58%" style="width:12px;height:19px;background:#C8324A;border-radius:2px;"></div>
+              </div>
+              <div style="font-size:12.5px;color:#C8324A;font-weight:700;">84 → 58 &#9660;</div>
+            </div>
+            <div style="font-size:11.5px;color:#8C91AB;margin-top:5px;">Declining across 3 touchpoints</div>
+          </div>
+        </div>
+
+        <!-- RV-3 / RV-5: driving signal + the customer's own words -->
+        <div style="margin:12px 0;padding:13px 16px;background:#FAFAFC;border:1px solid #EDF0F4;border-radius:9px;">
+          <div style="font-size:12px;color:#616E88;margin-bottom:7px;"><b style="color:#202123;">Driving signal:</b> Proposal-fit <b style="color:#C8324A;">58% · At Risk</b> (worst-active)</div>
+          <div style="display:flex;gap:9px;align-items:flex-start;">
+            <span style="font-size:20px;color:#C5C4D3;line-height:.8;">&#8220;</span>
+            <div style="font-size:13px;color:#313949;font-style:italic;line-height:1.5;">Price is higher than the competitor's offer, and the delivery timeline you quoted is too long for us.</div>
+          </div>
+          <div style="font-size:11px;color:#8C91AB;margin-top:6px;">— Ramesh Kumar · open-text answer, "anything holding you back?"</div>
+        </div>
+
         <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">
           <span class="dd-chip on">CSAT <b>✓</b></span>
           <span class="dd-chip on">Score <b>✓</b></span>
           <span class="dd-chip on">Rating <b>✓</b></span>
           <span class="dd-chip off">NPS —</span>
         </div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8C91AB;margin-bottom:8px;">Workflow / stage touchpoints — each shows whatever it measured</div>
+
+        <!-- PR-4 / R6: stakeholder coverage -->
+        <div style="margin:12px 0;padding:13px 16px;background:#FAFAFC;border:1px solid #EDF0F4;border-radius:9px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+            <span style="font-size:12px;font-weight:700;color:#202123;">Stakeholder coverage</span>
+            <span style="font-size:11.5px;color:#C8324A;font-weight:700;">2 of 4 responded</span>
+            <span style="flex:1;height:6px;background:#EDF0F4;border-radius:100px;overflow:hidden;max-width:160px;"><span style="display:block;width:50%;height:100%;background:#B8791A;"></span></span>
+            <span style="font-size:11px;color:#8C91AB;">2 silent = multi-threading risk</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:11.5px;padding:3px 9px;border-radius:100px;background:#E7F5EC;color:#1F8A54;font-weight:600;">&#10003; Ramesh Kumar · Decision Maker</span>
+            <span style="font-size:11.5px;padding:3px 9px;border-radius:100px;background:#E7F5EC;color:#1F8A54;font-weight:600;">&#10003; Anita Rao · Influencer</span>
+            <span style="font-size:11.5px;padding:3px 9px;border-radius:100px;background:#F4F4F6;color:#8C91AB;font-weight:600;">— Finance Head · silent</span>
+            <span style="font-size:11.5px;padding:3px 9px;border-radius:100px;background:#F4F4F6;color:#8C91AB;font-weight:600;">— Procurement · silent</span>
+          </div>
+        </div>
+
+        <!-- PR-5 / R2 / R3: Next Best Action + auto-created task + recovery (RV-8) -->
+        <div id="dd-nba-block" style="margin:12px 0;padding:14px 16px;background:#F0F1FF;border:1px solid #D2D7FF;border-radius:9px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:14px;">&#9889;</span>
+            <span style="font-size:12.5px;font-weight:750;color:#3441C8;">Next Best Action</span>
+          </div>
+          <div style="font-size:13px;color:#313949;line-height:1.5;margin-bottom:10px;">Counter on price or offer a <b>priority-delivery slot</b>, then call within 24h. The objection is concrete (price + delivery) — address both directly.</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#616E88;margin-bottom:12px;padding:9px 12px;background:#fff;border:1px solid #E1E4F7;border-radius:7px;">
+            <span style="font-size:13px;">&#128203;</span>
+            <span>Task auto-created: <b style="color:#202123;">"Recovery call — Ramesh Kumar"</b> · assigned to Jay Suriya · due in 24h</span>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button id="dd-recover-btn" onclick="cvDealRecover()" style="font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:6px;border:none;background:linear-gradient(#11B670,#0F935B);color:#fff;cursor:pointer;">Log recovery &amp; clear flag</button>
+            <button onclick="showToast('Opening recovery call log…')" style="font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:6px;border:1px solid #D5D8E9;background:#fff;color:#313949;cursor:pointer;">Call Ramesh</button>
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8C91AB;margin-bottom:8px;">Workflow / stage touchpoints — auto-sent by workflow on CRM events (no manual sending)</div>
         <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
           <thead><tr style="border-bottom:1px solid #EDF0F4;">
             <th style="text-align:left;padding:8px 10px;color:#616E88;font-weight:600;">Trigger</th>

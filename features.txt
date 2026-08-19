@@ -1,0 +1,117 @@
+Zoho CRM ⇌ Zoho Survey Integration — Pitch Feature Menu
+========================================================
+
+Every item passes the "breaks without one side" test — noted why it is
+impossible standalone, since that is the core sales argument. The unique
+asset is the JOIN: sentiment (Survey) attached to a revenue/process object (CRM).
+
+
+Exec / Manager / Admin — decisions & trends
+-------------------------------------------
+
+#   | Capability                        | The pitch (one line)                                                                   | Impossible alone because…
+----|-----------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------
+E1  | Revenue at Risk                   | "$2.3M of pipeline is sitting with detractors, in 4 accounts."                          | Survey doesn't know deal $; CRM doesn't know sentiment
+E2  | Revenue-weighted NPS/CSAT         | One board-level score weighted by dollars, not headcount — a $500K detractor           | Survey weights every respondent equally; it has no
+    |                                   | outweighs a $5K one                                                                    | account value
+E3  | Sentiment by pipeline stage       | "CSAT craters at Negotiation — that's our leaky stage."                                 | Only CRM knows the stage; only Survey knows the score
+E4  | Win/loss <-> sentiment correlation| "Deals with CSAT < 3 close-lost 4x more" — proves the survey program predicts revenue   | Requires deal outcome (CRM) joined to sentiment (Survey)
+E5  | Rep / team sentiment leaderboard  | Coach reps on customer voice, not just quota                                            | CRM has the owner; Survey has the signal
+E6  | Territory / product / segment     | Slice sentiment by any CRM dimension Survey can't see                                   | Survey has no territory/product/tier fields
+    | heatmap                           |                                                                                        |
+E7  | "Blind revenue" coverage          | "$900K of accounts haven't responded — we're flying blind on them"                      | Needs response-gap (Survey) x account value (CRM)
+E8  | Renewal / churn-risk forecast     | Sentiment trend + renewal date → ranked renewal-at-risk list                            | Renewal date lives in CRM; churn signal in Survey
+E9  | Expansion / upsell whitespace     | Promoters with open pipeline or upcoming renewal → sell into them now                   | Promoter flag (Survey) x pipeline (CRM)
+
+
+Sales Rep (Jay) — act at the record level
+-----------------------------------------
+
+#   | Capability                        | The pitch (one line)                                                                   | Impossible alone because…
+----|-----------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------
+R1  | Customer Voice panel on the record| Live sentiment + trend + last response, right on the Deal/Contact/Account               | Survey signal rendered in CRM context on the record
+R2  | Next Best Action                  | Detractor → "call in 24h"; Promoter → "ask for referral/upsell"                          | Action logic needs both the score and the deal context
+R3  | Closed-loop auto-tasks/cases      | A bad response auto-creates a follow-up, assigned to the owner with an SLA               | Survey event → CRM automation
+R4  | At-risk flag in list views        | Jay filters "my at-risk deals" like any CRM view                                        | Sentiment as a first-class CRM filter/field
+R5  | Verbatim on the record            | The actual customer quote, in context — no leaving CRM                                   | The open-text answer surfaced against the CRM record
+R6  | Stakeholder coverage              | "3 of 5 buying-committee contacts responded — 2 are silent" (multi-threading risk)       | Needs contact roles (CRM) x who-responded (Survey)
+R7  | Event-triggered send              | Auto-send CSAT when a deal hits Closed-Won (workflow action already built)               | CRM event drives Survey send
+R8  | Real-time negative alert          | "Acme just scored you a 2" pinged to the owner instantly                                 | Response routed to the CRM record owner
+
+
+Admin — governance layer that ties it together
+----------------------------------------------
+- Signal model config: at-risk thresholds, dollar-weighting, which metric maps to which module
+- Push-to-CRM mapping + field-value mapping + record assignment (already built)
+- Response → action automation / workflow rules (already built)
+
+
+Recommended demo spine — one signal, three altitudes
+----------------------------------------------------
+E1 Revenue at Risk (exec sees $2.3M at risk)
+  → drill into Acme
+  → R1 Customer Voice panel on Acme's deal (CSAT declining, verbatim shown)
+  → R2/R3 Jay gets a Next Best Action + auto-task
+  → he acts → the number on the exec dashboard moves.
+
+E4 (win/loss correlation) is the strongest standalone deck stat — the
+"this pays for itself" slide.
+
+
+Use Cases — what the user expects ("As a user, I want…")
+========================================================
+
+These are the user stories the integration must satisfy. Grounded in the car
+showroom (Kia dealership) running example: surveys sent on deal-stage events
+(test-drive done, delivered, serviced), responses auto-linked back to the deal,
+and Revenue at Risk computed as Amount x (1 - s), where s is the normalized
+sentiment score (NPS / CSAT / purchase-intent, whichever the survey carries).
+
+
+Sales Manager / Exec — "As a manager, I want…"
+----------------------------------------------
+UC-M1  …see the TOTAL revenue at risk from customer sentiment, so I know my
+       exposure in ₹, not just a satisfaction score.
+UC-M2  …see that number TREND over time, so I know if we're getting better or worse.
+UC-M3  …see a RANKED list of at-risk deals (by ₹), so I can prioritize intervention.
+UC-M4  …SEGMENT at-risk revenue by model / consultant / showroom / stage, so I can
+       find the systemic cause.
+UC-M5  …read the TOP OBJECTION THEMES from open-text answers, so I fix the root
+       cause, not each symptom.
+UC-M6  …DELEGATE / bulk-act on a slice of at-risk deals (assign follow-ups), so my
+       team acts this week.
+UC-M7  …CHANGE the process or config (threshold, which survey, when it fires) and
+       WATCH the number move, so I can prove the intervention worked.
+
+
+Sales Rep (Jay) — "As a rep, I want…"
+-------------------------------------
+UC-R1  …see an AT-RISK signal on my Deal/Contact, so I know which deals need saving.
+UC-R2  …know WHY (the customer's own words), so my recovery call is specific.
+UC-R3  …get a NEXT BEST ACTION, so I know what to do without analysis.
+UC-R4  …be ALERTED immediately on a negative response, so I act while it's hot.
+UC-R5  …FILTER "my at-risk deals" in a CRM list view, so it fits how I already work.
+UC-R6  …RECOVER a deal and see its risk flag CLEAR, so my effort shows in the system.
+
+
+Admin (Jay) — "As an admin, I want…"
+------------------------------------
+UC-A1  …surveys to AUTO-SEND when a deal stage changes (test-drive done, delivered,
+       serviced), so it scales without manual effort.
+UC-A2  …every response to AUTO-LINK to the right deal/contact, so I never reconcile
+       responses by hand.
+UC-A3  …to CONFIGURE the risk threshold and which metric drives it (NPS/CSAT/intent),
+       so the signal fits our business.
+UC-A4  …to MAP survey answers to CRM fields, so responses enrich the record
+       automatically.
+
+
+Send / scoping rules (frozen for Revenue at Risk)
+-------------------------------------------------
+- Transactional surveys (test-drive, delivery CSAT, service feedback) → sent from
+  the DEAL WORKFLOW on stage change → DEAL-SCOPED, stamps dealId → precise ₹.
+- Relationship surveys (NPS check-in) → sent from the CONTACT → RELATIONSHIP-SCOPED
+  → spills across that contact's open deals.
+- Unit of risk is the DEAL, not the contact: score per deal, sum per deal, never
+  multiply a contact's combined deal total by one score (no double-count).
+- One signal per deal: if a deal has multiple responses, use the latest / worst-active.

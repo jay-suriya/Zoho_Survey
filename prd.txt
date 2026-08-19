@@ -1,0 +1,760 @@
+PRD — Zoho CRM ⇌ Zoho Survey Integration
+=========================================
+Status: DRAFT · Problem definition phase
+Author: Jay (PM) · Persona lens: Jay — Sales Rep + CRM admin
+
+
+==================================================================
+1. PROBLEM STATEMENT
+==================================================================
+
+Companies collect customer feedback in a survey tool and manage customer
+relationships in a CRM — two systems that never talk. As a result, the
+customer's VOICE (what they feel) and the customer's VALUE and CONTEXT (who
+they are, what they're worth, where they are in the journey, who owns them)
+live in separate worlds.
+
+A survey answer, on its own, is an island: it knows what was said but not who
+truly said it, what they're worth, or what should happen next. A CRM record, on
+its own, is deaf: it knows the deal, the money, and the history, but not how the
+customer actually feels about any of it.
+
+Because the two are disconnected:
+  - Feedback arrives with no business context, so no one can tell which
+    responses matter (a detractor worth ₹5,000 looks identical to one worth
+    ₹18,00,000).
+  - Feedback never reaches the person who owns the relationship, at the place
+    they work (the CRM record), so it is not acted upon in time.
+  - Feedback cannot trigger anything — it ends as a static report, not a task,
+    an alert, or a next step.
+  - Reporting is aggregate and anonymous ("our NPS is 32") and cannot be sliced
+    by the CRM dimensions that drive decisions (deal stage, rep, product,
+    account, revenue).
+
+The problem to solve: make the customer's voice a first-class, contextual,
+actionable signal INSIDE the system of record — so feedback is automatically
+tied to the right customer and deal, weighted by real business value, visible
+to the person who owns it, and able to drive action — without anyone leaving CRM
+or reconciling two tools by hand.
+
+
+==================================================================
+2. BACKGROUND — first-principles research
+==================================================================
+
+2.1 What a survey actually is
+-----------------------------
+A survey tool is a structured-feedback engine. Its job: build a questionnaire,
+distribute it (link / email / embed / QR), collect responses, and report on
+them in aggregate. The atomic output is a RESPONSE — a set of answers tied to a
+respondent, captured at a single point in time.
+
+2.2 What data a survey holds
+----------------------------
+  - The answers themselves (ratings, choices, open text)
+  - Respondent identity — ONLY what the respondent typed, or what was passed in
+    via URL/custom variables (often just a name/email, sometimes nothing)
+  - Metadata — timestamp, time taken, IP/device, collector/channel, completion
+    status (complete / partial / disqualified)
+  - Derived metrics — NPS, CSAT, CES, star ratings, scored results
+  - Aggregate views — response rate, answer distributions, cross-tabs, trends by
+    collector
+
+2.3 Who uses a survey standalone (and for what)
+-----------------------------------------------
+  - CX / Support — CSAT after a ticket, NPS relationship surveys
+  - Sales / Account teams — post-purchase, post-demo, win/loss feedback
+  - HR — employee engagement / eNPS
+  - Marketing — audience research, lead-gen forms, campaign feedback
+  - Product / UX — feature and usability research
+  - Events — post-event attendee feedback
+In every case the results sit inside the survey tool, disconnected from the
+system where the customer relationship actually lives.
+
+2.4 How survey data is INCOMPLETE on its own (the core gap)
+-----------------------------------------------------------
+A standalone response is missing five things it cannot supply itself:
+  (a) IDENTITY   — who the respondent really is beyond a typed email; no reliable
+                   link to a known customer record. Typos, anonymous responses,
+                   and shared inboxes make matching unreliable.
+  (b) VALUE      — what the respondent is worth. No deal amount, no pipeline, no
+                   lifetime value. Every respondent is weighted equally.
+  (c) CONTEXT    — where they are in the lifecycle (prospect / new buyer /
+                   renewing / churning) and their history (past purchases,
+                   prior complaints, previous survey answers).
+  (d) OWNERSHIP  — who in the company owns this relationship and should respond.
+  (e) ACTION     — the survey tool can SHOW a detractor but cannot DO anything:
+                   it cannot create a task, assign an owner, escalate, or update
+                   a record. The insight dies as a report.
+It is also blind on AUDIENCE: it has no live view of the customer base, so it
+cannot send "the right survey at the right lifecycle moment" — sending is a
+manual campaign, not an event-driven act.
+
+2.5 What a CRM actually is (and holds)
+--------------------------------------
+A CRM is the system of record for customer relationships. It holds identity and
+full profile (contacts, accounts, leads), MONEY and STAGE (deals/potentials with
+amount, pipeline stage, close/renewal date), ACTIVITY and HISTORY (calls,
+emails, tasks, meetings, timeline), OWNERSHIP (which rep/team), and PRODUCTS.
+Critically, it also has an ACTION ENGINE — workflows, assignment rules, tasks,
+field updates, escalation — and a live, always-current, segmentable audience.
+
+2.6 How CRM is ALSO incomplete (the reverse gap)
+------------------------------------------------
+A CRM is deaf. It records what the company DID (calls made, emails sent, stage
+moved) but not how the customer FEELS. It has no structured, quantified,
+comparable voice-of-customer — at best a free-text note ("seems unhappy"),
+never a systematic NPS/CSAT captured at key lifecycle moments.
+
+2.7 How the two complete each other
+-----------------------------------
+  Survey = the VOICE (sentiment, structured feedback, at a moment in time)
+  CRM    = the IDENTITY, VALUE, CONTEXT, OWNERSHIP, and ACTION
+
+Connected, each fills the other's gap:
+  - CRM enriches every response — identity resolved to a real record, weighted
+    by deal value, placed in lifecycle context, attributed to an owner. An
+    anonymous "score of 3" becomes "a ₹18L open deal, owned by Jay, at risk."
+  - Survey enriches every CRM record — the deaf record gains the customer's
+    actual voice, quantified and trended, so the relationship is no longer
+    managed blind.
+  - CRM's action engine gives feedback consequences — a response can now create
+    a task, alert an owner, flag a deal, or trigger a workflow.
+  - CRM's live audience lets surveys fire at the exact lifecycle moment (deal
+    delivered, service closed) automatically, at scale, instead of by hand.
+The unique value is the JOIN: sentiment attached to a revenue/relationship
+object, made actionable inside the system of record.
+
+
+==================================================================
+3. PROBLEMS BY PERSONA
+==================================================================
+
+3.1 Sales Rep (Jay) — problems today
+------------------------------------
+PR-1  Feedback lives in another tool. To see how a customer feels I must leave
+      CRM, open Survey, and match the response to my contact by email myself.
+PR-2  I learn a customer is unhappy too late — the feedback never surfaces on
+      the record I'm actually working, so I miss the window to save the deal.
+PR-3  I can't tell which feedback matters. A bad response gives me no sense of
+      whether it's my biggest deal or a trivial one — the survey doesn't know
+      the deal value.
+PR-4  I can't see who actually responded. I don't know which of my contacts
+      answered and which ignored me, so I can't chase the silent ones.
+PR-5  I can't act from the feedback. Nothing is created for me — no task, no
+      reminder — so following up depends on me remembering.
+PR-6  Sending is manual and badly timed. I send surveys one contact at a time
+      and forget to send at the right moment (right after a test drive or
+      delivery), so I lose feedback I could have captured.
+PR-7  No history on the record. I can't see this customer's past sentiment or
+      whether it's trending down — every interaction starts blind.
+
+3.2 Admin (Jay) — problems today
+--------------------------------
+PA-1  Getting survey data into CRM is manual. Export CSVs, match by email,
+      re-import — stale by the time it lands, and repeated every cycle.
+PA-2  Identity resolution is unreliable. Mistyped or anonymous respondents don't
+      match cleanly to records, creating duplicates or orphaned responses.
+PA-3  I can't automate lifecycle-timed sending. There's no way to fire a survey
+      automatically on a CRM event (stage change, deal closed, service done) —
+      it's always a manual campaign disconnected from what's happening in CRM.
+PA-4  Feedback and revenue live in two reporting worlds. I cannot build a report
+      that crosses them — "sentiment by deal stage / by rep / by product / by
+      account" is impossible when the data never meets.
+PA-5  Bad responses can't be routed or actioned automatically. The survey tool
+      can't create a CRM task, assign an owner, or trigger a workflow, so
+      closing the loop is entirely manual.
+PA-6  Duplicate / incomplete records. Responses that create leads don't dedupe
+      against existing CRM records, polluting the database.
+PA-7  Two-tool governance overhead. Separate audience lists, separate consent /
+      GDPR tracking, separate access control — double the maintenance and risk.
+
+3.3 Sales Manager / Exec — problems today (for completeness)
+------------------------------------------------------------
+PM-1  An NPS/CSAT number with no revenue or accountability attached — cannot
+      answer "what is this costing us" or "who owns it."
+PM-2  Feedback is a lagging, aggregate, anonymous report — not a live
+      operational signal that can be prioritized or delegated.
+PM-3  No way to see whether acting on feedback actually moved the business,
+      because sentiment and outcomes are never in the same view.
+
+
+==================================================================
+4. TARGET USERS & JOBS-TO-BE-DONE
+==================================================================
+
+Note on personas: in this integration ONE person, Jay, wears two hats — he is
+both the Sales Rep who lives in the records AND the CRM admin who configures the
+integration. The Sales Manager / Exec is a distinct consumer of the aggregate
+view. We design for all three, but Jay is the primary lens.
+
+JTBD format used below: "When [situation], I want to [motivation], so I can
+[outcome]." Jobs describe the progress the user is trying to make — not features.
+
+
+4.1 PRIMARY USER — Sales Rep (Jay)
+----------------------------------
+Profile:   Account Executive at the dealership. Lives in Zoho CRM all day; works
+           deals and contacts. Strong in CRM concepts, no interest in learning a
+           separate survey product. Measured on deals won and revenue.
+Uses it:   Continuously, at the record level, as part of working a deal.
+Cares about: Not losing a deal he could have saved; knowing what to do next.
+
+Jobs-to-be-done:
+  JR-1  When a customer gives feedback on a deal I'm working, I want that
+        feedback to show up on the deal as a clear signal, so I can act on it
+        before the deal is lost.
+  JR-2  When feedback is negative, I want to see WHY (in the customer's words)
+        and what to do next, so my recovery is fast and specific instead of
+        generic.
+  JR-3  When a customer hits a key moment (test drive done, car delivered), I
+        want the right survey to go out automatically, so I capture feedback
+        without having to remember to send it.
+  JR-4  When I plan my day, I want to see which of my deals are at risk from
+        customer sentiment, so I prioritize the ones worth saving.
+  JR-5  When I've followed up and fixed the issue, I want the risk flag to clear
+        on the record, so my effort is reflected and I know I'm done.
+  JR-6  When I open a customer, I want to see their feedback history and whether
+        sentiment is trending down, so I never walk into a conversation blind.
+
+4.2 PRIMARY USER — Admin (Jay, admin hat)
+-----------------------------------------
+Profile:   Same person, configuring the integration for the team. Comfortable
+           with CRM setup (modules, fields, workflows, assignment) but not with
+           survey-specific machinery.
+Uses it:   Once at setup, then occasionally to tune (thresholds, mappings).
+Cares about: Automation that scales, data that lands clean, no manual glue work.
+
+Jobs-to-be-done:
+  JA-1  When a deal reaches a key stage, I want a survey to fire automatically to
+        the right person, so feedback is captured at scale without manual sends.
+  JA-2  When a response comes back, I want it linked to the correct deal/contact
+        automatically, so I never reconcile by hand or create duplicates.
+  JA-3  When I set up the integration, I want to control which metric drives risk
+        (NPS/CSAT/intent) and how answers map to CRM fields, so the signal fits
+        how our business actually works.
+  JA-4  When feedback is negative, I want it to trigger CRM actions (task, alert,
+        owner assignment), so the follow-up loop closes without manual routing.
+  JA-5  When responses create records, I want them to dedupe against existing
+        CRM data, so the database stays clean.
+
+4.3 SECONDARY USER — Sales Manager / Exec
+-----------------------------------------
+Profile:   Owns the number and the team. Consumes aggregate reporting to make
+           decisions; does not work individual records. Thinks in revenue,
+           pipeline, and rep performance.
+Uses it:   Periodically (e.g. weekly review), at the dashboard level.
+Cares about: Exposure in ₹, root cause, and proof that action worked.
+
+Jobs-to-be-done:
+  JM-1  When I review the business, I want to see how much revenue is at risk
+        from customer sentiment and how it's trending, so I know where to
+        intervene.
+  JM-2  When at-risk revenue rises, I want to find the systemic cause (which
+        model, rep, stage, or showroom), so I fix the process, not each symptom.
+  JM-3  When I spot a cluster of at-risk deals, I want to delegate or bulk-assign
+        follow-ups to my team, so we act within the week.
+  JM-4  When I change something (coaching, a process, a config), I want to see
+        the number move, so I can prove the intervention paid off.
+
+4.4 The end-to-end job (the through-line)
+-----------------------------------------
+Across all three, the overarching job is:
+  "When a customer tells us how they feel, I want that voice to become a
+   contextual, actionable signal on the right record — automatically — so the
+   right person acts in time and we protect the revenue."
+This single job travels three altitudes: Admin makes it flow, Rep acts on it,
+Manager steers by it.
+
+
+==================================================================
+5. GOALS & SUCCESS METRICS / NORTH STAR
+==================================================================
+
+5.1 Goals
+---------
+Business goals (why the company builds this):
+  BG-1  Differentiate the suite — make cross-product integration a reason to buy
+        CRM + Survey together instead of best-of-breed point tools.
+  BG-2  Drive adoption and retention of both products by making them more
+        valuable connected than apart.
+  BG-3  Help customers PROTECT revenue, giving a hard ROI story that justifies
+        the spend.
+
+Product goals (what the product must achieve for users):
+  PG-1  Turn every relevant response into a contextual, actionable signal on the
+        right CRM record — automatically. (addresses PR-1,2,3 / PA-1,2)
+  PG-2  Close the feedback loop faster — shrink the time from "customer speaks"
+        to "owner acts." (addresses PR-2,5 / PA-4)
+  PG-3  Give managers a revenue-weighted, sliceable view of sentiment they can
+        steer by. (addresses PM-1,2,3)
+  PG-4  Make it scale with zero manual glue — event-driven sending and automatic
+        record linking. (addresses PA-1,2,3)
+
+
+5.2 NORTH STAR METRIC
+---------------------
+      Recovered At-Risk Revenue
+      = Σ (Amount) of deals that were FLAGGED at-risk by a customer's voice
+        AND subsequently RECOVERED (owner acted → deal won / retained /
+        sentiment re-scored healthy).
+
+Why this is the North Star:
+  - It sits exactly on the value the integration creates: voice → context →
+    action → revenue saved. It is impossible to move without both products.
+  - It is a shared score across all three personas: Admin makes the signal flow,
+    Rep acts, Manager steers — and all of it shows up here.
+  - It aligns the company and the customer: we win when the customer keeps
+    revenue they would otherwise have lost.
+
+A response-only or "NPS improved" metric was rejected as North Star: it measures
+the survey, not the integration, and can rise without any revenue impact.
+
+
+5.3 SUPPORTING METRIC TREE
+--------------------------
+Grouped as a funnel from setup → the closed loop → business outcome. Targets
+shown as direction (illustrative numbers marked *illus.*).
+
+A) ADOPTION / ACTIVATION (is it set up and flowing?)
+   AM-1  % of key deal stages with an auto-send survey workflow configured   ↑
+   AM-2  # of surveys auto-sent via CRM events per week                       ↑
+   AM-3  Identity-resolution rate — % of responses auto-linked to the correct
+         record with no manual matching     ↑  (target >95% *illus.*)  [PA-2]
+   AM-4  Response rate: CRM-triggered sends vs manual sends                    ↑
+
+B) ENGAGEMENT (are the signals seen and worked?)
+   EM-1  % of at-risk deals viewed by their owner                             ↑
+   EM-2  Weekly active managers on the Customer Voice dashboard               ↑
+   EM-3  % of at-risk deals with a follow-up action created                   ↑
+
+C) THE CLOSED LOOP (leading indicators of the North Star)
+   LM-1  Time-to-first-action on a detractor (response → task/call)           ↓
+         (target <24h *illus.*)  [PR-2,5]
+   LM-2  % of at-risk deals acted on within SLA                               ↑
+   LM-3  % of at-risk deals RECOVERED (flag cleared / won / retained)         ↑
+   LM-4  Feedback coverage — % of open deals carrying ≥1 signal-bearing
+         response  ↑  ("blind revenue" shrinks)
+
+D) BUSINESS OUTCOME (lagging, the proof)
+   OM-1  Recovered At-Risk Revenue (₹)  ← North Star                          ↑
+   OM-2  Win-rate delta: at-risk deals WITH intervention vs WITHOUT           ↑
+   OM-3  Renewal / repurchase rate: surveyed-and-actioned vs not             ↑
+   OM-4  Account CSAT/NPS trend over time (tied to accounts, not aggregate)   ↑
+
+E) COUNTER-METRICS / GUARDRAILS (don't win these the wrong way)
+   CM-1  Survey fatigue — over-send rate, opt-outs, declining response rate   ↓
+   CM-2  False-risk rate — deals flagged at-risk that were actually fine
+         (precision of the signal)   ↓
+   CM-3  Duplicate records created from responses                             ↓
+   CM-4  Rep alert overload — alerts per rep per day (keep actionable)        ↓
+
+
+5.4 How the metrics ladder up
+-----------------------------
+  Admin configures (A) → signals flow and get seen (B) → owners act fast and
+  recover deals (C) → recovered revenue and better win/renewal rates show up (D)
+  → all without fatigue, false alarms, or dirty data (E).
+The North Star (OM-1) is the single number the whole ladder exists to move.
+
+
+==================================================================
+6. SCOPE / MVP DEFINITION
+==================================================================
+
+6.1 MVP principle
+-----------------
+Ship ONE complete thread end-to-end, not many partial features. The MVP must
+let the full through-line job happen once, for real: a customer's voice becomes
+a contextual, actionable signal on a deal, a rep acts, and the recovery shows up
+at the top. A thin vertical slice that closes the loop beats a broad set of
+disconnected widgets — because the whole pitch is the loop, not any one screen.
+
+Running example held constant: the Kia showroom, the test-drive survey, the
+Deals module.
+
+
+6.2 IN SCOPE (MVP)
+------------------
+Send & link (Admin path):
+  S-1  One event-driven send: a deal-stage change fires ONE survey via workflow.
+       (test-drive done → test-drive experience survey)   [JA-1 / PA-3]
+  S-2  The send stamps dealId + contactId into the link (custom variables), so
+       the response is DEAL-SCOPED.                        [JA-2]
+  S-3  On response, it auto-links to the correct deal/contact — no manual
+       matching.                                           [JA-2 / PA-2]
+
+Signal & calculation (the model):
+  S-4  One normalized sentiment score s (0-1) per response, from the survey's
+       primary metric (intent for pre-sale test-drive; NPS/CSAT otherwise).
+  S-5  Per-deal At-Risk Revenue = Amount x (1 - s), counted only for open deals
+       below threshold. Unit of risk = the deal (no contact-total lumping).
+  S-6  One signal per deal (latest / worst-active).
+
+Manager surface (aggregate):
+  S-7  Customer Voice dashboard as a CRM surface: hero At-Risk Revenue (₹) +
+       count + trend.                                      [JM-1]
+  S-8  Ranked at-risk deals list (by ₹), each row drillable to the record.
+                                                           [JM-1 / JR-4]
+
+Rep surface (record):
+  S-9  At-risk signal panel on the Deal: badge, this deal's ₹ at risk, the
+       driving score, and the verbatim "why".              [JR-1,2]
+  S-10 Next Best Action on the record.                     [JR-3-equiv/JR-2]
+
+Close the loop:
+  S-11 Recovery: rep logs a follow-up / the signal re-scores healthy → the deal
+       drops off the at-risk list and the manager total falls by that amount.
+                                                           [JR-5 / JM-4]
+
+MVP scope guards:
+  - ONE module (Deals), ONE survey type (test-drive), ONE metric driver.
+  - Numbers reconcile: manager hero = Σ of the record-level ₹.
+
+
+6.3 EXPLICITLY OUT OF SCOPE (v2+)
+---------------------------------
+Deferred so the MVP stays a shippable thread. Named to protect the boundary:
+  X-1  Segment / pattern panel (by model, consultant, showroom, stage).  [E3,E5,E6]
+  X-2  Verbatim-theme clustering / root-cause themes.                    [M5]
+  X-3  Relationship-scoped NPS that SPILLS across a contact's open deals.
+  X-4  Multi-survey / multi-metric signal catalog & auto-detection (show-if-
+       present tiles for NPS/CES/rating/score simultaneously).
+  X-5  Bulk actions / delegate-to-team from the dashboard.               [JM-3]
+  X-6  Real-time negative-response alerts / notifications.               [JR-4/PR-2]
+  X-7  Predictive & ROI analytics: win/loss correlation, churn/renewal
+       forecast, upsell whitespace.                        [E4, E8, E9]
+  X-8  Full signal-model admin config UI (thresholds, metric mapping, field
+       value mapping beyond what already exists).          [JA-3]
+  X-9  Contacts / Accounts / Leads modules and account-level rollups.
+  X-10 Auto-created tasks/cases & assignment automation on a bad response. [JA-4]
+
+(Several of these already exist in partial form in the mock — e.g. the workflow
+Send Survey action, Push-to-CRM mapping, Deal Health panel. MVP REUSES those;
+it does not rebuild or expand them.)
+
+
+6.4 MVP USER JOURNEY (the one thread it must complete)
+------------------------------------------------------
+  1. [Admin] Deal "KIA-SEL-002" stage → Test Drive Done → workflow auto-sends the
+     test-drive survey to Ramesh, dealId stamped.                      (S-1,2)
+  2. [System] Ramesh answers; intent 3/10 → s=0.3; response auto-links to the
+     deal.                                                             (S-3,4)
+  3. [System] Deal At-Risk Revenue = ₹18L x 0.7 = ₹12.6L.             (S-5)
+  4. [Manager] Customer Voice dashboard shows At-Risk ₹ (incl. this ₹12.6L),
+     Ramesh's deal ranked in the list.                                (S-7,8)
+  5. [Rep/Jay] Opens the deal: At-Risk badge, ₹12.6L, intent 3/10, verbatim
+     "price/delivery", Next Best Action "counter on price · call in 24h". (S-9,10)
+  6. [Rep] Logs the recovery call → signal clears → deal drops off the list →
+     manager total falls by ₹12.6L.                                    (S-11)
+If these six steps demo cleanly end-to-end, the MVP is done.
+
+
+6.5 ASSUMPTIONS & DEPENDENCIES
+------------------------------
+  A-1  A survey can be triggered from a CRM workflow on a deal-stage change
+       (mechanism already prototyped: workflow Send Survey action).
+  A-2  CRM can inject dealId/contactId into the survey link as custom variables
+       (mechanism documented + prototyped).
+  A-3  A response carries back those IDs (or a resolvable email) for auto-linking.
+  A-4  Deals carry an Amount and an open/closed stage to compute and gate risk.
+  A-5  The survey exposes a numeric primary metric (intent/CSAT/NPS) to derive s.
+
+
+==================================================================
+7. SOLUTION OVERVIEW
+==================================================================
+
+7.1 In one line
+---------------
+A signal pipeline that turns a survey response into a revenue-weighted, deal-
+scoped risk signal inside CRM — sent automatically on a deal event, linked back
+by stamped IDs, scored to a single number s, and surfaced at two altitudes
+(manager dashboard + rep record) with a recovery path that closes the loop.
+
+
+7.2 The three building blocks
+-----------------------------
+  1. THE JOIN (plumbing) — how a response finds its deal.
+     CRM stamps dealId + contactId into the survey link as custom variables at
+     send; the response carries them back, so it auto-attaches to the exact deal.
+     This is the foundation; nothing else works without it.
+
+  2. THE SIGNAL MODEL (brain) — how a response becomes money-at-risk.
+     Each response reduces to one normalized score s (0-1) from its primary
+     metric. Per open deal: At-Risk Revenue = Amount x (1 - s). Unit of risk is
+     the deal; one signal per deal (latest / worst-active). This single model is
+     the source of truth both surfaces read — so numbers always reconcile.
+
+  3. THE SURFACES (face) — where humans see and act.
+     Manager: aggregate Customer Voice dashboard. Rep: at-risk panel on the deal
+     record. Same model, two altitudes, guaranteed to tie out.
+
+
+7.3 How it works — the pipeline
+-------------------------------
+  SEND    Deal-stage change → workflow fires ONE survey; IDs stamped.   (S-1,2)
+    v
+  LINK    Response returns with IDs → auto-attaches to the deal/contact. (S-3)
+    v
+  SCORE   Primary metric → s (0-1); At-Risk ₹ = Amount x (1 - s).        (S-4,5,6)
+    v
+  SURFACE Manager dashboard (aggregate ₹, ranked list) +
+          Rep record panel (badge, ₹, driver, verbatim, NBA).           (S-7..10)
+    v
+  ACT     Rep works the deal from the record / manager delegates.
+    v
+  CLOSE   Recovery re-scores s → deal drops off → manager total falls.   (S-11)
+
+
+7.4 Component breakdown
+-----------------------
+  C-1  Event-driven Send (Admin) — reuses the existing workflow "Send Survey"
+       action; adds ID-stamping so sends are deal-scoped.
+  C-2  Auto-link / Identity resolution — matches returning response to the
+       record by stamped IDs (email fallback).
+  C-3  Signal engine — normalizes metric → s; computes per-deal At-Risk ₹;
+       enforces one-signal-per-deal and open-deal gating.
+  C-4  Customer Voice dashboard (Manager) — new CRM surface: hero KPI band +
+       ranked at-risk list + trend; rows drill to the record.
+  C-5  At-Risk panel (Rep) — extends the existing Deal Health · Survey Signals
+       panel: badge, this deal's ₹, driving score, verbatim, Next Best Action.
+  C-6  Loop-close — recovery action re-scores/clears the signal and updates both
+       surfaces from the same model.
+
+
+7.5 Where it lives in CRM
+-------------------------
+  - Manager surface: a dedicated CRM dashboard ("Customer Voice"), reached from
+    the CRM sidebar/nav — NOT inside the Survey module (it is a CRM decision, not
+    a survey report).
+  - Rep surface: on the Deal record itself, in the existing survey-signals area.
+  - Admin surface: the existing workflow-rule + Push-to-CRM config screens.
+This keeps the whole experience CRM-native for Jay — no second product to learn.
+
+
+7.6 Mapping to features.txt
+---------------------------
+  MVP delivers, in full:      E1 (Revenue at Risk) + R1 (record panel) +
+                              R2 (Next Best Action, basic) + R7 (event send).
+  MVP reuses (already built): workflow Send Survey action, Push-to-CRM mapping,
+                              Deal Health · Survey Signals panel.
+  Deferred to v2+:            E2,E3,E5,E6,E7,E8,E9 (analytics/segmentation),
+                              R3,R4,R5,R6,R8 (auto-tasks, list filters, alerts,
+                              stakeholder coverage). See section 6.3.
+The MVP is the vertical spine; features.txt is the horizontal roadmap that
+builds outward from it.
+
+
+7.7 Design principles for the build
+-----------------------------------
+  D-1  CRM-native language and placement throughout (Jay never sees survey
+       jargon — no collectors/quotas in these surfaces).
+  D-2  One model, two altitudes — manager total is literally Σ of record ₹.
+  D-3  Reuse before rebuild — extend existing mock screens, don't duplicate.
+  D-4  Show-if-present — surfaces render only the signal a survey actually has.
+  D-5  Always show the "why" (verbatim) next to the "what" (score), so action is
+       specific, not generic.
+
+
+==================================================================
+8. WHAT EACH PERSONA SEES (surface inventory)
+==================================================================
+
+Concrete list of the features, analytics, and on-screen elements each role
+actually sees. Tagged [MVP] = in the first build, [v2] = deferred (see 6.3).
+
+
+8.1 ADMIN (Jay, admin hat) — the setup & health surfaces
+--------------------------------------------------------
+Configuration he sees/sets:
+  AV-1  [MVP] Workflow rule with a "Send Survey" action — trigger = deal-stage
+        change (e.g. Test Drive Done), pick which survey fires.
+  AV-2  [MVP] ID-stamping / custom-variable mapping — dealId + contactId (and
+        email/name) passed into the survey link.
+  AV-3  [MVP] Push-to-CRM field mapping — which answers write to which CRM
+        fields (reuses existing screen).
+  AV-4  [v2]  Signal-model config — pick the metric that drives risk
+        (NPS/CSAT/intent), set the at-risk threshold, map custom questions.
+  AV-5  [v2]  Duplicate-handling rule — skip vs create-new when a record exists.
+
+Health & governance he sees:
+  AV-6  [MVP] Link status — confirmation that a sent survey is tied to a deal.
+  AV-7  [MVP] Auto-link / identity-resolution result — which responses matched a
+        record automatically, which need attention (the "no manual matching"
+        proof).                                                   [metric AM-3]
+  AV-8  [v2]  Send volume & response-rate view for CRM-triggered sends.
+
+
+8.2 SALES REP (Jay) — on the Deal record
+----------------------------------------
+The at-risk signal panel (extends Deal Health · Survey Signals):
+  RV-1  [MVP] At-Risk badge / health state (Healthy / Watch / At-Risk).
+  RV-2  [MVP] This deal's Revenue at Risk in ₹ (Amount x (1 - s)).
+  RV-3  [MVP] The DRIVING metric with label — e.g. "Purchase intent 3/10".
+  RV-4  [MVP] Supporting metric tiles, show-if-present — e.g. Rating 4/10,
+        CSAT 3/10 (hidden if the survey doesn't have them).
+  RV-5  [MVP] The verbatim "why" — the customer's own words (open-text answer).
+  RV-6  [MVP] Next Best Action — specific, driven by score + verbatim.
+  RV-7  [MVP] Sentiment trend — this response vs the contact's previous one.
+  RV-8  [MVP] Recovery control — log follow-up / mark actioned → clears the flag.
+
+The survey history (related list on the record):
+  RV-9  [MVP] Zoho Survey related list — Title / Sent / Responded / Source /
+        score columns (reuses existing table).
+  RV-10 [MVP] View Response → per-question answers + per-question scoring
+        (reuses existing response-detail view).
+
+In his pipeline (list views):
+  RV-11 [v2]  "My at-risk deals" filter / column in the Deals list view.
+  RV-12 [v2]  Real-time alert when a customer responds negatively.
+  RV-13 [v2]  Stakeholder coverage — which contacts on a deal responded vs silent.
+
+
+8.3 SALES MANAGER / EXEC — the Customer Voice dashboard
+-------------------------------------------------------
+Headline analytics:
+  MV-1  [MVP] Hero KPI band — At-Risk Revenue (₹), # at-risk deals,
+        revenue-weighted sentiment score, ▲/▼ vs last period.
+  MV-2  [MVP] At-Risk Revenue trend line over time.
+
+The worklist:
+  MV-3  [MVP] Ranked at-risk deals table — Deal / Value / Score / Trend / Owner /
+        Last response — sorted by ₹ at risk; each row drills to the record.
+
+Root-cause & action (deferred):
+  MV-4  [v2]  Segment panel — at-risk ₹ by model / consultant / showroom / stage.
+  MV-5  [v2]  Objection themes — clustered from open-text verbatims.
+  MV-6  [v2]  Bulk actions — select a slice, assign follow-ups to the team.
+  MV-7  [v2]  Predictive/ROI widgets — win/loss correlation, churn/renewal
+        forecast, upsell whitespace.
+
+
+8.4 Shared guarantee across all surfaces
+----------------------------------------
+Every number above reads from the ONE signal model (section 7.2). The manager's
+hero ₹ (MV-1) is exactly the sum of every rep-record ₹ (RV-2). Fixing one deal
+(RV-8) moves the manager total (MV-1) by that same amount — no surface can
+disagree with another.
+
+
+==================================================================
+9. SOLUTIONS — mapped to every problem
+==================================================================
+
+For each problem in Section 3, the solution the integration provides. Format:
+  [Problem ID] Problem (short)  →  SOLUTION  (feature ref / surface ref)
+Feature refs = features.txt (E#/R#); surface refs = section 8 (AV/RV/MV).
+
+
+9.1 Solutions for the SALES REP
+-------------------------------
+[PR-1] Feedback lives in another tool; I match by hand
+   → The customer's voice is rendered ON the deal record, auto-linked by the IDs
+     stamped at send. Jay never leaves CRM or matches anything.
+     (R1 / RV-1..7 · The Join, sec 7.2)
+
+[PR-2] I learn of unhappiness too late
+   → An at-risk signal + real-time negative-response alert surfaces the moment a
+     bad response lands, on the record and to the owner.
+     (R1, R8 / RV-1, RV-12)
+
+[PR-3] I can't tell which feedback matters
+   → Every signal is revenue-weighted: the record shows THIS deal's ₹ at risk
+     (Amount x (1 - s)), so importance is in dollars, not a bare score.
+     (E1, R1 / RV-2)
+
+[PR-4] I can't see who responded vs stayed silent
+   → Stakeholder coverage on the deal: which contacts answered, which are silent.
+     (R6 / RV-13)
+
+[PR-5] I can't act from the feedback
+   → A bad response auto-creates a follow-up task/case assigned to the owner with
+     an SLA; the record also shows a Next Best Action.
+     (R2, R3 / RV-6, RV-8)
+
+[PR-6] Sending is manual and badly timed
+   → Event-triggered send: a deal-stage change auto-fires the right survey at the
+     right moment (test drive done, delivered) — no remembering.
+     (R7 / AV-1)
+
+[PR-7] No sentiment history on the record
+   → A sentiment trend on the record shows this response vs prior ones, so Jay
+     sees direction before every conversation.
+     (R1 / RV-7, RV-9)
+
+
+9.2 Solutions for the ADMIN
+---------------------------
+[PA-1] Getting survey data into CRM is manual
+   → Native, automatic sync: responses flow into CRM with no export/import, via
+     Push-to-CRM field mapping.
+     (Push to CRM / AV-3)
+
+[PA-2] Identity resolution is unreliable
+   → IDs (dealId/contactId) stamped into the survey link at send guarantee the
+     response links to the exact record; email is a fallback, not the primary key.
+     (The Join, sec 7.2 / AV-2, AV-7)
+
+[PA-3] Can't automate lifecycle-timed sending
+   → Workflow "Send Survey" action fires on any CRM event (stage change, deal
+     closed, service done), so timing is automatic and rule-based.
+     (R7 / AV-1)
+
+[PA-4] Feedback and revenue live in two reporting worlds
+   → The shared signal model puts sentiment on the deal, enabling reports that
+     cross both — sentiment by stage / rep / product / account.
+     (E3, E5, E6 / MV-4)
+
+[PA-5] Bad responses can't be routed/actioned automatically
+   → Response → CRM automation: a negative response triggers task creation,
+     owner assignment, or a workflow, closing the loop without manual routing.
+     (R3 / AV-4)
+
+[PA-6] Duplicate / incomplete records
+   → Duplicate-handling rule on Push-to-CRM (skip vs create-new) dedupes
+     responses against existing records.
+     (Push to CRM / AV-5)
+
+[PA-7] Two-tool governance overhead
+   → One integrated setup — a single audience (live CRM records), one mapping
+     config, consent/ownership inherited from CRM — instead of two parallel tools.
+     (Push to CRM + workflow config / AV-1..3)
+
+
+9.3 Solutions for the MANAGER / EXEC
+------------------------------------
+[PM-1] A sentiment number with no revenue or accountability
+   → Revenue at Risk + revenue-weighted sentiment: exposure in ₹, attributed to
+     an owner, not a headcount-weighted score.
+     (E1, E2 / MV-1)
+
+[PM-2] Feedback is a lagging, aggregate, anonymous report
+   → A live Customer Voice dashboard: ranked at-risk deals (worklist), segment
+     breakdown, and objection themes — operational, not a static PDF.
+     (E1, E3, E5, E6 / MV-3, MV-4, MV-5)
+
+[PM-3] No way to see whether acting moved the business
+   → Trend line + closed-loop reconciliation: when a rep recovers a deal the
+     number falls; win/loss-vs-sentiment correlation proves the program's ROI.
+     (E4 / MV-2, and the shared-model guarantee sec 8.4)
+
+
+9.4 Solution coverage summary
+-----------------------------
+  - Every Rep problem (PR-1..7)      → covered by R1,R2,R3,R6,R7,R8 + E1
+  - Every Admin problem (PA-1..7)    → covered by Push-to-CRM, The Join, R7, R3
+  - Every Manager problem (PM-1..3)  → covered by E1,E2,E3,E4,E5,E6
+The three building blocks (The Join, The Signal Model, The Surfaces — sec 7.2)
+are the common machinery underneath all of the above.
+
+Sequencing note: not all solutions ship at once. The MVP (sec 6.2) delivers the
+core thread — event send, auto-link, signal model, Revenue at Risk dashboard,
+record panel, loop-close — and the remaining solutions land per the features.txt
+roadmap. This section is the full solution space; Section 6 is what comes first.
+
+
+==================================================================
+10. NEXT SECTIONS (to be written)
+==================================================================
+  - Acceptance criteria
