@@ -13948,19 +13948,19 @@ function anLeadsCards(){
 var CV_TP={'Test Drive':'#5B9BE8','Delivery':'#3FBFB0','Service':'#E8A13F'};
 var CV_SENT={'Test Drive':{sent:34,resp:22,cov:88},'Delivery':{sent:28,resp:21,cov:95},'Service':{sent:61,resp:39,cov:79}};
 var cvResp=[
- {deal:'KIA-SEL-002',status:'Open',dname:'Ramesh Kumar — Seltos',cust:'Ramesh Kumar',model:'Seltos',tp:'Test Drive',val:1260000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Consultant rushed the drive, barely explained the features.'},
- {deal:'KIA-SEL-021',status:'Open',dname:'Arjun Rao — Seltos',cust:'Arjun Rao',model:'Seltos',tp:'Test Drive',val:1180000,csat:3.1,nps:5,rating:3.5,score:55,owner:'Jay Suriya',center:'Velachery',ago:'1d',trend:-1,txt:'Waited 40 min for the car to be brought around.'},
+ {deal:'KIA-SEL-002',status:'Open',dname:'Ramesh Kumar — Seltos',cust:'Ramesh Kumar',model:'Seltos',tp:'Test Drive',val:1260000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Consultant rushed the drive, barely explained the features.',comments:[{q:'What could we improve?',a:'Consultant rushed the drive, barely explained the features.'},{q:'What would have made it better?',a:'More time behind the wheel and a proper feature walkthrough.'}]},
+ {deal:'KIA-SEL-021',status:'Open',dname:'Arjun Rao — Seltos',cust:'Arjun Rao',model:'Seltos',tp:'Test Drive',val:1180000,csat:3.1,nps:5,rating:3.5,score:55,owner:'Jay Suriya',center:'Velachery',ago:'1d',trend:-1,txt:'Waited 40 min for the car to be brought around.',comments:[{q:'What could we improve?',a:'Waited 40 minutes for the car to be brought around.'},{q:'Any other comments?',a:'Staff were polite but clearly short-handed that day.'}]},
  {deal:'KIA-EV6-003',status:'Open',dname:'Meera S — EV6',cust:'Meera S',model:'EV6',tp:'Test Drive',val:3400000,csat:4.8,nps:10,rating:5.0,score:90,owner:'Priya Venkat',center:'OMR',ago:'3h',trend:1,txt:'Loved it — Priya was fantastic, zero pressure.'},
  {deal:'KIA-SON-041',status:'Open',dname:'Vikram N — Sonet',cust:'Vikram N',model:'Sonet',tp:'Test Drive',val:980000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'5h',trend:1,txt:'Great walkthrough, very knowledgeable.'},
  {deal:'KIA-SON-014',status:'Closed-Won',dname:'Anita Rao — Sonet',cust:'Anita Rao',model:'Sonet',tp:'Delivery',val:1050000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'6h',trend:1,txt:'Smooth handover, felt special.'},
- {deal:'KIA-CAR-009',status:'Closed-Won',dname:'Fleet Corp — Carens ×5',cust:'Fleet Corp',model:'Carens',tp:'Delivery',val:2940000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Morrison Troy',center:'T. Nagar',ago:'4h',trend:-1,txt:'Car delivered with a scratch on the driver door.'},
- {deal:'KIA-CAR-018',status:'Closed-Won',dname:'Latha R — Carens',cust:'Latha R',model:'Carens',tp:'Delivery',val:1120000,csat:3.6,nps:6,rating:3.0,score:62,owner:'Morrison Troy',center:'Anna Nagar',ago:'1d',trend:0,txt:'Paperwork took far too long at handover.'},
+ {deal:'KIA-CAR-009',status:'Closed-Won',dname:'Fleet Corp — Carens ×5',cust:'Fleet Corp',model:'Carens',tp:'Delivery',val:2940000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Morrison Troy',center:'T. Nagar',ago:'4h',trend:-1,txt:'Car delivered with a scratch on the driver door.',comments:[{q:'What went wrong?',a:'Car delivered with a scratch on the driver door.'},{q:'What would you like us to do?',a:'Call me before delivery to confirm condition next time.'},{q:'Any other comments?',a:'Otherwise the sales process itself was fine.'}]},
+ {deal:'KIA-CAR-018',status:'Closed-Won',dname:'Latha R — Carens',cust:'Latha R',model:'Carens',tp:'Delivery',val:1120000,csat:3.6,nps:6,rating:3.0,score:62,owner:'Morrison Troy',center:'Anna Nagar',ago:'1d',trend:0,txt:'Paperwork took far too long at handover.',comments:[{q:'What could we improve?',a:'Paperwork took far too long at handover.'},{q:'Any other comments?',a:'The car itself is great, just the process dragged.'}]},
  {deal:'KIA-SEL-033',status:'Closed-Won',dname:'Sanjay P — Seltos',cust:'Sanjay P',model:'Seltos',tp:'Delivery',val:1300000,csat:4.2,nps:8,rating:4.0,score:74,owner:'Jay Suriya',center:'Velachery',ago:'8h',trend:1,txt:'All good, happy with the car.'},
- {deal:'KIA-SON-030',status:'Closed-Won',dname:'Karthik V — Sonet',cust:'Karthik V',model:'Sonet',tp:'Service',val:45000,csat:2.2,nps:4,rating:2.5,score:38,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Same issue still not fixed — this is my second visit.'},
+ {deal:'KIA-SON-030',status:'Closed-Won',dname:'Karthik V — Sonet',cust:'Karthik V',model:'Sonet',tp:'Service',val:45000,csat:2.2,nps:4,rating:2.5,score:38,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Same issue still not fixed — this is my second visit.',comments:[{q:'What went wrong?',a:'Same issue still not fixed — this is my second visit.'},{q:'What would you like us to do?',a:'Please have a senior technician look at it.'}]},
  {deal:'KIA-EV6-051',status:'Closed-Won',dname:'Divya M — EV6',cust:'Divya M',model:'EV6',tp:'Service',val:60000,csat:4.9,nps:10,rating:5.0,score:92,owner:'Priya Venkat',center:'OMR',ago:'7h',trend:1,txt:'Quick, courteous, done ahead of time.'},
- {deal:'KIA-CAR-027',status:'Closed-Won',dname:'Ravi T — Carens',cust:'Ravi T',model:'Carens',tp:'Service',val:38000,csat:3.0,nps:6,rating:3.0,score:58,owner:'Morrison Troy',center:'T. Nagar',ago:'1d',trend:0,txt:'Job was ok but felt overpriced.'},
+ {deal:'KIA-CAR-027',status:'Closed-Won',dname:'Ravi T — Carens',cust:'Ravi T',model:'Carens',tp:'Service',val:38000,csat:3.0,nps:6,rating:3.0,score:58,owner:'Morrison Troy',center:'T. Nagar',ago:'1d',trend:0,txt:'Job was ok but felt overpriced.',comments:[{q:'What could we improve?',a:'Job was ok but felt overpriced.'},{q:'Any other comments?',a:'A cost estimate up front would help.'}]},
  {deal:'KIA-SEL-060',status:'Closed-Won',dname:'Nisha K — Seltos',cust:'Nisha K',model:'Seltos',tp:'Service',val:42000,csat:4.4,nps:9,rating:4.5,score:80,owner:'Jay Suriya',center:'Velachery',ago:'9h',trend:1,txt:'Friendly staff, clear estimate up front.'},
- {deal:'KIA-SON-072',status:'Closed-Won',dname:'Mohan R — Sonet',cust:'Mohan R',model:'Sonet',tp:'Service',val:35000,csat:2.6,nps:5,rating:2.5,score:44,owner:'Morrison Troy',center:'Anna Nagar',ago:'5h',trend:-1,txt:'Long wait and no status updates the whole time.'}
+ {deal:'KIA-SON-072',status:'Closed-Won',dname:'Mohan R — Sonet',cust:'Mohan R',model:'Sonet',tp:'Service',val:35000,csat:2.6,nps:5,rating:2.5,score:44,owner:'Morrison Troy',center:'Anna Nagar',ago:'5h',trend:-1,txt:'Long wait and no status updates the whole time.',comments:[{q:'What went wrong?',a:'Long wait and no status updates the whole time.'},{q:'What could we improve?',a:'Send an SMS when the car is ready.'}]}
 ];
 var cvThemes=[
  {t:'Vehicle damage / quality',n:1,val:2940000},
@@ -14030,11 +14030,19 @@ function anSurveyCards(){
     '<th style="padding:8px 10px;">Deal</th><th style="padding:8px 10px;">Deal Status</th><th style="padding:8px 10px;">Name</th><th style="padding:8px 10px;">Contact</th><th style="padding:8px 10px;">Product</th><th style="padding:8px 10px;">NPS</th><th style="padding:8px 10px;">CSAT</th><th style="padding:8px 10px;">Score</th><th style="padding:8px 10px;">Trend</th><th style="padding:8px 10px;">Owner</th><th style="padding:8px 10px;">Last response</th></tr></thead>'+
     '<tbody>'+wrows+'</tbody></table></div></div>';
 
-  // detractor voice feed
-  var feed=risk.map(function(r){ return '<div style="padding:10px 0;border-bottom:1px solid #F2F3F7;">'+
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><b style="font-size:12.5px;color:#33475B;">'+r.cust+'</b>'+cvTag(r.tp)+
-    '<span style="margin-left:auto;font-size:11px;font-weight:700;color:#C8324A;">'+cvL(r.val)+' · NPS '+r.nps+'</span></div>'+
-    '<div style="font-size:12px;color:#5B6473;font-style:italic;">“'+r.txt+'”</div></div>'; }).join('');
+  // detractor voice feed — Contact · Deal · NPS · CSAT, then every text box (labelled)
+  var feed=risk.map(function(r){
+    var boxes=(r.comments||[{q:'Comment',a:r.txt}]).map(function(c){
+      return '<div style="font-size:12px;color:#5B6473;margin-top:5px;line-height:1.45;"><span style="color:#8C91AB;">'+c.q+'</span><br><span style="font-style:italic;">“'+c.a+'”</span></div>'; }).join('');
+    return '<div style="padding:12px 0;border-bottom:1px solid #F2F3F7;">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">'+
+        '<b style="font-size:12.5px;color:#33475B;">'+r.cust+'</b>'+
+        '<span style="font-size:11px;color:#5464F2;font-weight:600;">'+r.deal+'</span>'+
+        '<span style="margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap;">'+
+          '<span style="color:'+(r.nps<=6?'#C8324A':'#33475B')+';">NPS '+r.nps+'</span> '+
+          '<span style="color:#D6D6E3;">·</span> '+
+          '<span style="color:'+(r.csat<3?'#C8324A':'#33475B')+';">CSAT '+r.csat.toFixed(1)+'</span></span>'+
+      '</div>'+boxes+'</div>'; }).join('');
   var voice=anCard('The Voice — what detractors actually said', '<div style="margin-top:-4px;">'+feed+'</div>');
 
   // objection themes
