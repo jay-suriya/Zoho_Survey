@@ -13962,13 +13962,6 @@ var cvResp=[
  {deal:'KIA-SEL-060',status:'Closed-Won',dname:'Nisha K — Seltos',cust:'Nisha K',model:'Seltos',tp:'Service',val:42000,csat:4.4,nps:9,rating:4.5,score:80,owner:'Jay Suriya',center:'Velachery',ago:'9h',trend:1,txt:'Friendly staff, clear estimate up front.'},
  {deal:'KIA-SON-072',status:'Closed-Won',dname:'Mohan R — Sonet',cust:'Mohan R',model:'Sonet',tp:'Service',val:35000,csat:2.6,nps:5,rating:2.5,score:44,owner:'Morrison Troy',center:'Anna Nagar',ago:'5h',trend:-1,txt:'Long wait and no status updates the whole time.',comments:[{q:'What went wrong?',a:'Long wait and no status updates the whole time.'},{q:'What could we improve?',a:'Send an SMS when the car is ready.'}]}
 ];
-var cvThemes=[
- {t:'Vehicle damage / quality',n:1,val:2940000},
- {t:'Long wait / delays',n:3,val:2335000},
- {t:'Rushed / poor guidance',n:1,val:1260000},
- {t:'Repeat / unresolved issue',n:1,val:45000},
- {t:'Pricing concern',n:1,val:38000}
-];
 function cvL(r){ return '₹'+(r/100000).toFixed(1)+'L'; }
 function cvIsRisk(r){ return r.nps<=6; }
 function cvTag(tp){ var c=CV_TP[tp]; return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:'+c+';background:'+c+'18;border:1px solid '+c+'44;border-radius:20px;padding:2px 8px;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:'+c+';"></span>'+tp+'</span>'; }
@@ -14045,13 +14038,6 @@ function anSurveyCards(){
       '</div>'+boxes+'</div>'; }).join('');
   var voice=anCard('The Voice — what detractors actually said', '<div style="margin-top:-4px;">'+feed+'</div>');
 
-  // objection themes
-  var tmax=Math.max.apply(null,cvThemes.map(function(t){return t.val;}));
-  var trows=cvThemes.map(function(t){ var pct=t.val/tmax*100; return '<div style="margin:9px 0;">'+
-    '<div style="display:flex;justify-content:space-between;font-size:12px;color:#33475B;margin-bottom:4px;"><span>'+t.t+' <span style="color:#97A0B0;">· '+t.n+'×</span></span><b style="color:#C8324A;">'+cvL(t.val)+'</b></div>'+
-    '<div style="height:7px;background:#F0F1F5;border-radius:4px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:#E86A5E;border-radius:4px;"></div></div></div>'; }).join('');
-  var themes=anCard('Objection themes <span style="font-size:11px;font-weight:500;color:#8C91AB;">· ₹ exposure</span>', trows);
-
   // ── SECTION 2 : METRICS BY TOUCHPOINT ──
   var tpCols=Object.keys(CV_TP).map(function(tp){ var s=cvTpStats(tp), sr=CV_SENT[tp]; var c=CV_TP[tp];
     return '<div style="flex:1;min-width:200px;border:1px solid #EDEEF3;border-radius:10px;padding:14px;border-top:3px solid '+c+';">'+
@@ -14114,7 +14100,7 @@ function anSurveyCards(){
   var testimonials=anCard('Testimonials <span style="font-size:11px;font-weight:500;color:#8C91AB;">· use in marketing &amp; morale</span>', '<div style="margin-top:-4px;">'+quotes+'</div>');
 
   return cvSec('Handle bad feedback','revenue at risk, ranked and named — act top-down')+
-    hero + worklist + voice + themes +
+    hero + worklist + voice +
     cvSec('Metrics','response health &amp; sentiment, per auto-send touchpoint')+
     byTp +
     cvSec('Trends','is exposure rising, and did acting on it pay off?')+
