@@ -13951,21 +13951,21 @@ var CV_TP={'Test Drive':'#5B9BE8','Quotation':'#8E7CC3','Negotiation':'#E8A13F',
 var CV_SENT={'Test Drive':{sent:30,resp:20,cov:85},'Quotation':{sent:26,resp:17,cov:80},'Negotiation':{sent:22,resp:14,cov:78},'Booking':{sent:20,resp:15,cov:88},'Delivery':{sent:24,resp:19,cov:92}};
 var cvResp=[
  // ── Test Drive (Open) ──
- {deal:'KIA-EV6-003',status:'Open',dname:'Meera S — EV6',cust:'Meera S',model:'EV6',tp:'Test Drive',val:3400000,csat:4.8,nps:10,rating:5.0,score:90,owner:'Priya Venkat',center:'OMR',ago:'3h',trend:1,txt:'Loved it — Priya was fantastic, zero pressure.'},
+ {deal:'KIA-EV6-003',status:'Open',dname:'Meera S — EV6',cust:'Meera S',model:'EV6',tp:'Test Drive',val:3400000,csat:4.8,nps:10,rating:5.0,score:90,owner:'Priya Venkat',center:'OMR',ago:'3h',trend:1,txt:'Loved it — Priya was fantastic, zero pressure.',comments:[{q:'What did you love?',a:'Priya was fantastic — zero pressure and super knowledgeable.'},{q:'Any other comments?',a:'Best test-drive experience I have had.'}]},
  {deal:'KIA-SEL-002',status:'Open',dname:'Ramesh Kumar — Seltos',cust:'Ramesh Kumar',model:'Seltos',tp:'Test Drive',val:1260000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Consultant rushed the drive, barely explained the features.',comments:[{q:'What could we improve?',a:'Consultant rushed the drive, barely explained the features.'},{q:'What would have made it better?',a:'More time behind the wheel and a proper feature walkthrough.'}]},
- {deal:'KIA-SON-041',status:'Open',dname:'Vikram N — Sonet',cust:'Vikram N',model:'Sonet',tp:'Test Drive',val:980000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'5h',trend:1,txt:'Great walkthrough, very knowledgeable.'},
+ {deal:'KIA-SON-041',status:'Open',dname:'Vikram N — Sonet',cust:'Vikram N',model:'Sonet',tp:'Test Drive',val:980000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'5h',trend:1,txt:'Great walkthrough, very knowledgeable.',comments:[{q:'What did you love?',a:'Great walkthrough — every feature explained clearly.'},{q:'Any other comments?',a:'The consultant really knew the car.'}]},
  // ── Quotation (Open) ──
- {deal:'KIA-EV6-051',status:'Open',dname:'Divya M — EV6',cust:'Divya M',model:'EV6',tp:'Quotation',val:3200000,csat:4.9,nps:10,rating:5.0,score:92,owner:'Priya Venkat',center:'OMR',ago:'7h',trend:1,txt:'Quote was clear and fully transparent.'},
+ {deal:'KIA-EV6-051',status:'Open',dname:'Divya M — EV6',cust:'Divya M',model:'EV6',tp:'Quotation',val:3200000,csat:4.9,nps:10,rating:5.0,score:92,owner:'Priya Venkat',center:'OMR',ago:'7h',trend:1,txt:'Quote was clear and fully transparent.',comments:[{q:'What did you love?',a:'The quote was clear and fully transparent.'},{q:'Any other comments?',a:'No hidden charges — exactly what I was told.'}]},
  {deal:'KIA-SEL-021',status:'Open',dname:'Arjun Rao — Seltos',cust:'Arjun Rao',model:'Seltos',tp:'Quotation',val:1180000,csat:3.1,nps:5,rating:3.5,score:55,owner:'Jay Suriya',center:'Velachery',ago:'1d',trend:-1,txt:'The quote took two days and had hidden charges.',comments:[{q:'What could we improve?',a:'The quote took two days and still had hidden charges.'},{q:'Any other comments?',a:'Had to ask twice for a proper on-road price breakup.'}]},
  // ── Negotiation (Open) ──
- {deal:'KIA-SEL-060',status:'Open',dname:'Nisha K — Seltos',cust:'Nisha K',model:'Seltos',tp:'Negotiation',val:1150000,csat:4.4,nps:9,rating:4.5,score:80,owner:'Jay Suriya',center:'Velachery',ago:'9h',trend:1,txt:'Fair negotiation, never felt pressured.'},
+ {deal:'KIA-SEL-060',status:'Open',dname:'Nisha K — Seltos',cust:'Nisha K',model:'Seltos',tp:'Negotiation',val:1150000,csat:4.4,nps:9,rating:4.5,score:80,owner:'Jay Suriya',center:'Velachery',ago:'9h',trend:1,txt:'Fair negotiation, never felt pressured.',comments:[{q:'What did you love?',a:'Fair negotiation — I never felt pressured.'},{q:'Any other comments?',a:'Clear estimate up front, no surprises.'}]},
  {deal:'KIA-SON-072',status:'Open',dname:'Mohan R — Sonet',cust:'Mohan R',model:'Sonet',tp:'Negotiation',val:990000,csat:2.6,nps:5,rating:2.5,score:44,owner:'Morrison Troy',center:'Anna Nagar',ago:'5h',trend:-1,txt:'Felt pressured to close, the discount kept changing.',comments:[{q:'What went wrong?',a:'Felt pressured to close, and the discount kept changing.'},{q:'What could we improve?',a:'Give a firm price instead of endless back-and-forth.'}]},
  // ── Booking (Open) ──
  {deal:'KIA-SEL-033',status:'Open',dname:'Sanjay P — Seltos',cust:'Sanjay P',model:'Seltos',tp:'Booking',val:1300000,csat:4.2,nps:8,rating:4.0,score:74,owner:'Jay Suriya',center:'Velachery',ago:'8h',trend:1,txt:'Booking was smooth and quick.'},
  {deal:'KIA-SON-030',status:'Open',dname:'Karthik V — Sonet',cust:'Karthik V',model:'Sonet',tp:'Booking',val:1020000,csat:2.2,nps:4,rating:2.5,score:38,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Booking amount was debited twice.',comments:[{q:'What went wrong?',a:'Booking amount was debited twice and took days to reverse.'},{q:'What would you like us to do?',a:'Confirm the payment instantly next time.'}]},
  {deal:'KIA-CAR-027',status:'Open',dname:'Ravi T — Carens',cust:'Ravi T',model:'Carens',tp:'Booking',val:1120000,csat:3.0,nps:6,rating:3.0,score:58,owner:'Morrison Troy',center:'T. Nagar',ago:'1d',trend:0,txt:'No confirmation of my booking for a week.',comments:[{q:'What could we improve?',a:'I had no confirmation of my booking for a week.'},{q:'Any other comments?',a:'A simple SMS or email would have reassured me.'}]},
  // ── Delivery (Closed-Won) ──
- {deal:'KIA-SON-014',status:'Closed-Won',dname:'Anita Rao — Sonet',cust:'Anita Rao',model:'Sonet',tp:'Delivery',val:1050000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'6h',trend:1,txt:'Smooth handover, felt special.'},
+ {deal:'KIA-SON-014',status:'Closed-Won',dname:'Anita Rao — Sonet',cust:'Anita Rao',model:'Sonet',tp:'Delivery',val:1050000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'6h',trend:1,txt:'Smooth handover, felt special.',comments:[{q:'What did you love?',a:'Smooth handover — they made it feel special.'},{q:'Any other comments?',a:'Would happily recommend to friends.'}]},
  {deal:'KIA-CAR-009',status:'Closed-Won',dname:'Fleet Corp — Carens ×5',cust:'Fleet Corp',model:'Carens',tp:'Delivery',val:2940000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Morrison Troy',center:'T. Nagar',ago:'4h',trend:-1,txt:'Car delivered with a scratch on the driver door.',comments:[{q:'What went wrong?',a:'Car delivered with a scratch on the driver door.'},{q:'What would you like us to do?',a:'Inspect the car with me before delivery next time.'},{q:'Any other comments?',a:'Otherwise the sales process itself was fine.'}]},
  {deal:'KIA-CAR-018',status:'Closed-Won',dname:'Latha R — Carens',cust:'Latha R',model:'Carens',tp:'Delivery',val:1120000,csat:3.6,nps:6,rating:3.0,score:62,owner:'Morrison Troy',center:'Anna Nagar',ago:'1d',trend:0,txt:'Paperwork took far too long at handover.',comments:[{q:'What could we improve?',a:'Paperwork took far too long at handover.'},{q:'Any other comments?',a:'The car itself is great, just the process dragged.'}]}
 ];
@@ -14033,8 +14033,8 @@ function anSurveyCards(){
     '<th style="padding:8px 10px;">Deal</th><th style="padding:8px 10px;">Deal Status</th><th style="padding:8px 10px;">Name</th><th style="padding:8px 10px;">Contact</th><th style="padding:8px 10px;">Product</th><th style="padding:8px 10px;">NPS</th><th style="padding:8px 10px;">CSAT</th><th style="padding:8px 10px;">Score</th><th style="padding:8px 10px;">Trend</th><th style="padding:8px 10px;">Owner</th><th style="padding:8px 10px;">Last response</th></tr></thead>'+
     '<tbody>'+wrows+'</tbody></table></div></div>';
 
-  // detractor voice feed — Contact · Deal · NPS · CSAT, then every text box (labelled)
-  var feed=risk.map(function(r){
+  // Shared feed — Contact · Deal · NPS · CSAT header, then every text box (labelled)
+  var cvFeed=function(list){ return '<div style="margin-top:-4px;">'+list.map(function(r){
     var boxes=(r.comments||[{q:'Comment',a:r.txt}]).map(function(c){
       return '<div style="font-size:12px;color:#5B6473;margin-top:5px;line-height:1.45;"><span style="color:#8C91AB;">'+c.q+'</span><br><span style="font-style:italic;">“'+c.a+'”</span></div>'; }).join('');
     return '<div style="padding:12px 0;border-bottom:1px solid #F2F3F7;">'+
@@ -14042,11 +14042,11 @@ function anSurveyCards(){
         '<b style="font-size:12.5px;color:#33475B;">'+r.cust+'</b>'+
         '<span style="font-size:11px;color:#5464F2;font-weight:600;">'+r.deal+'</span>'+
         '<span style="margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap;">'+
-          '<span style="color:'+(r.nps<=6?'#C8324A':'#33475B')+';">NPS '+r.nps+'</span> '+
+          '<span style="color:'+(r.nps<=6?'#C8324A':(r.nps>=9?'#1F8A54':'#33475B'))+';">NPS '+r.nps+'</span> '+
           '<span style="color:#D6D6E3;">·</span> '+
-          '<span style="color:'+(r.csat<3?'#C8324A':'#33475B')+';">CSAT '+r.csat.toFixed(1)+'</span></span>'+
-      '</div>'+boxes+'</div>'; }).join('');
-  var voice=anCard('The Voice — what unhappy customers actually said', '<div style="margin-top:-4px;">'+feed+'</div>');
+          '<span style="color:'+(r.csat<3?'#C8324A':(r.csat>=4.5?'#1F8A54':'#33475B'))+';">CSAT '+r.csat.toFixed(1)+'</span></span>'+
+      '</div>'+boxes+'</div>'; }).join('')+'</div>'; };
+  var voice=anCard('The Voice — what unhappy customers actually said', cvFeed(risk));
 
   // ── SECTION 2 : METRICS BY TOUCHPOINT ──
   var tpCols=Object.keys(CV_TP).map(function(tp){ var s=cvTpStats(tp), sr=CV_SENT[tp]; var c=CV_TP[tp];
@@ -14100,20 +14100,10 @@ function anSurveyCards(){
     '<th style="padding:8px 10px;">Rank</th><th style="padding:8px 10px;">Consultant</th><th style="padding:8px 10px;">Avg CSAT</th><th style="padding:8px 10px;">Avg NPS</th><th style="padding:8px 10px;">Happy</th><th style="padding:8px 10px;">Unhappy</th><th style="padding:8px 10px;">₹ at risk</th></tr></thead>'+
     '<tbody>'+lrows+'</tbody></table></div>';
 
-  var prows=proms.map(function(r){ var ref=r.val>=1000000; return '<div style="padding:10px 0;border-bottom:1px solid #F2F3F7;display:flex;align-items:center;gap:8px;">'+
-    '<div style="flex:1;"><div style="font-size:12.5px;color:#33475B;font-weight:600;">'+r.cust+' <span style="font-weight:400;color:#97A0B0;">· '+r.model+'</span></div>'+
-    '<div style="margin-top:3px;">'+cvTag(r.tp)+' <span style="font-size:11px;color:#8C91AB;">'+r.owner+'</span></div></div>'+
-    '<span style="font-size:11px;font-weight:600;color:#1F8A54;">NPS '+r.nps+'</span>'+
-    '<span style="font-size:10px;font-weight:700;color:#fff;background:'+(ref?'#8E7CC3':'#1F8A54')+';border-radius:20px;padding:3px 9px;white-space:nowrap;">'+(ref?'Referral lead':'Ask for review')+'</span></div>'; }).join('');
-  var promoters=anCard('Happy customers &amp; referral opportunities <span style="font-size:11px;font-weight:500;color:#8C91AB;">· '+proms.length+' happy customers</span>', '<div style="margin-top:-4px;">'+prows+'</div>');
-
-  var quotes=proms.slice(0,3).map(function(r){ return '<div style="padding:11px 0;border-bottom:1px solid #F2F3F7;">'+
-    '<div style="font-size:12.5px;color:#434D5E;font-style:italic;line-height:1.5;">“'+r.txt+'”</div>'+
-    '<div style="margin-top:6px;font-size:11px;color:#8C91AB;">— '+r.cust+' · '+r.model+' · '+r.tp+' · <span style="color:#1F8A54;">served by '+r.owner+'</span></div></div>'; }).join('');
-  var testimonials=anCard('Testimonials <span style="font-size:11px;font-weight:500;color:#8C91AB;">· use in marketing &amp; morale</span>', '<div style="margin-top:-4px;">'+quotes+'</div>');
+  var happy=anCard('Happy customers &amp; referral opportunities <span style="font-size:11px;font-weight:500;color:#8C91AB;">· '+proms.length+' happy customers</span>', cvFeed(proms));
 
   return cvSec('Handle bad feedback','revenue at risk, ranked and named — act top-down')+
-    hero + worklist + voice +
+    hero + worklist + voice + happy +
     cvSec('Metrics','response health &amp; sentiment, per Blueprint stage')+
     byTp +
     cvSec('Trends','is exposure rising, and did acting on it pay off?')+
@@ -14125,7 +14115,7 @@ function anSurveyCards(){
     anCard('Avg CSAT by collector', anBar(byCollector,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Collector') +
     anCard('NPS distribution', anPie(npsDist), 'NPS Distribution') +
     cvSec('Reward good feedback','recognise reps, capture referrals &amp; reviews')+
-    leaderboard + promoters + testimonials;
+    leaderboard;
 }
 
 function renderAnalytics(){ document.getElementById('an-grid').innerHTML = (anDash==='leads'? anLeadsCards(): anSurveyCards()); }
