@@ -13969,6 +13969,9 @@ var cvResp=[
  {deal:'KIA-CAR-009',status:'Closed-Won',dname:'Fleet Corp — Carens ×5',cust:'Fleet Corp',model:'Carens',tp:'Delivery',val:2940000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Morrison Troy',center:'T. Nagar',ago:'4h',trend:-1,txt:'Car delivered with a scratch on the driver door.',comments:[{q:'What went wrong?',a:'Car delivered with a scratch on the driver door.'},{q:'What would you like us to do?',a:'Inspect the car with me before delivery next time.'},{q:'Any other comments?',a:'Otherwise the sales process itself was fine.'}]},
  {deal:'KIA-CAR-018',status:'Closed-Won',dname:'Latha R — Carens',cust:'Latha R',model:'Carens',tp:'Delivery',val:1120000,csat:3.6,nps:6,rating:3.0,score:62,owner:'Morrison Troy',center:'Anna Nagar',ago:'1d',trend:0,txt:'Paperwork took far too long at handover.',comments:[{q:'What could we improve?',a:'Paperwork took far too long at handover.'},{q:'Any other comments?',a:'The car itself is great, just the process dragged.'}]}
 ];
+// Collector = the distribution channel each survey was sent through.
+var CV_COLLECTOR={'KIA-EV6-003':'WhatsApp','KIA-SEL-002':'SMS','KIA-SON-041':'Email','KIA-EV6-051':'Email','KIA-SEL-021':'SMS','KIA-SEL-060':'WhatsApp','KIA-SON-072':'SMS','KIA-SEL-033':'Email','KIA-SON-030':'In-store QR','KIA-CAR-027':'In-store QR','KIA-SON-014':'WhatsApp','KIA-CAR-009':'Email','KIA-CAR-018':'SMS'};
+cvResp.forEach(function(r){ r.collector=CV_COLLECTOR[r.deal]; });
 function cvL(r){ return '₹'+(r/100000).toFixed(1)+'L'; }
 function cvIsRisk(r){ return r.nps<=6; }
 function cvTag(tp){ var c=CV_TP[tp]; return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:'+c+';background:'+c+'18;border:1px solid '+c+'44;border-radius:20px;padding:2px 8px;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:'+c+';"></span>'+tp+'</span>'; }
@@ -14076,10 +14079,11 @@ function anSurveyCards(){
       {name:'Delivery',color:CV_TP['Delivery'],points:[4.0,3.9,3.7,3.6,3.7,3.7]}
     ],{labels:wk,yMin:2.5,yMax:5,fmtY:function(v){return v.toFixed(1);},legend:true});
 
-  // ── SECTION 4 : ROOT CAUSE ──
-  var byModel=Object.values(cvResp.reduce(function(m,r){ (m[r.model]=m[r.model]||{label:r.model,s:0,n:0}); m[r.model].s+=r.score; m[r.model].n++; return m; },{})).map(function(x){return {label:x.label,value:+(x.s/x.n).toFixed(0),color:x.s/x.n<55?'#E86A5E':'#6FCF97'};});
-  var byCenter=Object.values(cvResp.reduce(function(m,r){ (m[r.center]=m[r.center]||{label:r.center,s:0,n:0}); m[r.center].s+=r.score; m[r.center].n++; return m; },{})).map(function(x){return {label:x.label,value:+(x.s/x.n).toFixed(0),color:x.s/x.n<55?'#E86A5E':'#6FCF97'};});
-  var byRepBar=cvReps().map(function(x){return {label:x.owner.split(' ')[0],value:+x.csat.toFixed(1),color:x.csat<3.5?'#E86A5E':'#6FCF97'};});
+  // ── SECTION 4 : ROOT CAUSE ── (avg CSAT sliced by product / user / collector, + NPS split)
+  var cvCsatBy=function(keyFn){ var m={}; cvResp.forEach(function(r){ var k=keyFn(r); (m[k]=m[k]||{label:k,s:0,n:0}); m[k].s+=r.csat; m[k].n++; }); return Object.keys(m).map(function(k){ var x=m[k], v=+(x.s/x.n).toFixed(1); return {label:x.label,value:v,color:v<3.5?'#E86A5E':'#6FCF97'}; }); };
+  var byProduct=cvCsatBy(function(r){return r.model;});
+  var byUser=cvCsatBy(function(r){return r.owner.split(' ')[0];});
+  var byCollector=cvCsatBy(function(r){return r.collector;});
   var npsDist=[{label:'Happy (9-10)',value:cvResp.filter(function(r){return r.nps>=9;}).length,color:'#6FCF97'},{label:'Neutral (7-8)',value:cvResp.filter(function(r){return r.nps>=7&&r.nps<=8;}).length,color:'#E0C341'},{label:'Unhappy (0-6)',value:cvResp.filter(cvIsRisk).length,color:'#E86A5E'}];
 
   // ── SECTION 5 : REWARD GOOD FEEDBACK ──
@@ -14116,9 +14120,9 @@ function anSurveyCards(){
     anCard('At-Risk vs Recovered Revenue', trendRisk, 'At-Risk Revenue Trend') +
     anCard('CSAT trend by touchpoint <span style="font-size:11px;font-weight:500;color:#8C91AB;">· Negotiation is sliding</span>', trendCsat, 'CSAT by Touchpoint') +
     cvSec('Root cause','fix the process, not each symptom')+
-    anCard('Avg score by model', anBar(byModel,{yLabel:'Avg score /100',maxY:100}), 'Score by Model') +
-    anCard('Avg score by service center', anBar(byCenter,{yLabel:'Avg score /100',maxY:100}), 'Score by Center') +
-    anCard('Avg CSAT by consultant', anBar(byRepBar,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Consultant') +
+    anCard('Avg CSAT by product', anBar(byProduct,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Product') +
+    anCard('Avg CSAT by user', anBar(byUser,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by User') +
+    anCard('Avg CSAT by collector', anBar(byCollector,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Collector') +
     anCard('NPS distribution', anPie(npsDist), 'NPS Distribution') +
     cvSec('Reward good feedback','recognise reps, capture referrals &amp; reviews')+
     leaderboard + promoters + testimonials;
