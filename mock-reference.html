@@ -13990,6 +13990,9 @@ function anSurveyCards(){
   var riskRev=risk.reduce(function(a,r){return a+r.val;},0);
   var wSent=cvResp.reduce(function(a,r){return a+r.score*r.val;},0)/cvResp.reduce(function(a,r){return a+r.val;},0);
   var proms=cvResp.filter(function(r){return r.nps>=9;}).sort(function(a,b){return b.val-a.val;});
+  var totSent=0,totResp=0; Object.keys(CV_SENT).forEach(function(k){totSent+=CV_SENT[k].sent;totResp+=CV_SENT[k].resp;});
+  var respRate=Math.round(totResp/totSent*100);
+  var avgCsat=cvResp.reduce(function(a,r){return a+r.csat;},0)/cvResp.length;
 
   // ── SECTION 1 : HANDLE BAD FEEDBACK ──
   var hk=function(v,l,sub,col){ return '<div class="an-kpi" style="flex:1;min-width:150px;"><div class="an-kpi-v" style="color:'+(col||'#1F2733')+';">'+v+'</div><div class="an-kpi-l">'+l+'</div><div style="font-size:11px;color:#8C91AB;margin-top:6px;">'+sub+'</div></div>'; };
@@ -13998,6 +14001,10 @@ function anSurveyCards(){
     '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+
       hk(cvL(riskRev),'At-Risk Revenue','','#C8324A')+
       hk(risk.length,'At-Risk Deals','3 high-value (&gt;₹10L)','#1F2733')+
+      hk(respRate+'<span style="font-size:14px;color:#8C91AB;">%</span>','Response Rate',totResp+' of '+totSent+' replied','#1F2733')+
+      hk(avgCsat.toFixed(1)+'<span style="font-size:14px;color:#8C91AB;">/5</span>','Avg CSAT','across all touchpoints','#B8791A')+
+      hk(proms.length,'Promoters','NPS 9–10','#1F8A54')+
+      hk(risk.length,'Detractors','NPS 0–6','#C8324A')+
     '</div></div>';
 
   // worklist
