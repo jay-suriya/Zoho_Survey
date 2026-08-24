@@ -2086,7 +2086,7 @@ tbody tr:hover{background:#f5f7ff;}
       </div>
     </div>
     <div class="sb-nav">
-      <div class="sb-item">
+      <div class="sb-item" onclick="openContactsListPage()" style="cursor:pointer;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</div>
       <div class="sb-item" onclick="openLeadsListPage()" style="cursor:pointer;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Leads</div>
@@ -12128,37 +12128,46 @@ function renderDealSurveys(){
   var body = document.getElementById('dd-survey-body'); if(!body) return;
   var responded = dealSurveysData.filter(function(s){return s.status==='responded';});
   var pending = dealSurveysData.filter(function(s){return s.status==='pending';});
-  document.getElementById('dd-survey-subtitle').textContent = dealSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
-
-  // ===== FLASH CARDS — latest-per-metric across all surveys on this deal =====
-  var html = '';
-  // Aggregate each metric across responded surveys (chronological): last one wins = latest.
-  var agg = {}; // label -> {value, norm, count}
+  var sub = document.getElementById('dd-survey-subtitle');
+  if(sub) sub.textContent = dealSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
+  cvRenderSignals(body, dealSurveysData, dealSurveyMeta, 'deal');
+}
+// Shared per-transition-attributed survey signals — used by Deal and Contact detail.
+// Each metric shows its LATEST value + WHICH transition/survey it came from (attribution,
+// not a blended average across transitions), then per-transition rows.
+function cvRenderSignals(body, data, meta, unit){
+  if(!body) return;
+  unit = unit || 'record';
+  var responded = data.filter(function(s){return s.status==='responded';});
+  var pending = data.filter(function(s){return s.status==='pending';});
+  // Aggregate each metric across responded surveys (chronological): last one wins = latest, and keep its source transition.
+  var agg = {};
   responded.forEach(function(s){ s.metrics.forEach(function(m){
-    var e = agg[m.label] || {count:0}; e.count++; e.value=m.value; e.norm=m.norm; agg[m.label]=e;
+    agg[m.label] = {value:m.value, norm:m.norm, src:s.name, trigger:s.trigger, count:(agg[m.label]?agg[m.label].count:0)+1};
   }); });
-  function metricSub(e){ return e.count>1 ? 'latest · '+e.count+' surveys' : '1 survey'; }
+  var cards = [];
   function metricCard(key, title){
     var e = agg[key]; if(!e) return; var b = dsBand(e.norm);
     cards.push('<div class="cv-fcard" style="border-top:3px solid '+b.c+';"><div class="fl">'+title+'</div>'+
-      '<div class="fv" style="color:'+b.c+';">'+e.value+'</div><div class="fs">'+metricSub(e)+'</div></div>');
+      '<div class="fv" style="color:'+b.c+';">'+e.value+'</div><div class="fs">from '+e.src+(e.count>1?' · latest of '+e.count:'')+'</div></div>');
   }
-
-  var cards = [];
-  metricCard('NPS','NPS');
-  metricCard('CSAT','CSAT');
-  metricCard('Rating','Avg Rating');
-  metricCard('Score','Score');
-  // coverage
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+dealSurveysData.length+'</div><div class="fs">'+(pending.length? pending.length+' pending response':'all responded')+'</div></div>');
-  // recency + live dot
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.lastAgo+'</div><div class="fs">most recent of '+responded.length+'</div></div>');
-  // response speed
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl">⏱ Reply speed</div><div class="fv" style="font-size:16px;color:#202123;">'+dealSurveyMeta.speed+'</div><div class="fs">engaged respondent</div></div>');
-  // touchpoints
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+dealSurveysData.length+'</div><div class="fs">surveys over this deal</div></div>');
-  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
-
+  metricCard('NPS','NPS'); metricCard('CSAT','CSAT'); metricCard('Rating','Avg Rating'); metricCard('Score','Score');
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+data.length+'</div><div class="fs">'+(pending.length? pending.length+' pending':'all responded')+'</div></div>');
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+meta.lastAgo+'</div><div class="fs">most recent of '+responded.length+'</div></div>');
+  cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+data.length+'</div><div class="fs">transitions on this '+unit+'</div></div>');
+  var html = '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
+  // Per-transition breakdown (attribution) — which transition fired which survey and what it scored
+  html += '<div style="margin-top:16px;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">'+
+    '<div style="padding:10px 14px;font-size:12.5px;font-weight:700;color:#5B6473;background:#F7F8FA;border-bottom:1px solid #EDF0F4;">By transition</div>'+
+    data.map(function(s){
+      var mets = s.status==='responded'
+        ? s.metrics.map(function(m){var b=dsBand(m.norm);return '<span style="color:'+b.c+';font-weight:600;">'+m.label+' '+m.value+'</span>';}).join(' <span style="color:#D6D6E3;">·</span> ')
+        : '<span style="color:#B8791A;">Yet to respond</span>';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F2F3F7;">'+
+        '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#33475B;">'+s.name+'</div>'+
+        '<div style="font-size:11.5px;color:#97A0B0;margin-top:2px;">'+s.trigger+'</div></div>'+
+        '<div style="font-size:12.5px;text-align:right;">'+mets+'</div></div>';
+    }).join('')+'</div>';
   body.innerHTML = html;
 }
 function dsToggle(id){ dealSurveyExpanded[id] = !dealSurveyExpanded[id]; renderDealSurveys(); }
@@ -14481,6 +14490,50 @@ function svcDone(){
 }
 </script>
 
+<!-- ═══════════ Contacts module: list + detail (with survey signals) ═══════════ -->
+<style>
+.ctl-row{cursor:pointer;border-bottom:1px solid #F0F1F5;}
+.ctl-row:hover{background:#FBEFF3;}
+</style>
+<div id="ctl-page" style="display:none;position:fixed;inset:0;z-index:930;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;flex-direction:column;">
+  <div style="display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid #E6E6EC;flex-shrink:0;">
+    <span style="cursor:pointer;color:#8C91AB;" onclick="closeContactsListPage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+    <span style="font-size:20px;font-weight:700;color:#1F2733;">Contacts</span>
+    <span style="font-size:13px;color:#8C91AB;">All Contacts &#9662;</span>
+    <span style="flex:1;"></span>
+    <button style="background:linear-gradient(#E7476E,#C42D5B);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Create Contact</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead><tr style="border-bottom:1px solid #E6E6EC;text-align:left;color:#8C91AB;background:#FAFAFD;">
+        <th style="padding:12px 22px;font-weight:600;">Contact Name</th><th style="padding:12px 16px;font-weight:600;">Account Name</th><th style="padding:12px 16px;font-weight:600;">Email</th><th style="padding:12px 16px;font-weight:600;">Phone</th><th style="padding:12px 16px;font-weight:600;">Contact Owner</th></tr></thead>
+      <tbody id="ctl-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="ctd-page" style="display:none;position:fixed;inset:0;z-index:932;background:#F4F5F7;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:auto;">
+  <div style="display:flex;align-items:center;gap:14px;padding:14px 24px;background:#fff;border-bottom:1px solid #E6E6EC;">
+    <span style="cursor:pointer;color:#8C91AB;" onclick="closeContactDetailPage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+    <span id="ctd-avatar" style="width:44px;height:44px;border-radius:50%;background:#7A1F4E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;">C</span>
+    <div><div id="ctd-name" style="font-size:18px;font-weight:700;color:#1F2733;">Contact</div><div style="font-size:12px;color:#97A0B0;">Add Tags</div></div>
+    <span style="flex:1;"></span>
+    <button style="background:#fff;border:1px solid #C0C8E2;border-radius:6px;padding:7px 16px;font-size:13px;color:#33475B;font-weight:600;cursor:pointer;font-family:inherit;">Send Mail</button>
+    <button style="background:#fff;border:1px solid #C0C8E2;border-radius:6px;padding:7px 16px;font-size:13px;color:#33475B;font-weight:600;cursor:pointer;font-family:inherit;">Edit</button>
+  </div>
+  <div style="max-width:1080px;margin:20px auto;padding:0 24px;">
+    <div style="background:#fff;border:1px solid #E6E6EC;border-radius:10px;padding:20px 22px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:15px;font-weight:700;color:#1F2733;">Zoho Survey · Signals</span><span id="ctd-survey-subtitle" style="font-size:12px;color:#97A0B0;"></span></div>
+      <div style="font-size:12px;color:#97A0B0;margin-bottom:14px;">Sentiment attributed to the Blueprint transition that fired each survey.</div>
+      <div id="ctd-survey-body"></div>
+    </div>
+    <div style="background:#fff;border:1px solid #E6E6EC;border-radius:10px;padding:20px 22px;">
+      <div style="font-size:15px;font-weight:700;color:#1F2733;margin-bottom:6px;">Contact Details</div>
+      <div id="ctd-fields" style="font-size:13.5px;color:#3C4557;line-height:2;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ Settings → Blueprint flow ═══════════ -->
 <style>
 .bp-navitem{padding:8px 14px 8px 22px;font-size:13.5px;color:#3C4557;cursor:pointer;}
@@ -14663,6 +14716,51 @@ function svcDone(){
 </div>
 
 <script>
+// ── Contacts module ──
+var ctlData=[
+  {name:'Ramesh Kumar',account:'Sundaram Kia',email:'ramesh.kumar@example.com',phone:'+91 98400 11223',owner:'Jay Suriya'},
+  {name:'Anita Rao',account:'Sundaram Kia',email:'anita.rao@example.com',phone:'+91 98400 44556',owner:'Priya Venkat'},
+  {name:'Fleet Corp (Suresh)',account:'Fleet Corp',email:'suresh@fleetcorp.com',phone:'+91 98400 77889',owner:'Morrison Troy'},
+  {name:'Meera S',account:'Individual',email:'meera.s@example.com',phone:'+91 98400 22110',owner:'Priya Venkat'},
+  {name:'Karthik V',account:'Vantage Motors',email:'karthik.v@example.com',phone:'+91 98400 33445',owner:'Jay Suriya'},
+  {name:'Divya M',account:'Individual',email:'divya.m@example.com',phone:'+91 98400 55667',owner:'Priya Venkat'},
+  {name:'Mohan R',account:'Individual',email:'mohan.r@example.com',phone:'+91 98400 88990',owner:'Morrison Troy'},
+  {name:'Latha R',account:'Fleet Corp',email:'latha.r@example.com',phone:'+91 98400 12345',owner:'Morrison Troy'}
+];
+// Per-transition survey signals for a contact (its own Blueprint: onboarding → active → renewal + service)
+var contactSurveysData=[
+  {name:'Welcome / Onboarding CSAT', trigger:'Stage → Onboarded', status:'responded', metrics:[{label:'CSAT',value:'4.4 / 5',norm:0.88}]},
+  {name:'Post-Service CSAT', trigger:'Service ticket closed', status:'responded', metrics:[{label:'CSAT',value:'3.2 / 5',norm:0.64},{label:'Rating',value:'3.0 / 5',norm:0.60}]},
+  {name:'Relationship NPS', trigger:'Stage → Active (90-day)', status:'responded', metrics:[{label:'NPS',value:'7 / 10',norm:0.70}]},
+  {name:'Renewal Pulse', trigger:'Stage → Renewal Due', status:'pending', metrics:[]}
+];
+var contactSurveyMeta={ lastAgo:'5h ago', speed:'6 min' };
+function openContactsListPage(){
+  document.getElementById('ctl-tbody').innerHTML=ctlData.map(function(c,i){
+    return '<tr class="ctl-row" onclick="openContactDetailPage('+i+')">'+
+      '<td style="padding:14px 22px;"><span style="color:#5464F2;font-weight:600;">'+c.name+'</span></td>'+
+      '<td style="padding:14px 16px;color:#3C4557;">'+c.account+'</td>'+
+      '<td style="padding:14px 16px;color:#5B6473;">'+c.email+'</td>'+
+      '<td style="padding:14px 16px;color:#5B6473;">'+c.phone+'</td>'+
+      '<td style="padding:14px 16px;color:#3C4557;">'+c.owner+'</td></tr>';
+  }).join('');
+  document.getElementById('ctl-page').style.display='flex';
+}
+function closeContactsListPage(){ document.getElementById('ctl-page').style.display='none'; }
+function openContactDetailPage(i){
+  var c=ctlData[i];
+  document.getElementById('ctd-name').textContent=c.name;
+  document.getElementById('ctd-avatar').textContent=c.name.charAt(0).toUpperCase();
+  document.getElementById('ctd-fields').innerHTML='<b>Account:</b> '+c.account+' &nbsp; · &nbsp; <b>Email:</b> '+c.email+' &nbsp; · &nbsp; <b>Phone:</b> '+c.phone+' &nbsp; · &nbsp; <b>Owner:</b> '+c.owner;
+  var responded=contactSurveysData.filter(function(s){return s.status==='responded';});
+  var pending=contactSurveysData.filter(function(s){return s.status==='pending';});
+  document.getElementById('ctd-survey-subtitle').textContent='· '+contactSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
+  cvRenderSignals(document.getElementById('ctd-survey-body'), contactSurveysData, contactSurveyMeta, 'contact');
+  document.getElementById('ctd-page').style.display='block';
+  document.getElementById('ctd-page').scrollTop=0;
+}
+function closeContactDetailPage(){ document.getElementById('ctd-page').style.display='none'; }
+
 // ── Blueprint flow ──
 var BP_STATES=['Qualification','Needs Analysis','Value Proposition','Proposal/Price Quote','Negotiation/Review','Closed Won','Closed Lost','Closed Lost to Competition'];
 function openBPList(){ document.getElementById('bp-list').style.display='block'; }
