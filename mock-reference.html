@@ -3828,6 +3828,7 @@ tbody tr:hover{background:#f5f7ff;}
           </div>
         </div>
         <button class="sd-btn sd-btn-secondary" onclick="openSurveyLinkPanel()">View Survey Link</button>
+        <button class="sd-btn sd-btn-secondary" onclick="sdPreviewSurvey()" title="Preview the survey as a respondent" style="display:inline-flex;align-items:center;gap:7px;">Preview <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
         <button class="sd-btn sd-btn-edit" onclick="sdEditInBuilder()" title="Opens the survey builder in a new page" style="display:inline-flex;align-items:center;gap:7px;">Edit <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
         <div style="position:relative;display:inline-block;" id="sd-actions-wrap">
           <button class="sd-btn sd-btn-actions" onclick="event.stopPropagation();sdToggleActionsDD()">Actions
@@ -5790,6 +5791,11 @@ function openSurveyDetail(survey) {
   document.getElementById('survey-detail-page').classList.add('visible');
 }
 
+// Preview the survey as a respondent (opens in a new tab)
+function sdPreviewSurvey() {
+  var link = (currentDetailSurvey && currentDetailSurvey.surveyLink) || 'https://survey.zohopublic.com/zs/ktBB99';
+  window.open(link, '_blank');
+}
 // Toggle the detail page between "no responses yet" (empty) and "has data"
 function sdSetData(hasData) {
   var stats = hasData
