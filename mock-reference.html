@@ -12781,7 +12781,7 @@ function closeMarketplaceZohoPage() {
           </div>
           <div class="mkt-zoho-title">Zoho Survey</div>
           <div class="mkt-zoho-desc">Send surveys and view responses from contacts within your Zoho CRM. Build surveys, automate, and distribute them.</div>
-          <button class="mkt-zoho-btn">Manage</button>
+          <button class="mkt-zoho-btn" onclick="openSurveyIntegration()">Manage</button>
         </div>
         <div class="mkt-zoho-card">
           <div class="mkt-zoho-icon" style="background:#F0F1FF;color:#5464F2;">
@@ -14488,6 +14488,137 @@ function svcDone(){
     });
   }
 }
+</script>
+
+<!-- ═══════════ Marketplace → Zoho → Zoho Survey : Integration page ═══════════ -->
+<style>
+@keyframes sintPacket{0%{left:2%;opacity:0;transform:translateY(-50%) scale(.6);}12%{opacity:1;transform:translateY(-50%) scale(1);}88%{opacity:1;transform:translateY(-50%) scale(1);}100%{left:98%;opacity:0;transform:translateY(-50%) scale(.6);}}
+@keyframes sintPulse{0%,100%{box-shadow:0 0 0 0 rgba(31,138,84,0);}50%{box-shadow:0 0 0 6px rgba(31,138,84,.18);}}
+@keyframes sintRise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes sintDash{to{stroke-dashoffset:0;}}
+@keyframes sintFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes sintGlow{0%,100%{opacity:.55;}50%{opacity:1;}}
+.sint-usp{background:#fff;border:1px solid #EDF0F4;border-radius:14px;padding:22px;flex:1;min-width:220px;animation:sintRise .5s ease both;}
+.sint-node{background:#fff;border:1px solid #E6E6EC;border-radius:14px;padding:16px 18px;box-shadow:0 4px 16px rgba(49,57,73,.06);position:relative;z-index:2;animation:sintFloat 4s ease-in-out infinite;}
+.sint-chip{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:3px 9px;margin:2px 3px 0 0;}
+.sint-track{flex:1;height:3px;background:linear-gradient(90deg,#C7CDFB,#EDEEF3);border-radius:2px;position:relative;margin:0 -6px;z-index:1;}
+.sint-packet{position:absolute;top:50%;left:2%;width:14px;height:14px;border-radius:50%;background:#5464F2;box-shadow:0 0 0 4px rgba(84,100,242,.2);animation:sintPacket 3s linear infinite;}
+.sint-sec{background:#fff;border:1px solid #EDF0F4;border-radius:14px;padding:22px 24px;margin-bottom:16px;}
+.sint-maprow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F3F7;font-size:13.5px;}
+.sint-tog{width:38px;height:22px;border-radius:20px;background:#17A97F;display:inline-flex;align-items:center;padding:0 3px;justify-content:flex-end;flex-shrink:0;}
+.sint-tog span{width:16px;height:16px;border-radius:50%;background:#fff;}
+</style>
+<div id="survey-integration-page" style="display:none;position:fixed;inset:0;z-index:952;background:#F5F6FA;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:auto;">
+  <!-- header -->
+  <div style="display:flex;align-items:center;gap:14px;padding:13px 26px;background:#fff;border-bottom:1px solid #E6E6EC;position:sticky;top:0;z-index:10;">
+    <span style="cursor:pointer;color:#8C91AB;" onclick="closeSurveyIntegration()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+    <span style="width:34px;height:34px;border-radius:8px;background:#FFF2F3;color:#F63648;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+    <span style="font-size:18px;font-weight:700;color:#1F2733;">Zoho Survey ⇌ CRM Integration</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#1F8A54;background:#EAF7F0;border:1px solid #1F8A5433;border-radius:20px;padding:3px 11px;"><span style="width:7px;height:7px;border-radius:50%;background:#1F8A54;animation:sintGlow 1.6s infinite;"></span>Connected</span>
+    <span style="flex:1;"></span>
+    <span style="font-size:13px;color:#8C91AB;">Department: <b style="color:#3C4557;">My Department</b></span>
+  </div>
+
+  <div style="max-width:1120px;margin:0 auto;padding:28px 26px 60px;">
+    <!-- Hero: animated closed-loop -->
+    <div style="text-align:center;margin-bottom:10px;"><div style="font-size:26px;font-weight:800;color:#1F2733;">One customer voice — everywhere it matters</div>
+      <div style="font-size:14.5px;color:#5B6473;margin-top:6px;">A response never leaves CRM. It auto-attaches to the record, lands as metrics, and rolls up to revenue.</div></div>
+    <div style="background:#fff;border:1px solid #EDF0F4;border-radius:18px;padding:34px 30px;margin:20px 0 26px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <!-- node 1 -->
+        <div class="sint-node" style="flex:1;text-align:center;animation-delay:0s;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#FBEFF3;color:#C42D5B;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div style="font-size:13.5px;font-weight:700;color:#33475B;">Customer answers</div>
+          <div style="font-size:11.5px;color:#97A0B0;">Test-Drive CSAT</div>
+        </div>
+        <div class="sint-track"><span class="sint-packet"></span></div>
+        <!-- node 2 : CRM record -->
+        <div class="sint-node" style="flex:1.3;text-align:center;animation-delay:.6s;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#EEF0FF;color:#5464F2;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+          <div style="font-size:13.5px;font-weight:700;color:#33475B;">Lands on the record</div>
+          <div style="margin-top:6px;">
+            <span class="sint-chip" style="background:#EAF7F0;color:#1F8A54;animation:sintPulse 3s infinite .3s;">NPS 9</span>
+            <span class="sint-chip" style="background:#EAF7F0;color:#1F8A54;animation:sintPulse 3s infinite .6s;">CSAT 4.6</span>
+            <span class="sint-chip" style="background:#FBF3E4;color:#B8791A;animation:sintPulse 3s infinite .9s;">Rating 4.5</span>
+          </div>
+        </div>
+        <div class="sint-track"><span class="sint-packet" style="animation-delay:1.5s;"></span></div>
+        <!-- node 3 : dashboard -->
+        <div class="sint-node" style="flex:1;text-align:center;animation-delay:1.2s;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#FCECEE;color:#C8324A;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div style="font-size:13.5px;font-weight:700;color:#33475B;">Rolls up to revenue</div>
+          <div style="font-size:16px;font-weight:800;color:#C8324A;margin-top:3px;">₹66.2L at-risk</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USP cards -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:30px;">
+      <div class="sint-usp" style="animation-delay:.05s;"><div style="width:44px;height:44px;border-radius:11px;background:#EEF0FF;color:#5464F2;display:flex;align-items:center;justify-content:center;margin-bottom:12px;animation:sintFloat 3.5s ease-in-out infinite;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div><div style="font-size:15px;font-weight:700;color:#1F2733;">Auto-linked, no matching</div><div style="font-size:13px;color:#5B6473;line-height:1.5;margin-top:6px;">Custom variables carry the record ID out; the response finds its exact record on return. <b style="color:#1F8A54;">&gt;95%</b> identity resolution.</div></div>
+      <div class="sint-usp" style="animation-delay:.15s;"><div style="width:44px;height:44px;border-radius:11px;background:#EAF7F0;color:#1F8A54;display:flex;align-items:center;justify-content:center;margin-bottom:12px;animation:sintFloat 3.5s ease-in-out infinite .3s;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg></div><div style="font-size:15px;font-weight:700;color:#1F2733;">Sentiment on the record</div><div style="font-size:13px;color:#5B6473;line-height:1.5;margin-top:6px;">NPS, CSAT, Rating & Score land right on the Deal/Contact — attributed to the transition that fired them.</div></div>
+      <div class="sint-usp" style="animation-delay:.25s;"><div style="width:44px;height:44px;border-radius:11px;background:#FFF9ED;color:#E28C27;display:flex;align-items:center;justify-content:center;margin-bottom:12px;animation:sintFloat 3.5s ease-in-out infinite .6s;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div style="font-size:15px;font-weight:700;color:#1F2733;">Event-driven sending</div><div style="font-size:13px;color:#5B6473;line-height:1.5;margin-top:6px;">Blueprint transitions & workflows auto-fire the right survey at the right moment — zero manual campaigns.</div></div>
+      <div class="sint-usp" style="animation-delay:.35s;"><div style="width:44px;height:44px;border-radius:11px;background:#FCECEE;color:#C8324A;display:flex;align-items:center;justify-content:center;margin-bottom:12px;animation:sintFloat 3.5s ease-in-out infinite .9s;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div style="font-size:15px;font-weight:700;color:#1F2733;">Revenue-weighted</div><div style="font-size:13px;color:#5B6473;line-height:1.5;margin-top:6px;">Managers see at-risk ₹ by stage, model & rep — the voice tied to money, not an anonymous score.</div></div>
+    </div>
+
+    <!-- ① Connection & modules -->
+    <div class="sint-sec"><div style="font-size:16px;font-weight:700;color:#1F2733;margin-bottom:14px;">Connection &amp; modules</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">Survey department</div><div style="font-size:14px;font-weight:600;color:#33475B;margin-top:3px;">My Department</div></div>
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">CRM organization</div><div style="font-size:14px;font-weight:600;color:#33475B;margin-top:3px;">Sundaram Kia</div></div>
+      </div>
+      <div style="font-size:12.5px;color:#8C91AB;margin:16px 0 8px;">Enabled modules</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid #EDF0F4;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#33475B;">Leads <span class="sint-tog"><span></span></span></span>
+        <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid #EDF0F4;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#33475B;">Contacts <span class="sint-tog"><span></span></span></span>
+        <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid #EDF0F4;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#33475B;">Deals <span class="sint-tog"><span></span></span></span>
+        <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid #EDF0F4;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#8C91AB;">Custom Module <span style="width:38px;height:22px;border-radius:20px;background:#D6D6E3;display:inline-flex;align-items:center;padding:0 3px;"><span style="width:16px;height:16px;border-radius:50%;background:#fff;"></span></span></span>
+      </div>
+    </div>
+
+    <!-- ② Push to CRM -->
+    <div class="sint-sec"><div style="display:flex;align-items:center;"><span style="font-size:16px;font-weight:700;color:#1F2733;flex:1;">Push to CRM &nbsp;<span style="font-size:12.5px;font-weight:500;color:#8C91AB;">· how a response becomes a record</span></span><button style="background:linear-gradient(#5767F6,#124DC3);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Manage Configuration</button></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;">
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">Target module · layout</div><div style="font-size:13.5px;font-weight:600;color:#33475B;margin-top:3px;">Leads · Standard</div></div>
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">Field mapping</div><div style="font-size:13.5px;font-weight:600;color:#1F8A54;margin-top:3px;">8 fields mapped</div></div>
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">Record assignment</div><div style="font-size:13.5px;font-weight:600;color:#33475B;margin-top:3px;">Assignment Rule</div></div>
+        <div style="flex:1;min-width:150px;border:1px solid #EDF0F4;border-radius:10px;padding:12px 14px;"><div style="font-size:12px;color:#8C91AB;">If duplicate exists</div><div style="font-size:13.5px;font-weight:600;color:#33475B;margin-top:3px;">Update record</div></div>
+      </div>
+    </div>
+
+    <!-- ③ Metric mapping -->
+    <div class="sint-sec"><div style="font-size:16px;font-weight:700;color:#1F2733;margin-bottom:6px;">Metric mapping &nbsp;<span style="font-size:12.5px;font-weight:500;color:#8C91AB;">· which survey score writes to which CRM field</span></div>
+      <div class="sint-maprow"><span style="width:120px;font-weight:600;color:#33475B;">NPS</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="color:#5B6473;">Deal · NPS Score</span></div>
+      <div class="sint-maprow"><span style="width:120px;font-weight:600;color:#33475B;">CSAT</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="color:#5B6473;">Deal · CSAT Score</span></div>
+      <div class="sint-maprow"><span style="width:120px;font-weight:600;color:#33475B;">Avg Rating</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="color:#5B6473;">Deal · Total Rating</span></div>
+      <div class="sint-maprow" style="border-bottom:none;"><span style="width:120px;font-weight:600;color:#33475B;">Score</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="color:#5B6473;">Deal · Survey Score %</span></div>
+    </div>
+
+    <!-- ④ Custom Variables -->
+    <div class="sint-sec"><div style="font-size:16px;font-weight:700;color:#1F2733;margin-bottom:6px;">Custom Variables &nbsp;<span style="font-size:12.5px;font-weight:500;color:#8C91AB;">· CRM data carried into the survey link (this is what auto-links the response)</span></div>
+      <div class="sint-maprow"><span style="width:150px;color:#5B6473;">CRM Record ID</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="font-family:monospace;font-size:12.5px;color:#5464F2;">?recordId=</span></div>
+      <div class="sint-maprow"><span style="width:150px;color:#5B6473;">Email</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="font-family:monospace;font-size:12.5px;color:#5464F2;">?email=</span></div>
+      <div class="sint-maprow" style="border-bottom:none;"><span style="width:150px;color:#5B6473;">Deal / Module</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="font-family:monospace;font-size:12.5px;color:#5464F2;">?module=</span></div>
+    </div>
+
+    <!-- ⑤ Sync health -->
+    <div class="sint-sec"><div style="font-size:16px;font-weight:700;color:#1F2733;margin-bottom:16px;">Sync health &nbsp;<span style="font-size:12.5px;font-weight:500;color:#8C91AB;">· is data actually flowing?</span></div>
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#EDF0F4" stroke-width="12"/><circle cx="60" cy="60" r="50" fill="none" stroke="#1F8A54" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="9.4" transform="rotate(-90 60 60)" style="animation:sintDash 1.6s ease-out both;"/><text x="60" y="58" text-anchor="middle" font-size="24" font-weight="800" fill="#1F8A54">97%</text><text x="60" y="76" text-anchor="middle" font-size="10" fill="#8C91AB">auto-linked</text></svg>
+          <div style="font-size:12px;color:#8C91AB;margin-top:4px;">Identity resolution</div>
+        </div>
+        <div style="flex:1;min-width:260px;display:flex;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;border:1px solid #EDF0F4;border-radius:10px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#1F2733;">1,284</div><div style="font-size:12px;color:#8C91AB;margin-top:3px;">Responses synced</div></div>
+          <div style="flex:1;min-width:120px;border:1px solid #EDF0F4;border-radius:10px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#1F2733;">2m ago</div><div style="font-size:12px;color:#8C91AB;margin-top:3px;">Last sync</div></div>
+          <div style="flex:1;min-width:120px;border:1px solid #FCE4E4;background:#FEF6F6;border-radius:10px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#C8324A;">3</div><div style="font-size:12px;color:#C8324A;margin-top:3px;">Need attention</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openSurveyIntegration(){ document.getElementById('survey-integration-page').style.display='block'; document.getElementById('survey-integration-page').scrollTop=0; }
+function closeSurveyIntegration(){ document.getElementById('survey-integration-page').style.display='none'; }
 </script>
 
 <!-- ═══════════ Contacts module: list + detail (with survey signals) ═══════════ -->
