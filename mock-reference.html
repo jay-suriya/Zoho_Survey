@@ -12540,7 +12540,7 @@ function closeMarketplaceZohoPage() {
         <div class="setup-link">Canvas</div>
         <div class="setup-link">Customize Home page</div>
         <div class="setup-link">Translations</div>
-        <div class="setup-link">Templates</div>
+        <div class="setup-link" onclick="openTemplatesPage()" style="color:#5464F2;font-weight:600;">Templates</div>
         <div class="setup-link">Teamspace</div>
       </div>
       <div class="setup-col">
@@ -13759,6 +13759,326 @@ function closeMarketplaceZohoPage() {
 </div>
 
 <!-- ═══════════ ANALYTICS / DASHBOARDS PAGE (replica of Zoho CRM Dashboards) ═══════════ -->
+<!-- ═══════════ Customization → Templates flow ═══════════ -->
+<style>
+.tpl-navitem{padding:8px 14px 8px 22px;font-size:13.5px;color:#3C4557;cursor:pointer;}
+.tpl-navitem:hover{background:#F5F6FB;}
+.tpl-cathead{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13.5px;font-weight:600;color:#2B3346;cursor:pointer;}
+.tpl-sublink{padding:7px 14px 7px 40px;font-size:13px;color:#3C4557;cursor:pointer;}
+.tpl-sublink:hover{background:#F5F6FB;}
+.tpl-sublink.on{color:#C42D5B;background:#FBEFF3;font-weight:600;}
+.tpl-catlink{padding:8px 12px;font-size:13.5px;color:#3C4557;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:space-between;}
+.tpl-catlink:hover{background:#F5F6FB;}
+.tpl-catlink.on{color:#C42D5B;font-weight:600;}
+.tpl-trow{cursor:pointer;border-bottom:1px solid #EEF0F4;}
+.tpl-trow:hover{background:#FAFAFD;}
+.tpl-pill{padding:7px 20px;font-size:13.5px;color:#5B6473;cursor:pointer;border-radius:100px;}
+.tpl-pill.on{background:#FBEFF3;color:#C42D5B;border:1px solid #EBB6C8;font-weight:600;}
+.tpl-fld{width:100%;height:34px;border:none;border-bottom:1px solid #D6D6E3;font-size:14px;color:#202123;font-family:inherit;padding:4px 2px;outline:none;background:transparent;}
+.tpl-fld:focus{border-bottom-color:#5464F2;}
+</style>
+
+<!-- Templates list page (screenshot 1) -->
+<div id="templates-page" style="display:none;position:fixed;inset:0;z-index:960;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
+  <div style="display:flex;height:100%;">
+    <!-- Setup left rail -->
+    <div style="width:262px;flex-shrink:0;border-right:1px solid #EDF0F4;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 12px;">
+        <span style="cursor:pointer;color:#C42D5B;" onclick="closeTemplatesPage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+        <span style="font-size:16px;font-weight:700;color:#C42D5B;flex:1;">Setup Home</span>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      </div>
+      <div style="padding:0 14px 10px;">
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid #D6D6E3;border-radius:7px;padding:7px 10px;color:#8C91AB;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span style="font-size:13px;">Search</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding-bottom:20px;">
+        <div class="tpl-navitem">Active Directory Sync</div>
+        <div class="tpl-navitem">Login History</div>
+        <div class="tpl-navitem">Audit Log</div>
+        <div class="tpl-cathead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span style="flex:1;">Customization</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg></div>
+        <div class="tpl-sublink">Modules and Fields</div>
+        <div class="tpl-sublink">Pipelines</div>
+        <div class="tpl-sublink">Wizards</div>
+        <div class="tpl-sublink">Kiosk Studio</div>
+        <div class="tpl-sublink">Canvas ✨</div>
+        <div class="tpl-sublink">Customize Home page</div>
+        <div class="tpl-sublink">Translations</div>
+        <div class="tpl-sublink on">Templates</div>
+        <div class="tpl-sublink">Teamspace ✨</div>
+        <div class="tpl-cathead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span style="flex:1;">Channels</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg></div>
+        <div class="tpl-sublink">Email</div>
+        <div class="tpl-sublink">Telephony</div>
+        <div class="tpl-sublink">Business Messaging</div>
+        <div class="tpl-sublink">Notification SMS</div>
+        <div class="tpl-sublink">Webforms</div>
+        <div class="tpl-sublink">Social</div>
+        <div class="tpl-sublink">Chat</div>
+        <div class="tpl-sublink">Portals</div>
+        <div class="tpl-cathead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="flex:1;">Automation</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+    </div>
+    <!-- main -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:16px;padding:16px 24px 14px;">
+        <span style="font-size:23px;font-weight:700;color:#2B3346;">Templates</span>
+        <div style="display:flex;align-items:center;gap:2px;border:1px solid #E0E2EA;border-radius:100px;padding:2px;margin-left:6px;">
+          <span class="tpl-pill on">Email</span><span class="tpl-pill">Inventory</span><span class="tpl-pill">Mail Merge</span>
+        </div>
+        <span style="flex:1;"></span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#2B3346;font-weight:600;cursor:pointer;">All Modules <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid #D6D6E3;border-radius:7px;padding:8px 12px;color:#8C91AB;width:220px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span style="font-size:13px;">Search Template</span>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;overflow:hidden;border-top:1px solid #EDF0F4;">
+        <!-- category list -->
+        <div style="width:222px;flex-shrink:0;border-right:1px solid #EDF0F4;overflow-y:auto;padding:16px 12px;">
+          <button onclick="openTplEditor()" style="display:flex;align-items:center;gap:7px;width:100%;justify-content:center;background:linear-gradient(#8E2A5B,#7A1F4E);color:#fff;border:none;border-radius:7px;padding:10px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Template</button>
+          <div class="tpl-catlink on">All Templates</div>
+          <div class="tpl-catlink">Favorites</div>
+          <div class="tpl-catlink">Associated Templates</div>
+          <div class="tpl-catlink">Created by me</div>
+          <div class="tpl-catlink">Shared with me</div>
+          <div class="tpl-catlink">Public Email Templates <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Managerial templates</div>
+          <div class="tpl-catlink">Test <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Donor Management</div>
+          <div class="tpl-catlink">Halloween Email Tem… <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Zoho Sign <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Healthcare <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Saas - Updates <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Real Estate <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Meetups <span style="color:#B9BECD;">&#128101;</span></div>
+          <div class="tpl-catlink">Patient Education <span style="color:#B9BECD;">&#128101;</span></div>
+        </div>
+        <!-- table -->
+        <div style="flex:1;overflow-y:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;">
+            <thead><tr style="border-bottom:1px solid #E6E6EC;text-align:left;color:#5B6473;">
+              <th style="padding:14px 16px;font-weight:600;">Template Name</th><th style="padding:14px 16px;font-weight:600;">Modified By</th><th style="padding:14px 16px;font-weight:600;">Last Used</th><th style="padding:14px 16px;font-weight:600;">Stats</th></tr></thead>
+            <tbody id="tpl-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template preview panel (screenshot 2) -->
+<div id="ctmpl-preview" style="display:none;position:fixed;inset:0;z-index:965;background:rgba(49,57,73,.32);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;">
+  <div style="position:absolute;top:86px;left:640px;right:24px;bottom:24px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(49,57,73,.25);display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;gap:12px;padding:20px 24px 16px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:19px;font-weight:700;color:#202123;">Zooho Survey Test Template</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;border:1px solid #E0E2EA;border-radius:6px;padding:4px 9px;font-size:12px;color:#5B6473;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Public Email Templates</span></div>
+        <div style="font-size:12.5px;color:#8C91AB;margin-top:3px;">Zoho Survey Test Template</div>
+      </div>
+      <span style="flex:1;"></span>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:#5B6473;cursor:default;"><span style="width:15px;height:15px;border:2px solid #C0C8E2;border-radius:3px;display:inline-block;"></span>Mail data with Masking <span style="color:#B9BECD;">&#9432;</span></label>
+      <span style="cursor:pointer;color:#8C91AB;" onclick="closeTplPreview()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:26px;border-bottom:1px solid #EDF0F4;padding-bottom:2px;">
+      <span style="font-size:14px;font-weight:600;color:#C42D5B;border-bottom:2px solid #C42D5B;padding:8px 4px;">Preview</span>
+      <span style="font-size:14px;color:#8C91AB;padding:8px 4px;">Analytics</span>
+    </div>
+    <div style="flex:1;display:flex;overflow:hidden;">
+      <div style="width:230px;flex-shrink:0;background:#F7F8FA;padding:18px;">
+        <div style="display:inline-flex;border:1px solid #EBB6C8;border-radius:100px;overflow:hidden;">
+          <span style="display:flex;align-items:center;gap:6px;background:#FBEFF3;color:#C42D5B;font-size:13px;font-weight:600;padding:6px 14px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Desktop</span>
+          <span style="display:flex;align-items:center;gap:6px;color:#5B6473;font-size:13px;padding:6px 14px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Mobile</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:34px 40px;position:relative;">
+        <div style="font-size:15px;color:#202123;margin-bottom:34px;">Hello ${Leads.Last Name}</div>
+        <div style="font-size:22px;font-weight:700;color:#202123;margin-bottom:22px;">Is the product meeting your current business needs?</div>
+        <div style="display:flex;flex-direction:column;gap:18px;color:#8C91AB;font-size:16px;">
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Yes, fully</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Mostly</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Partially</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Not at all</div>
+        </div>
+      </div>
+      <div style="width:66px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:20px;">
+        <span onclick="openTplEditor()" title="Edit" style="width:44px;height:44px;border-radius:50%;background:#3C4557;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></span>
+        <span title="Clone" style="width:44px;height:44px;border-radius:50%;background:#3C4557;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template editor (screenshot 3) -->
+<div id="tpl-editor" style="display:none;position:fixed;inset:0;z-index:970;background:#F4F6FB;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;flex-direction:column;">
+  <div style="background:#1E1E24;color:#fff;padding:12px 22px;display:flex;align-items:center;gap:14px;">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:16px;font-weight:700;">Zooho Survey Test Template</span><span style="background:#3A3A42;color:#C9CBD6;font-size:11px;border-radius:4px;padding:3px 8px;">Leads</span></div>
+      <div style="font-size:12.5px;color:#9A9CA8;margin-top:2px;">Zoho Survey Test Template</div>
+    </div>
+    <span style="flex:1;"></span>
+    <span style="font-size:13.5px;text-decoration:underline;cursor:pointer;">Attachments</span>
+    <button onclick="closeTplEditor()" style="background:#fff;color:#2B3346;border:none;border-radius:6px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+    <button style="background:#fff;color:#2B3346;border:none;border-radius:6px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;">Preview</button>
+    <button onclick="closeTplEditor()" style="background:linear-gradient(#9C2A5E,#7A1F4E);color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;">Save</button>
+  </div>
+  <div style="flex:1;overflow:auto;position:relative;">
+    <div style="background:#fff;margin:0;padding:14px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #EDF0F4;position:sticky;top:0;">
+      <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:#3C4557;">Arial <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
+      <span style="color:#D6D6E3;">|</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:14px;color:#3C4557;">10 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
+      <span style="color:#D6D6E3;">|</span>
+      <b style="font-size:15px;color:#3C4557;cursor:pointer;">B</b><i style="font-size:15px;color:#3C4557;cursor:pointer;">I</i><u style="font-size:15px;color:#3C4557;cursor:pointer;">U</u><s style="font-size:15px;color:#3C4557;cursor:pointer;">S</s>
+      <span style="font-size:13px;color:#3C4557;">X₂</span><span style="font-size:13px;color:#3C4557;">X²</span>
+      <span style="color:#D6D6E3;">|</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3C4557" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+      <span style="color:#D6D6E3;">|</span>
+      <span onclick="openTplLinkModal()" title="Insert Link" style="cursor:pointer;display:inline-flex;padding:4px;border-radius:5px;" onmouseenter="this.style.background='#F0F1F8'" onmouseleave="this.style.background='transparent'"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3C4557" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3C4557" stroke-width="2"><path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+      <span title="Image" style="cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3C4557" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
+      <span title="Table" style="cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3C4557" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg></span>
+      <span style="color:#D6D6E3;">|</span>
+      <span style="font-size:13px;color:#3C4557;font-family:monospace;cursor:pointer;">&lt;/&gt;</span>
+      <span style="font-size:15px;color:#3C4557;cursor:pointer;">&#8221;</span>
+      <span style="flex:1;"></span>
+      <span style="font-size:12.5px;color:#5B6473;cursor:pointer;">&laquo; Plain text</span><span style="color:#D6D6E3;">|</span><span style="font-size:12.5px;color:#5B6473;cursor:pointer;">Show Hints</span>
+    </div>
+    <div style="max-width:1180px;margin:0 auto;padding:22px;">
+      <div style="background:#fff;border:1px solid #E6E6EC;min-height:640px;padding:30px 36px;">
+        <div style="font-size:15px;color:#202123;margin-bottom:34px;">Hello ${Leads.Last Name}</div>
+        <div style="font-size:22px;font-weight:700;color:#202123;margin-bottom:22px;">Is the product meeting your current business needs?</div>
+        <div style="display:flex;flex-direction:column;gap:16px;color:#8C91AB;font-size:16px;">
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Yes, fully</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Mostly</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Partially</div>
+          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;height:20px;border:1px solid #C0C8E2;border-radius:50%;"></span>• Not at all</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#FCF9E9;border-top:1px solid #EDE9CF;padding:11px 22px;display:flex;align-items:center;font-size:13px;color:#7A7448;">
+    <span><b style="color:#5B6473;">HINT:</b> To insert a merge field, type # and choose one from the list.<span style="color:#5464F2;cursor:pointer;">More</span></span>
+    <span style="flex:1;"></span>
+    <span style="cursor:pointer;color:#B9BECD;">&#10005;</span>
+  </div>
+</div>
+
+<!-- Insert Link modal (screenshots 4 & 5) -->
+<div id="tpl-linkmodal" style="display:none;position:fixed;inset:0;z-index:980;background:rgba(49,57,73,.5);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;">
+  <div style="background:#fff;width:920px;max-width:94vw;border-radius:10px;margin-top:96px;box-shadow:0 8px 30px rgba(49,57,73,.4);padding:30px 40px 26px;">
+    <div style="font-size:22px;font-weight:700;color:#202123;margin-bottom:24px;">Insert Link</div>
+    <!-- Link Type -->
+    <div style="display:flex;align-items:center;padding:14px 0;border-bottom:1px solid #EDF0F4;">
+      <label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Link Type</label>
+      <select id="tpl-linktype" onchange="tplLinkType(this.value)" style="width:190px;height:32px;border:none;border-bottom:1px solid #D6D6E3;font-size:14px;color:#202123;background:transparent;font-family:inherit;outline:none;">
+        <option value="web">Web URL</option>
+        <option value="survey">Zoho Survey</option>
+      </select>
+    </div>
+    <!-- Web URL fields -->
+    <div id="tpl-web">
+      <div style="display:flex;align-items:center;padding:16px 0 6px;"><label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Selected Text</label><input class="tpl-fld" style="border-bottom-color:#F14A47;"></div>
+      <div style="display:flex;align-items:center;padding:16px 0 6px;"><label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">URL</label><input class="tpl-fld" style="border-bottom-color:#F14A47;" placeholder="http://www.example.com"></div>
+      <div style="display:flex;align-items:center;padding:16px 0 6px;"><label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Title (tooltip)</label><input class="tpl-fld"></div>
+      <label style="display:flex;align-items:center;gap:9px;font-size:14px;color:#3C4557;margin:22px 0 12px;cursor:default;"><span style="width:15px;height:15px;border:2px solid #C0C8E2;border-radius:3px;display:inline-block;"></span>Include SalesIQ identifiers <span style="color:#B9BECD;">&#9432;</span></label>
+      <div style="border:1px dashed #C0C8E2;border-radius:6px;background:#F7F8FB;height:82px;"></div>
+    </div>
+    <!-- Zoho Survey fields -->
+    <div id="tpl-survey" style="display:none;">
+      <div style="display:flex;align-items:center;padding:16px 0 6px;">
+        <label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Select the Survey</label>
+        <select id="tpl-surveysel" onchange="tplUpdateSurveyLink()" style="width:220px;height:32px;border:none;border-bottom:1px solid #F14A47;font-size:14px;color:#202123;background:transparent;font-family:inherit;outline:none;">
+          <option>this is a test</option><option>Test-Drive Experience</option><option>Delivery CSAT</option><option>Relationship NPS</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;padding:16px 0 6px;">
+        <label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Survey Link</label>
+        <span id="tpl-surveylink" style="flex:1;font-size:14px;color:#202123;border-bottom:1px solid #F14A47;padding-bottom:6px;">https://survey.zohopublic.com/zs/ktBB99?</span>
+        <span style="color:#5464F2;font-size:14px;cursor:pointer;margin-left:14px;">Preview</span>
+      </div>
+      <div style="display:flex;align-items:center;padding:16px 0 6px;"><label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Text To Display (Optional)</label><input class="tpl-fld"></div>
+      <!-- Collector + Custom Variable (from Send Survey flow) -->
+      <div style="display:flex;align-items:center;padding:18px 0 6px;">
+        <label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;">Choose Collector</label>
+        <select style="width:280px;height:34px;padding:0 30px 0 12px;border:1px solid #C0C8E2;border-radius:6px;font-size:13px;color:#333;background:#fff;appearance:none;-webkit-appearance:none;font-family:inherit;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23888%27 stroke-width=%272.5%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 12px center;">
+          <option>All Respondents</option><option>Age 15–30</option><option>Age 31–50</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-start;padding:6px 0 6px;">
+        <label style="width:200px;font-size:14px;color:#3C4557;flex-shrink:0;padding-top:7px;">Custom Variable</label>
+        <button onclick="tplAddParam()" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 14px;border:1px solid #D5D8E9;border-radius:6px;font-size:13px;cursor:pointer;background:linear-gradient(#FFFFFF,#F1F0F7);font-family:inherit;color:#313949;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add parameter</button>
+      </div>
+      <div id="tpl-param-rows"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:28px;">
+      <button onclick="closeTplLinkModal()" style="background:linear-gradient(#FFFFFF,#F1F0F7);border:1px solid #D5D8E9;border-radius:6px;padding:9px 22px;font-size:14px;color:#2B3346;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+      <button onclick="closeTplLinkModal()" style="background:linear-gradient(#5767F6,#124DC3);border:none;border-radius:6px;padding:9px 26px;font-size:14px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Templates flow ──
+var tplData=[
+  {name:'Zooho Survey Test Template',mod:'Leads',modsub:'Zoho Survey Test Template',by:'Rao Priya',byd:'Jan 28',used:'Jan 28',stat:'100%',statsub:'1/1'},
+  {name:'Test',mod:'Donor Manag…',modsub:'test22',by:'Rao Priya',byd:'Jan 12',used:'',stat:'-',statsub:''},
+  {name:'Survey 2',mod:'Contacts',modsub:'test',by:'Rao Priya',byd:'Jan 06',used:'',stat:'-',statsub:''},
+  {name:'Zoho Survey',mod:'Contacts',modsub:'test',by:'Rao Priya',byd:'Jan 06',used:'Jan 06',stat:'100%',statsub:'1/1',hot:true},
+  {name:'Donor Welcome Email',mod:'Donor Manag…',modsub:'Donor Welcome Email',by:'Rao Priya',byd:'Nov 21, 2025',used:'Nov 23, 2025',stat:'-',statsub:''},
+  {name:'Test Template',mod:'AI Creative Mo…',modsub:'Test Template',by:'Rao Priya',byd:'Nov 20, 2025',used:'',stat:'-',statsub:''},
+  {name:'Welcome lead',mod:'Leads',modsub:'Send email when a new lead is created.',by:'Rao Priya',byd:'Oct 28, 2025',used:'Oct 28, 2025',stat:'-',statsub:''},
+  {name:'Button',mod:'Leads',modsub:'Button',by:'Rao Priya',byd:'Mar 19, 2024',used:'May 31, 2025',stat:'14.9%',statsub:'15/101'},
+  {name:'Case escalated',mod:'Cases',modsub:'Cases escalated template',by:'Rao Priya',byd:'Feb 08, 2024',used:'',stat:'-',statsub:''}
+];
+var TPL_SURVEYLINKS={'this is a test':'https://survey.zohopublic.com/zs/ktBB99?','Test-Drive Experience':'https://survey.zohopublic.com/zs/aTd1QX?','Delivery CSAT':'https://survey.zohopublic.com/zs/dCs7PL?','Relationship NPS':'https://survey.zohopublic.com/zs/nPs3Mk?'};
+function openTemplatesPage(){ tplRenderTable(); document.getElementById('templates-page').style.display='block'; }
+function closeTemplatesPage(){ document.getElementById('templates-page').style.display='none'; }
+function tplRenderTable(){
+  document.getElementById('tpl-tbody').innerHTML = tplData.map(function(t){
+    return '<tr class="tpl-trow"'+(t.hot?' style="background:#FBEFF3;"':'')+' onclick="openTplPreview()">'+
+      '<td style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:8px;"><span style="color:#C0C8E2;">&#9734;</span><span style="color:#202123;font-weight:500;">'+t.name+'</span></div>'+
+        '<div style="margin-left:24px;font-size:12.5px;margin-top:3px;"><span style="color:#2F9E6B;">'+t.mod+'</span> <span style="color:#B9BECD;">&middot;</span> <span style="color:#8C79C7;">'+t.modsub+'</span></div></td>'+
+      '<td style="padding:14px 16px;vertical-align:top;"><div style="color:#202123;">'+t.by+'</div><div style="color:#8C79C7;font-size:12.5px;">'+t.byd+'</div></td>'+
+      '<td style="padding:14px 16px;vertical-align:top;color:#202123;">'+(t.used||'')+'</td>'+
+      '<td style="padding:14px 16px;vertical-align:top;">'+(t.stat==='-'?'<span style="color:#8C91AB;">-</span>':'<div style="color:'+(t.hot?'#C42D5B':'#202123')+';font-weight:600;">'+t.stat+'</div><div style="color:#8C91AB;font-size:12.5px;">'+t.statsub+'</div>')+'</td></tr>';
+  }).join('');
+}
+function openTplPreview(){ document.getElementById('ctmpl-preview').style.display='block'; }
+function closeTplPreview(){ document.getElementById('ctmpl-preview').style.display='none'; }
+function openTplEditor(){ document.getElementById('tpl-editor').style.display='flex'; }
+function closeTplEditor(){ document.getElementById('tpl-editor').style.display='none'; }
+function openTplLinkModal(){ document.getElementById('tpl-linktype').value='web'; tplLinkType('web'); document.getElementById('tpl-linkmodal').style.display='flex'; }
+function closeTplLinkModal(){ document.getElementById('tpl-linkmodal').style.display='none'; }
+function tplLinkType(v){ document.getElementById('tpl-web').style.display=(v==='survey')?'none':'block'; document.getElementById('tpl-survey').style.display=(v==='survey')?'block':'none'; }
+function tplUpdateSurveyLink(){ var s=document.getElementById('tpl-surveysel').value; document.getElementById('tpl-surveylink').textContent = TPL_SURVEYLINKS[s]||''; }
+// custom variable rows (mirrors Send Survey flow)
+var tplParamRows=[], tplParamId=0;
+function tplAddParam(){ tplParamId++; tplParamRows.push({id:tplParamId,paramKey:'',valueKey:''}); tplRenderParams(); }
+function tplRemoveParam(id){ tplParamRows=tplParamRows.filter(function(r){return r.id!==id;}); tplRenderParams(); }
+function tplParamChange(id,v){ var r=tplParamRows.find(function(x){return x.id===id;}); if(r) r.paramKey=v; }
+function tplValueChange(id,v){ var r=tplParamRows.find(function(x){return x.id===id;}); if(r) r.valueKey=v; }
+function tplRenderParams(){
+  var c=document.getElementById('tpl-param-rows'); c.innerHTML='';
+  if(!tplParamRows.length) return;
+  var hdr=document.createElement('div'); hdr.style.cssText='display:flex;align-items:center;gap:10px;margin:12px 0 8px;padding-left:200px;';
+  hdr.innerHTML='<span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Name</span><span style="flex:1;font-size:12px;font-weight:600;color:#616E88;">Parameter Value</span><span style="width:56px;"></span>';
+  c.appendChild(hdr);
+  var sel='flex:1;height:32px;padding:0 30px 0 10px;border:1px solid #C0C8E2;border-radius:6px;font-size:12.5px;color:#202123;background:#fff;appearance:none;-webkit-appearance:none;font-family:inherit;'+"background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23888%27 stroke-width=%273%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center;";
+  tplParamRows.forEach(function(row){
+    var r=document.createElement('div'); r.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-left:200px;';
+    var p='<select onchange="tplParamChange('+row.id+',this.value)" style="'+sel+'"><option value="">Select Param</option>';
+    ssCustomVars.forEach(function(cv){ p+='<option value="'+cv.key+'"'+(row.paramKey===cv.key?' selected':'')+'>'+cv.label+'</option>'; }); p+='</select>';
+    var vv='<select onchange="tplValueChange('+row.id+',this.value)" style="'+sel+'"><option value="">Select value</option>';
+    ssModuleFields['Leads'].forEach(function(f){ vv+='<option value="'+f.key+'"'+(row.valueKey===f.key?' selected':'')+'>'+f.label+'</option>'; }); vv+='</select>';
+    var a='<div style="display:flex;align-items:center;gap:5px;width:56px;flex-shrink:0;"><button onclick="tplAddParam()" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;font-size:15px;color:#616E88;">+</button><button onclick="tplRemoveParam('+row.id+')" style="width:26px;height:26px;border:1px solid #C0C8E2;border-radius:5px;background:#fff;cursor:pointer;font-size:16px;color:#8C91AB;">&#10005;</button></div>';
+    r.innerHTML=p+vv+a; c.appendChild(r);
+  });
+}
+</script>
+
 <div id="analytics-page" style="display:none;position:fixed;inset:0;z-index:950;background:#F4F5F7;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
   <div style="display:flex;height:100%;">
     <!-- navy left rail -->
