@@ -3879,6 +3879,11 @@ tbody tr:hover{background:#f5f7ff;}
             <span class="sd-detail-sep">-</span>
             <span class="sd-detail-value" id="sd-survey-createdby-val">Jay</span>
           </div>
+          <div class="sd-detail-row">
+            <span class="sd-detail-label">Survey Owner</span>
+            <span class="sd-detail-sep">-</span>
+            <span class="sd-detail-value" id="sd-survey-owner-val">Jay</span>
+          </div>
         </div>
 
         <!-- Survey Responses Summary section (collapsible) -->
@@ -5706,6 +5711,8 @@ function openSurveyDetail(survey) {
   document.getElementById('sd-survey-type-val').textContent = survey.surveyTypeLabel || 'Create From Scratch';
   document.getElementById('sd-survey-category-val').textContent = survey.surveyCategory || 'Human Resource';
   document.getElementById('sd-survey-createdby-val').textContent = survey.createdBy || 'Jay';
+  var ownerEl = document.getElementById('sd-survey-owner-val');
+  if (ownerEl) ownerEl.textContent = survey.surveyOwner || survey.createdBy || 'Jay';
   // Quota strip inside responses summary
   var quotaStrip = document.getElementById('sd-quota-strip');
   if (quotaStrip) {
