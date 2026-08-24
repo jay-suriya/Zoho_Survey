@@ -11727,8 +11727,8 @@ document.addEventListener('click', function(e) {
 });
 function wfFlyoutPick(typeName) {
   closeWfAddActionFlyout();
-  if (typeName === 'Send Survey') {
-    openWfSurveyListModal();
+  if (typeName === 'Notify') {
+    openENPicker();
   }
 }
 
@@ -13382,7 +13382,6 @@ function closeMarketplaceZohoPage() {
             <div class="wf-flyout-item" onclick="wfFlyoutPick('Create Connected Record')">Create Connected Record</div>
             <div class="wf-flyout-item" onclick="wfFlyoutPick('Webhook')">Webhook</div>
             <div class="wf-flyout-item" onclick="wfFlyoutPick('Function')">Function</div>
-            <div class="wf-flyout-item" onclick="wfFlyoutPick('Send Survey')" style="color:#C2185B;font-weight:600;">Send Survey <span style="font-size:9.5px;font-weight:700;color:#C2185B;background:#FFF0F5;border-radius:100px;padding:1px 7px;margin-left:4px;">New</span></div>
             <div class="wf-flyout-item" onclick="wfFlyoutPick('Actions By Zoho Flow')">Actions By Zoho Flow</div>
           </div>
         </div>
@@ -14077,6 +14076,158 @@ function tplRenderParams(){
     r.innerHTML=p+vv+a; c.appendChild(r);
   });
 }
+</script>
+
+<!-- ═══════════ Workflow → Notify → Email Notification flow ═══════════ -->
+<style>
+.en-row{border-bottom:1px solid #F0F1F5;cursor:pointer;}
+.en-row:hover{background:#FAFAFD;}
+.en-row.sel{background:#FBEFF3;}
+.en-lbl{width:130px;flex-shrink:0;font-size:14px;color:#616E88;text-align:right;padding-right:18px;padding-top:8px;}
+.en-inp{flex:1;height:36px;border:1px solid #C0C8E2;border-left:3px solid #FF5D5A;border-radius:6px;padding:0 12px;font-size:14px;color:#202123;font-family:inherit;outline:none;}
+.en-inp:focus{border-color:#5464F2;border-left-color:#FF5D5A;}
+.en-drop{flex:1;display:flex;align-items:center;border:1px solid #C0C8E2;border-radius:6px;height:36px;padding:0 10px;font-size:14px;color:#8C91AB;cursor:pointer;justify-content:space-between;}
+.en-btnprimary{background:linear-gradient(#9C2A5E,#7A1F4E);color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.en-btnprimary:disabled{opacity:.5;cursor:default;}
+.en-btncancel{background:linear-gradient(#FFFFFF,#F1F0F7);border:1px solid #D5D8E9;border-radius:6px;padding:10px 20px;font-size:14px;color:#2B3346;font-weight:600;cursor:pointer;font-family:inherit;}
+.en-tplrow{display:flex;align-items:center;gap:10px;padding:12px 4px;border-bottom:1px solid #F0F1F5;cursor:pointer;}
+.en-tplrow:hover{background:#FBEFF3;}
+.en-tplrow .en-hoveronly{display:none;margin-left:auto;align-items:center;gap:16px;}
+.en-tplrow:hover .en-hoveronly{display:flex;}
+</style>
+
+<!-- Email Notification picker (screenshot 1) -->
+<div id="en-picker" style="display:none;position:fixed;inset:0;z-index:990;background:rgba(49,57,73,.5);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;">
+  <div style="background:#fff;width:1000px;max-width:94vw;border-radius:10px;margin-top:70px;box-shadow:0 8px 30px rgba(49,57,73,.4);padding:26px 30px 22px;">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:20px;"><span style="font-size:21px;font-weight:700;color:#202123;">Email Notification -</span><span style="background:#F0F1F8;color:#5B6473;font-size:13px;border-radius:6px;padding:3px 10px;" id="en-pick-badge">Leads</span></div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:8px;border:1px solid #C42D5B;border-radius:7px;padding:8px 12px;color:#8C91AB;width:340px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:13.5px;">Search</span></div>
+      <span style="flex:1;"></span>
+      <button class="en-btnprimary" onclick="openENForm()">New Email Notification</button>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead><tr style="border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;text-align:left;color:#3C4557;">
+        <th style="padding:12px 16px;font-weight:600;">Name</th><th style="padding:12px 16px;font-weight:600;">Email Template</th><th style="padding:12px 16px;font-weight:600;">Modified On <span style="color:#8C91AB;">&#9662;</span></th></tr></thead>
+      <tbody id="en-pick-tbody"></tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:22px;">
+      <button class="en-btncancel" onclick="closeENPicker()">Cancel</button>
+      <button class="en-btnprimary" id="en-pick-assoc" disabled onclick="enAssociateFromPicker()">Associate</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Email Notification form (screenshots 2,3,5) -->
+<div id="en-form" style="display:none;position:fixed;inset:0;z-index:991;background:rgba(49,57,73,.5);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;overflow:auto;">
+  <div style="background:#fff;width:820px;max-width:94vw;border-radius:10px;margin:60px 0 40px;box-shadow:0 8px 30px rgba(49,57,73,.4);padding:28px 34px 24px;">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:22px;"><span style="font-size:21px;font-weight:700;color:#202123;">Email Notification -</span><span style="background:#F0F1F8;color:#5B6473;font-size:13px;border-radius:6px;padding:3px 10px;" id="en-form-badge">Leads</span></div>
+    <!-- Name -->
+    <div style="display:flex;align-items:center;margin-bottom:16px;"><label class="en-lbl" style="padding-top:0;">Name</label><input class="en-inp" placeholder=""></div>
+    <!-- To -->
+    <div style="display:flex;align-items:flex-start;margin-bottom:6px;position:relative;">
+      <label class="en-lbl" style="padding-top:8px;">To</label>
+      <div style="flex:1;position:relative;">
+        <div class="en-drop" onclick="enToggleTo()"><span>Choose Users, Groups, Roles etc.,</span><span style="display:flex;align-items:center;gap:8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="9" cy="7" r="3"/><path d="M2 21v-1a6 6 0 016-6"/><circle cx="17" cy="15" r="4"/><line x1="20" y1="18" x2="22" y2="20"/></svg></span></div>
+        <div id="en-to-dd" style="display:none;position:absolute;top:42px;left:0;right:0;background:#fff;border:1px solid #D6D6E3;border-radius:8px;box-shadow:0 8px 22px rgba(49,57,73,.2);z-index:5;padding:12px;">
+          <div style="display:flex;gap:10px;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;border:1px solid #C42D5B;border-radius:6px;padding:6px 12px;font-size:13.5px;color:#3C4557;">Lead <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg></span>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid #C42D5B;border-radius:6px;padding:6px 12px;color:#8C91AB;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:13px;">Search</span></div>
+          </div>
+          <div style="font-size:12.5px;font-weight:700;color:#202123;margin:6px 0;">People Associated with the Module</div>
+          <div style="background:#FBEFF3;border-radius:6px;padding:8px 10px;font-size:13.5px;color:#202123;display:flex;align-items:center;gap:8px;"><span style="color:#C42D5B;">&#10003;</span>Lead</div>
+          <div style="font-size:12.5px;font-weight:700;color:#202123;margin:10px 0 6px;">Other People</div>
+          <div style="padding:7px 10px;font-size:13.5px;color:#3C4557;cursor:pointer;">Groups</div>
+          <div style="padding:7px 10px;font-size:13.5px;color:#3C4557;cursor:pointer;">Roles</div>
+          <div style="border-top:1px solid #EDF0F4;margin-top:8px;padding-top:10px;"><span style="color:#C42D5B;font-size:13.5px;font-weight:600;cursor:pointer;">Add additional recipient</span></div>
+        </div>
+      </div>
+    </div>
+    <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:#3C4557;margin:12px 0 12px 148px;cursor:default;"><span style="width:15px;height:15px;border:2px solid #C0C8E2;border-radius:3px;display:inline-block;flex-shrink:0;"></span>Send this notification as a Single Mass Email with all recipients displayed</label>
+    <!-- CC -->
+    <div style="display:flex;align-items:center;margin-bottom:4px;"><label class="en-lbl" style="padding-top:0;">CC</label>
+      <div class="en-drop" style="border-left:1px solid #C0C8E2;"><span>Add Users, Additional Recipients, etc.,</span><span style="display:flex;align-items:center;gap:8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="9" cy="7" r="3"/><path d="M2 21v-1a6 6 0 016-6"/><circle cx="17" cy="15" r="4"/><line x1="20" y1="18" x2="22" y2="20"/></svg></span></div></div>
+    <div style="margin:0 0 16px 148px;"><span style="color:#C42D5B;font-size:13.5px;font-weight:600;cursor:pointer;">BCC</span></div>
+    <!-- Email Template -->
+    <div style="display:flex;align-items:center;margin-bottom:16px;"><label class="en-lbl" style="padding-top:0;">Email Template</label>
+      <div style="flex:1;display:flex;align-items:center;gap:14px;border:1px solid #C0C8E2;border-left:3px solid #FF5D5A;border-radius:6px;padding:7px 12px;">
+        <button class="en-btncancel" style="padding:7px 16px;" onclick="openENTplPicker()">Select Template</button>
+        <span id="en-tpl-selected" style="font-size:14px;color:#C42D5B;font-weight:600;"></span>
+      </div></div>
+    <!-- From -->
+    <div style="display:flex;align-items:center;margin-bottom:12px;"><label class="en-lbl" style="padding-top:0;">From</label>
+      <div class="en-drop" style="border-left:1px solid #C0C8E2;color:#202123;"><span>ssunderjan@gmail.com</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+    <div style="background:#FCF9E9;border:1px solid #EDE9CF;border-radius:6px;padding:12px 14px;margin:0 0 16px 148px;font-size:13px;color:#7A7448;line-height:1.5;"><b style="color:#5B6473;">Sender email changed</b> : To improve email deliverability, Zoho CRM will avoid sending emails from public email addresses and use our own authenticated domain. <span style="color:#C42D5B;cursor:pointer;">Learn More</span></div>
+    <!-- Reply To -->
+    <div style="display:flex;align-items:center;margin-bottom:16px;"><label class="en-lbl" style="padding-top:0;">Reply To</label>
+      <div class="en-drop" style="border-left:1px solid #C0C8E2;color:#202123;"><span>ssunderjan@gmail.com</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+    <!-- Best Time -->
+    <label style="display:flex;align-items:center;gap:9px;border:1px solid #EDF0F4;border-radius:8px;padding:12px 14px;font-size:13.5px;color:#3C4557;margin-bottom:22px;cursor:default;"><span style="width:15px;height:15px;border:2px solid #C0C8E2;border-radius:3px;display:inline-block;flex-shrink:0;"></span>Send this email notification at Best Time to Email. <span style="color:#B9BECD;">&#9432;</span></label>
+    <div style="display:flex;justify-content:flex-end;gap:10px;">
+      <button class="en-btncancel" onclick="closeENForm()">Cancel</button>
+      <button class="en-btnprimary" onclick="enSaveAndAssociate()">Save and Associate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Select Template modal (screenshot 4) -->
+<div id="en-tplpicker" style="display:none;position:fixed;inset:0;z-index:995;background:rgba(49,57,73,.5);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;">
+  <div style="background:#fff;width:1010px;max-width:94vw;border-radius:10px;margin-top:60px;box-shadow:0 8px 30px rgba(49,57,73,.4);padding:24px 30px 20px;">
+    <div style="display:flex;align-items:center;margin-bottom:18px;"><span style="font-size:20px;font-weight:700;color:#202123;flex:1;">Select Template</span><span style="cursor:pointer;color:#8C91AB;" onclick="closeENTplPicker()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;border:1px solid #C0C8E2;border-radius:6px;padding:8px 12px;width:210px;justify-content:space-between;font-size:13.5px;color:#3C4557;">All Templates <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div style="display:flex;align-items:center;gap:8px;border:1px solid #C42D5B;border-radius:6px;padding:8px 12px;color:#8C91AB;width:300px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:13.5px;">Search Template</span></div>
+      <span style="font-size:13px;color:#5B6473;cursor:pointer;">A&#8595;<br>Z</span>
+      <span style="flex:1;"></span>
+      <button style="display:flex;align-items:center;gap:6px;border:1px solid #C42D5B;color:#C42D5B;background:#fff;border-radius:7px;padding:9px 16px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C42D5B" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Create Template</button>
+    </div>
+    <div id="en-tpl-list" style="max-height:440px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<script>
+// ── Email Notification flow ──
+var enNotifs=[
+  {name:'Notify NPO User',tpl:'Welcome lead',mod:'07-18-25'},
+  {name:'Lead Creation',tpl:'Welcome lead',mod:'02-08-24'},
+  {name:'Test',tpl:'Leads Zoho Sign Template',mod:'04-24-23'},
+  {name:'Lead status blue',tpl:'Bday Mail',mod:'11-30-22'},
+  {name:'leads 1',tpl:'Bday Mail',mod:'10-28-22'},
+  {name:'Notify Admin',tpl:'Notify sales rep',mod:'12-06-17'},
+  {name:'revenue',tpl:'New Deal Alerts',mod:'01-28-16'}
+];
+var enTemplates=[
+  {name:'Welcome lead',folder:'Public Email Templates',clip:true},
+  {name:'Button',folder:'Public Email Templates'},
+  {name:'Patient - Educational Material',folder:'Patient Education'},
+  {name:'Healthcare Customer Feedback',folder:'Healthcare'},
+  {name:'Healthcare Customer Consent',folder:'Healthcare'},
+  {name:'Meetups - Preparing for a Meetup',folder:'Meetups'},
+  {name:'Meetups - Venue Details',folder:'Meetups'},
+  {name:'Meetups Brief',folder:'Meetups'},
+  {name:'Meetups - Rem 1',folder:'Meetups'}
+];
+var enSelIdx=null;
+function enModule(){ var r=(typeof workflowRulesData!=='undefined')&&workflowRulesData.find(function(x){return x.id===wfActiveRuleId;}); return r?r.module:'Leads'; }
+function openENPicker(){ enSelIdx=null; var m=enModule(); document.getElementById('en-pick-badge').textContent=m;
+  document.getElementById('en-pick-tbody').innerHTML=enNotifs.map(function(n,i){
+    return '<tr class="en-row" id="en-prow-'+i+'" onclick="enSelectNotif('+i+')"><td style="padding:13px 16px;color:#313949;">'+n.name+'</td><td style="padding:13px 16px;color:#313949;">'+n.tpl+'</td><td style="padding:13px 16px;color:#616E88;"><span style="display:inline-flex;align-items:center;gap:9px;"><span style="width:22px;height:22px;border-radius:50%;background:#E9EAF0;display:inline-block;"></span>'+n.mod+'</span></td></tr>';
+  }).join('');
+  document.getElementById('en-pick-assoc').disabled=true;
+  document.getElementById('en-picker').style.display='flex'; }
+function closeENPicker(){ document.getElementById('en-picker').style.display='none'; }
+function enSelectNotif(i){ enSelIdx=i; [].forEach.call(document.querySelectorAll('#en-pick-tbody .en-row'),function(r){r.classList.remove('sel');}); document.getElementById('en-prow-'+i).classList.add('sel'); document.getElementById('en-pick-assoc').disabled=false; }
+function enAssociateFromPicker(){ if(enSelIdx===null) return; var n=enNotifs[enSelIdx]; enAppendAction(n.name); closeENPicker(); }
+function openENForm(){ document.getElementById('en-form-badge').textContent=enModule(); document.getElementById('en-tpl-selected').textContent=''; document.getElementById('en-to-dd').style.display='none'; document.getElementById('en-form').style.display='flex'; }
+function closeENForm(){ document.getElementById('en-form').style.display='none'; }
+function enToggleTo(){ var d=document.getElementById('en-to-dd'); d.style.display=(d.style.display==='block')?'none':'block'; }
+function openENTplPicker(){ document.getElementById('en-tpl-list').innerHTML=enTemplates.map(function(t,i){
+    return '<div class="en-tplrow" onclick="enPickTemplate('+i+')"><span style="color:#C0C8E2;">&#9734;</span><b style="font-size:14px;color:#202123;">'+t.name+'</b>'+(t.clip?' <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2" style="vertical-align:middle;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>':'')+' <span style="color:#D6D6E3;">|</span> <span style="font-size:13.5px;color:#8C91AB;">'+t.folder+'</span><span class="en-hoveronly"><span style="font-size:12.5px;color:#5B6473;display:flex;align-items:center;gap:5px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5464F2" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/></svg>Open Rate: 0%</span><span style="font-size:13px;color:#C42D5B;font-weight:600;">Preview</span></span></div>';
+  }).join(''); document.getElementById('en-tplpicker').style.display='flex'; }
+function closeENTplPicker(){ document.getElementById('en-tplpicker').style.display='none'; }
+function enPickTemplate(i){ document.getElementById('en-tpl-selected').textContent=enTemplates[i].name; closeENTplPicker(); }
+function enSaveAndAssociate(){ var nm=document.getElementById('en-form').querySelector('.en-inp').value.trim() || 'New Email Notification'; enAppendAction(nm); closeENForm(); }
+function enAppendAction(detail){ var rule=(typeof workflowRulesData!=='undefined')&&workflowRulesData.find(function(r){return r.id===wfActiveRuleId;}); if(rule){ rule.actions.push({type:'Email Notification',detail:detail}); if(typeof renderWfActionsList==='function') renderWfActionsList(); } }
 </script>
 
 <div id="analytics-page" style="display:none;position:fixed;inset:0;z-index:950;background:#F4F5F7;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
