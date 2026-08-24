@@ -14413,8 +14413,11 @@ function openSvCreate(){ document.getElementById('svc-landing').style.display='f
 function closeSvCreate(){ ['svc-landing','svc-builder','svc-modal','svc-donemodal'].forEach(function(id){document.getElementById(id).style.display='none';}); }
 function openSvcModal(){ document.getElementById('svc-name').value=''; document.getElementById('svc-modal').style.display='flex'; setTimeout(function(){document.getElementById('svc-name').focus();},50); }
 function closeSvcModal(){ document.getElementById('svc-modal').style.display='none'; }
+var svcDraft={name:'Untitled',category:''};
 function svcCreate(){
   var nm=document.getElementById('svc-name').value.trim()||'Untitled';
+  var cat=document.getElementById('svc-modal').querySelector('select').value;
+  svcDraft={name:nm, category:(cat && cat.indexOf('Select')===-1)?cat:''};
   document.getElementById('svc-bld-name').textContent=nm;
   closeSvcModal();
   document.getElementById('svc-landing').style.display='none';
@@ -14424,7 +14427,20 @@ function svcCreate(){
   document.getElementById('svc-builder').style.display='flex';
 }
 function svcDone(){ document.getElementById('svc-donemodal').style.display='flex'; }
-function svcReturn(published){ document.getElementById('svc-donemodal').style.display='none'; closeSvCreate(); }
+function svcReturn(published){
+  document.getElementById('svc-donemodal').style.display='none';
+  closeSvCreate();
+  if(typeof openSurveyDetail==='function'){
+    openSurveyDetail({
+      name: svcDraft.name,
+      surveyTypeLabel: 'Create From Scratch',
+      surveyCategory: svcDraft.category || 'Uncategorized',
+      createdBy: 'Jay',
+      status: published ? 'Published' : 'Draft',
+      responses: null
+    });
+  }
+}
 </script>
 
 <div id="analytics-page" style="display:none;position:fixed;inset:0;z-index:950;background:#F4F5F7;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
