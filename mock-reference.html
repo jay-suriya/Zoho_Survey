@@ -12605,7 +12605,7 @@ function closeMarketplaceZohoPage() {
     <div class="setup-row" style="margin-top:20px;">
       <div class="setup-col">
         <div class="setup-col-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#616E88" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Process Management</div>
-        <div class="setup-link">Blueprint</div>
+        <div class="setup-link" onclick="openBPList()" style="color:#5464F2;font-weight:600;">Blueprint</div>
         <div class="setup-link">Approval Processes</div>
         <div class="setup-link">Review Processes</div>
         <div class="setup-link">Connected Workflow</div>
@@ -14257,11 +14257,12 @@ function enAssociateFromPicker(){ if(enSelIdx===null) return; var n=enNotifs[enS
 function openENForm(){ document.getElementById('en-form-badge').textContent=enModule(); document.getElementById('en-tpl-selected').textContent=''; document.getElementById('en-to-dd').style.display='none'; document.getElementById('en-form').style.display='flex'; }
 function closeENForm(){ document.getElementById('en-form').style.display='none'; }
 function enToggleTo(){ var d=document.getElementById('en-to-dd'); d.style.display=(d.style.display==='block')?'none':'block'; }
-function openENTplPicker(){ document.getElementById('en-tpl-list').innerHTML=enTemplates.map(function(t,i){
+var enTplTarget='en-tpl-selected';
+function openENTplPicker(target){ enTplTarget=target||'en-tpl-selected'; document.getElementById('en-tpl-list').innerHTML=enTemplates.map(function(t,i){
     return '<div class="en-tplrow" onclick="enPickTemplate('+i+')"><span style="color:#C0C8E2;">&#9734;</span><b style="font-size:14px;color:#202123;">'+t.name+'</b>'+(t.clip?' <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2" style="vertical-align:middle;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>':'')+' <span style="color:#D6D6E3;">|</span> <span style="font-size:13.5px;color:#8C91AB;">'+t.folder+'</span><span class="en-hoveronly"><span style="font-size:12.5px;color:#5B6473;display:flex;align-items:center;gap:5px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5464F2" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/></svg>Open Rate: 0%</span><span style="font-size:13px;color:#C42D5B;font-weight:600;">Preview</span></span></div>';
   }).join(''); document.getElementById('en-tplpicker').style.display='flex'; }
 function closeENTplPicker(){ document.getElementById('en-tplpicker').style.display='none'; }
-function enPickTemplate(i){ document.getElementById('en-tpl-selected').textContent=enTemplates[i].name; closeENTplPicker(); }
+function enPickTemplate(i){ var el=document.getElementById(enTplTarget); if(el) el.textContent=enTemplates[i].name; closeENTplPicker(); if(typeof bpAfterTplChanged==='function') bpAfterTplChanged(); }
 function enSaveAndAssociate(){ var nm=document.getElementById('en-form').querySelector('.en-inp').value.trim() || 'New Email Notification'; enAppendAction(nm); closeENForm(); closeENPicker(); }
 function enAppendAction(detail){ var rule=(typeof workflowRulesData!=='undefined')&&workflowRulesData.find(function(r){return r.id===wfActiveRuleId;}); if(rule){ rule.actions.push({type:'Email Notification',detail:detail}); if(typeof renderWfActionsList==='function') renderWfActionsList(); } }
 </script>
@@ -14477,6 +14478,235 @@ function svcDone(){
       fresh: true
     });
   }
+}
+</script>
+
+<!-- ═══════════ Settings → Blueprint flow ═══════════ -->
+<style>
+.bp-navitem{padding:8px 14px 8px 22px;font-size:13.5px;color:#3C4557;cursor:pointer;}
+.bp-navitem:hover{background:#F5F6FB;}
+.bp-sublink{padding:7px 14px 7px 40px;font-size:13px;color:#3C4557;cursor:pointer;}
+.bp-sublink:hover{background:#F5F6FB;}
+.bp-sublink.on{color:#0F9A5F;background:#E9FBF4;font-weight:600;}
+.bp-teal{background:linear-gradient(#17A97F,#0F9A5F);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.bp-ghost{background:#F1F2F5;color:#8C91AB;border:none;border-radius:7px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:default;font-family:inherit;}
+.bp-fld{display:flex;align-items:center;padding:14px 0;}
+.bp-fld label{width:200px;flex-shrink:0;font-size:14.5px;color:#3C4557;}
+.bp-inp{flex:1;height:34px;border:none;border-bottom:1px solid #E24C4C;font-size:15px;color:#202123;font-family:inherit;outline:none;background:transparent;}
+.bp-sel{min-width:190px;height:32px;border:none;border-bottom:1px solid #D6D6E3;font-size:14.5px;color:#202123;background:transparent;font-family:inherit;outline:none;}
+.bp-state{display:flex;align-items:center;gap:8px;border:1px solid #D6D6E3;border-radius:6px;padding:8px 12px;font-size:13.5px;color:#3C4557;margin-bottom:9px;cursor:grab;background:#fff;}
+.bp-ttab{flex:1;text-align:center;font-size:13.5px;font-weight:600;color:#8C91AB;padding:12px 0;cursor:pointer;border-bottom:2px solid transparent;}
+.bp-ttab.on{color:#0F9A5F;border-bottom-color:#0F9A5F;}
+</style>
+
+<!-- Blueprint list (screenshot 1) -->
+<div id="bp-list" style="display:none;position:fixed;inset:0;z-index:958;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;">
+  <div style="display:flex;height:100%;">
+    <div style="width:262px;flex-shrink:0;border-right:1px solid #EDF0F4;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 12px;">
+        <span style="cursor:pointer;color:#0F9A5F;" onclick="closeBPList()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+        <span style="font-size:16px;font-weight:700;color:#0F9A5F;flex:1;">Setup Home</span>
+      </div>
+      <div style="padding:0 14px 10px;"><div style="display:flex;align-items:center;gap:8px;border:1px solid #D6D6E3;border-radius:7px;padding:7px 10px;color:#8C91AB;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:13px;">Search</span></div></div>
+      <div style="flex:1;overflow-y:auto;padding-bottom:20px;font-size:13.5px;">
+        <div style="padding:9px 14px;font-weight:700;color:#2B3346;">Automation</div>
+        <div class="bp-sublink">Workflow Rules</div><div class="bp-sublink">Actions</div><div class="bp-sublink">Schedules</div><div class="bp-sublink">Assignment</div><div class="bp-sublink">Case Escalation Rules</div><div class="bp-sublink">Scoring Rules</div><div class="bp-sublink">Cadences</div>
+        <div style="padding:9px 14px;font-weight:700;color:#2B3346;">Process Management</div>
+        <div class="bp-sublink on">Blueprint</div><div class="bp-sublink">Approval Processes</div><div class="bp-sublink">Review Processes</div><div class="bp-sublink">Connected Workflow ✨</div>
+        <div style="padding:9px 14px;font-weight:700;color:#2B3346;">Experience Center</div>
+        <div class="bp-sublink">Signals</div><div class="bp-sublink">CommandCenter</div><div class="bp-sublink">Segmentation</div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:30px;padding:14px 30px 0;border-bottom:1px solid #EDF0F4;flex-shrink:0;">
+        <span style="font-size:14px;font-weight:600;color:#0F9A5F;border-bottom:2px solid #0F9A5F;padding-bottom:12px;">Blueprints</span>
+        <span style="font-size:14px;color:#8C91AB;padding-bottom:12px;">Filters</span>
+        <span style="font-size:14px;color:#8C91AB;padding-bottom:12px;">Usage</span>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:22px 30px;">
+        <div style="font-size:24px;font-weight:700;color:#2B3346;">Blueprint</div>
+        <div style="font-size:14px;color:#5B6473;margin:6px 0 18px;">Design and define a process that matches your organizational policy while making sure that your data is streamlined and adhere to your team's work style and method.</div>
+        <div style="background:#FCF9E9;border:1px solid #EDE9CF;border-radius:6px;padding:14px 18px;font-size:14px;color:#5B6473;margin-bottom:22px;"><b>Note :</b> <span style="color:#E28C27;">*</span> denotes the draft copy of the published blueprint.</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #D6D6E3;padding:8px 4px;color:#8C91AB;width:360px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:14px;">Search</span></div>
+          <span style="flex:1;"></span>
+          <button class="bp-ghost">Reorder Blueprints</button>
+          <button class="bp-teal" onclick="openBPCreateModal()">＋ Create Blueprint</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:14.5px;">
+          <thead><tr style="border-bottom:1px solid #E6E6EC;text-align:left;color:#3C4557;">
+            <th style="padding:14px 8px;font-weight:600;">Blueprint</th><th style="padding:14px 8px;font-weight:600;">All Modules ▾</th><th style="padding:14px 8px;font-weight:600;">Layout</th><th style="padding:14px 8px;font-weight:600;">Field</th><th style="padding:14px 8px;font-weight:600;">Last Modified</th><th style="padding:14px 8px;font-weight:600;">All Status ▾</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #F0F1F5;"><td style="padding:16px 8px;"><span style="color:#0F9A5F;font-weight:600;cursor:pointer;">Lead Creation</span></td><td style="padding:16px 8px;color:#3C4557;">Leads</td><td style="padding:16px 8px;color:#3C4557;">Standard</td><td style="padding:16px 8px;color:#3C4557;">Lead Status</td><td style="padding:16px 8px;color:#5B6473;"><span style="display:inline-flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:#E9EAF0;"></span>Aug 18, 2026</span></td><td style="padding:16px 8px;"><span style="width:36px;height:20px;border-radius:20px;background:#17A97F;display:inline-flex;align-items:center;padding:0 3px;justify-content:flex-end;"><span style="width:15px;height:15px;border-radius:50%;background:#fff;"></span></span></td></tr>
+            <tr style="border-bottom:1px solid #F0F1F5;"><td style="padding:16px 8px;"><span style="color:#0F9A5F;font-weight:600;cursor:pointer;">Deals</span></td><td style="padding:16px 8px;color:#3C4557;">Potentials</td><td style="padding:16px 8px;color:#3C4557;">Standard</td><td style="padding:16px 8px;color:#3C4557;">Stage</td><td style="padding:16px 8px;color:#5B6473;"><span style="display:inline-flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:#E9EAF0;"></span>Apr 15, 2024</span></td><td style="padding:16px 8px;"><span style="width:36px;height:20px;border-radius:20px;background:#17A97F;display:inline-flex;align-items:center;padding:0 3px;justify-content:flex-end;"><span style="width:15px;height:15px;border-radius:50%;background:#fff;"></span></span></td></tr>
+            <tr><td style="padding:16px 8px;"><span style="color:#0F9A5F;font-weight:600;cursor:pointer;">Donor Management</span></td><td style="padding:16px 8px;color:#3C4557;">Donor Manag… <span style="background:#E9FBF4;color:#0F9A5F;font-size:11px;border-radius:20px;padding:2px 9px;">Team</span></td><td style="padding:16px 8px;color:#3C4557;">Standard</td><td style="padding:16px 8px;color:#3C4557;">Donor Type</td><td style="padding:16px 8px;color:#5B6473;"><span style="display:inline-flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:#E9EAF0;"></span>Nov 23, 2025</span></td><td style="padding:16px 8px;"><span style="width:36px;height:20px;border-radius:20px;background:#17A97F;display:inline-flex;align-items:center;padding:0 3px;justify-content:flex-end;"><span style="width:15px;height:15px;border-radius:50%;background:#fff;"></span></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Blueprint modal (screenshot 2) -->
+<div id="bp-create-modal" style="display:none;position:fixed;inset:0;z-index:962;background:rgba(31,39,51,.5);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;">
+  <div style="background:#fff;width:1000px;max-width:94vw;border-radius:6px;margin-top:0;min-height:100vh;box-shadow:0 8px 30px rgba(31,39,51,.4);padding:34px 42px;">
+    <div style="font-size:23px;font-weight:700;color:#202123;margin-bottom:22px;">Create new Blueprint</div>
+    <div class="bp-fld"><label>Blueprint name</label><input class="bp-inp" value="deals"></div>
+    <div class="bp-fld"><label>Module</label><select class="bp-sel"><option>Potentials</option><option>Leads</option><option>Contacts</option></select></div>
+    <div class="bp-fld"><label>Choose Layout</label><select class="bp-sel"><option>Standard</option></select></div>
+    <div class="bp-fld"><label>Choose field <span style="color:#B9BECD;">&#9432;</span></label><select class="bp-sel" style="border-bottom-color:#0F9A5F;"><option>Stage</option></select></div>
+    <div class="bp-fld"><label>Choose Pipeline</label><select class="bp-sel"><option>Standard (Standard)</option></select></div>
+    <div style="font-size:15px;font-weight:600;color:#2B3346;margin:22px 0 4px;">Define criteria for which records are associated with this Blueprint.</div>
+    <div style="font-size:13.5px;color:#8C91AB;margin-bottom:16px;">Leave this field blank if you want all records to be eligible for this Blueprint.</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
+      <span style="width:30px;height:30px;border-radius:50%;border:1px solid #D6D6E3;display:flex;align-items:center;justify-content:center;font-size:13px;color:#8C91AB;">1</span>
+      <select class="bp-sel" style="border-bottom-color:#D6D6E3;"><option>None</option></select>
+      <select class="bp-sel" style="border-bottom-color:#D6D6E3;color:#8C91AB;"><option>None</option></select>
+      <span style="flex:1;height:32px;background:#E9FBF4;border-radius:4px;"></span>
+      <span style="color:#0F9A5F;font-size:22px;cursor:pointer;">＋</span>
+    </div>
+    <div style="display:flex;align-items:flex-end;"><label style="width:200px;font-size:14.5px;color:#3C4557;">Description</label><div style="flex:1;border-bottom:1px solid #D6D6E3;height:26px;"></div></div>
+    <div style="text-align:right;margin:16px 0 26px;"><span style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;">Advanced configuration</span></div>
+    <div style="display:flex;justify-content:flex-end;gap:12px;">
+      <button style="background:#F1F2F5;border:none;border-radius:7px;padding:11px 26px;font-size:14px;color:#3C4557;font-weight:600;cursor:pointer;font-family:inherit;" onclick="closeBPCreateModal()">Cancel</button>
+      <button class="bp-teal" style="padding:11px 30px;" onclick="openBPCanvas()">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- Blueprint canvas (screenshots 3 & 4) -->
+<div id="bp-canvas" style="display:none;position:fixed;inset:0;z-index:960;background:#fff;font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;flex-direction:column;overflow:hidden;">
+  <div style="flex:1;display:flex;overflow:hidden;">
+    <!-- canvas -->
+    <div style="flex:1;position:relative;background:#F7F8FA;background-image:radial-gradient(#D6D6E3 1px, transparent 1px);background-size:22px 22px;overflow:auto;">
+      <div id="bp-canvas-empty" style="position:absolute;top:50%;left:42%;transform:translate(-50%,-50%);width:480px;height:480px;border:2px dashed #C0C8E2;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8C91AB;">
+        <div style="font-size:18px;font-weight:700;color:#5B6473;">Simply drag &amp; drop States</div>
+        <div style="font-size:15px;margin-top:8px;">Start</div>
+      </div>
+      <div id="bp-canvas-nodes" style="display:none;position:absolute;top:70px;left:120px;">
+        <div style="display:inline-block;border:1.5px solid #0F9A5F;border-radius:5px;padding:10px 26px;background:#fff;font-size:14px;color:#2B3346;">Qualification</div>
+        <div style="margin:8px 0 8px 30px;"><span onclick="bpShowTransitions()" style="display:inline-block;background:#4A6DE5;color:#fff;font-size:12px;font-weight:600;padding:6px 20px;transform:skewX(-15deg);cursor:pointer;"><span style="display:inline-block;transform:skewX(15deg);">saas</span></span></div>
+        <div style="margin-left:20px;height:120px;border-left:1.5px solid #5B6473;"></div>
+        <div style="border:1.5px solid #0F9A5F;border-radius:5px;padding:10px 26px;background:#fff;font-size:14px;color:#2B3346;width:150px;text-align:center;">Needs Analysis</div>
+      </div>
+    </div>
+    <!-- right panel -->
+    <div style="width:520px;flex-shrink:0;border-left:1px solid #EDF0F4;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:30px;padding:16px 26px 0;border-bottom:1px solid #EDF0F4;">
+        <span id="bp-tab-info" class="bp-panel-tab" onclick="bpShowInfo()" style="font-size:15px;font-weight:600;color:#0F9A5F;border-bottom:2px solid #0F9A5F;padding-bottom:14px;cursor:pointer;">Info and States</span>
+        <span id="bp-tab-trans" class="bp-panel-tab" onclick="bpShowTransitions()" style="font-size:15px;font-weight:600;color:#8C91AB;padding-bottom:14px;cursor:pointer;">Transitions</span>
+      </div>
+      <!-- Info and States -->
+      <div id="bp-panel-info" style="flex:1;overflow-y:auto;padding:22px 26px;">
+        <div style="font-size:20px;font-weight:700;color:#202123;margin-bottom:14px;">dealsdd</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><span style="width:36px;height:20px;border-radius:20px;background:#D6D6E3;display:inline-flex;align-items:center;padding:0 3px;"><span style="width:15px;height:15px;border-radius:50%;background:#fff;"></span></span><span style="font-size:14px;color:#3C4557;">Continuous</span></div>
+        <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;">+ Description</div>
+        <div style="font-size:14px;color:#3C4557;line-height:1.8;margin-bottom:20px;"><b>Module:</b> Potentials &nbsp;|&nbsp; <b>Layout:</b> Standard &nbsp;|&nbsp; <b>Field:</b> Stage<br><b>Pipeline:</b> Standard (Standard) &nbsp;|</div>
+        <div style="font-size:15px;font-weight:700;color:#202123;margin-bottom:4px;">Entry criteria for this Blueprint:</div>
+        <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:24px;">Add Criteria</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:#202123;margin-bottom:14px;">Available States <span style="color:#0F9A5F;cursor:pointer;">＋</span></div>
+        <div id="bp-states-list"></div>
+      </div>
+      <!-- Transitions (screenshot 4) -->
+      <div id="bp-panel-trans" style="display:none;flex:1;overflow-y:auto;padding:22px 26px;">
+        <div style="display:flex;align-items:center;margin-bottom:12px;"><span style="font-size:20px;font-weight:700;color:#202123;flex:1;">saas</span><span style="width:40px;height:22px;border-radius:20px;background:#4A6DE5;display:inline-flex;align-items:center;padding:0 3px;justify-content:flex-end;"><span style="width:16px;height:16px;border-radius:50%;background:#fff;"></span></span></div>
+        <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;">+ Description</div>
+        <label style="display:flex;align-items:center;gap:9px;font-size:14px;color:#3C4557;margin-bottom:18px;cursor:default;"><span style="width:15px;height:15px;border:2px solid #C0C8E2;border-radius:3px;display:inline-block;"></span>Common Transition</label>
+        <div style="display:flex;border:1px solid #EDF0F4;border-radius:8px;overflow:hidden;margin-bottom:22px;">
+          <span id="bp-ttab-before" class="bp-ttab on" onclick="bpTransTab('before')">BEFORE</span>
+          <span id="bp-ttab-during" class="bp-ttab" onclick="bpTransTab('during')">DURING</span>
+          <span id="bp-ttab-after" class="bp-ttab" onclick="bpTransTab('after')">AFTER</span>
+        </div>
+        <!-- BEFORE -->
+        <div id="bp-tc-before">
+          <div style="font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;">Owners</div>
+          <div style="font-size:13.5px;color:#5B6473;line-height:1.5;margin-bottom:12px;">Eligible Transitions can be displayed as buttons in the Record Detail page. Choose which users, groups, portals, or roles you would like to display these buttons for.</div>
+          <div style="display:flex;align-items:center;border:1px solid #C0C8E2;border-radius:6px;padding:10px 12px;margin-bottom:24px;"><span style="background:#F1F2F5;border-radius:5px;padding:5px 12px;font-size:13.5px;color:#3C4557;">Record Owner</span><span style="flex:1;"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2"><circle cx="9" cy="7" r="3"/><path d="M2 21v-1a6 6 0 016-6"/><circle cx="17" cy="15" r="4"/><line x1="20" y1="18" x2="22" y2="20"/></svg></div>
+          <div style="font-size:15px;font-weight:700;color:#202123;margin-bottom:8px;">CRITERIA</div>
+          <div style="font-size:13.5px;color:#5B6473;line-height:1.5;margin-bottom:8px;">Add criteria below to determine if this Transition button will be displayed.</div>
+          <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;">+ Add Criteria</div>
+        </div>
+        <!-- DURING -->
+        <div id="bp-tc-during" style="display:none;">
+          <div style="font-size:13.5px;color:#5B6473;line-height:1.5;margin-bottom:16px;">Fields the user must fill in while performing this transition.</div>
+          <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;">+ Add Field</div>
+        </div>
+        <!-- AFTER (email template association) -->
+        <div id="bp-tc-after" style="display:none;">
+          <div style="font-size:13.5px;color:#5B6473;line-height:1.5;margin-bottom:16px;">Automate actions once this transition is completed.</div>
+          <div style="font-size:15px;font-weight:700;color:#202123;margin-bottom:10px;">Email Notifications</div>
+          <div style="border:1px solid #EDF0F4;border-radius:8px;padding:16px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;margin-bottom:14px;"><label style="width:130px;font-size:14px;color:#3C4557;">Email Template</label>
+              <div style="flex:1;display:flex;align-items:center;gap:14px;border:1px solid #C0C8E2;border-left:3px solid #FF5D5A;border-radius:6px;padding:7px 12px;">
+                <button style="background:linear-gradient(#FFFFFF,#F1F0F7);border:1px solid #D5D8E9;border-radius:6px;padding:7px 16px;font-size:13.5px;color:#2B3346;font-weight:600;cursor:pointer;font-family:inherit;" onclick="openENTplPicker('bp-after-tpl')">Select Template</button>
+                <span id="bp-after-tpl" style="font-size:14px;color:#C42D5B;font-weight:600;"></span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;"><label style="width:130px;font-size:14px;color:#3C4557;">To</label>
+              <div style="flex:1;display:flex;align-items:center;border:1px solid #C0C8E2;border-radius:6px;height:36px;padding:0 12px;color:#8C91AB;font-size:14px;">Record Owner, Contact <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8C91AB" stroke-width="2.5" style="margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+          </div>
+          <div id="bp-after-associated" style="display:none;background:#E9FBF4;border:1px solid #0F9A5F44;border-radius:8px;padding:12px 14px;font-size:13.5px;color:#0F9A5F;">✓ Email template <b id="bp-after-associated-name"></b> associated with this transition's emails.</div>
+          <div style="color:#0F9A5F;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;">+ Add Action</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- bottom bar -->
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 24px;border-top:1px solid #EDF0F4;flex-shrink:0;">
+    <button class="bp-teal" onclick="closeBPCanvas()">Publish</button>
+    <button class="bp-teal" onclick="closeBPCanvas()">Save as Draft</button>
+    <button style="background:#F1F2F5;border:none;border-radius:7px;padding:9px 20px;font-size:13.5px;color:#3C4557;font-weight:600;cursor:pointer;font-family:inherit;" onclick="closeBPCanvas()">Cancel</button>
+    <span style="flex:1;"></span>
+    <span style="color:#B9BECD;font-size:14px;">Export as image</span>
+  </div>
+</div>
+
+<script>
+// ── Blueprint flow ──
+var BP_STATES=['Qualification','Needs Analysis','Value Proposition','Proposal/Price Quote','Negotiation/Review','Closed Won','Closed Lost','Closed Lost to Competition'];
+function openBPList(){ document.getElementById('bp-list').style.display='block'; }
+function closeBPList(){ document.getElementById('bp-list').style.display='none'; }
+function openBPCreateModal(){ document.getElementById('bp-create-modal').style.display='flex'; }
+function closeBPCreateModal(){ document.getElementById('bp-create-modal').style.display='none'; }
+function openBPCanvas(){
+  closeBPCreateModal();
+  document.getElementById('bp-states-list').innerHTML=BP_STATES.map(function(s){
+    return '<div class="bp-state"><svg width="12" height="14" viewBox="0 0 24 24" fill="#B9BECD"><circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/><circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/><circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/></svg>'+s+'</div>';
+  }).join('');
+  bpShowInfo();
+  document.getElementById('bp-after-tpl').textContent='';
+  document.getElementById('bp-after-associated').style.display='none';
+  document.getElementById('bp-canvas').style.display='flex';
+}
+function closeBPCanvas(){ document.getElementById('bp-canvas').style.display='none'; }
+function bpShowInfo(){
+  document.getElementById('bp-panel-info').style.display='block';
+  document.getElementById('bp-panel-trans').style.display='none';
+  document.getElementById('bp-canvas-empty').style.display='flex';
+  document.getElementById('bp-canvas-nodes').style.display='none';
+  document.getElementById('bp-tab-info').style.color='#0F9A5F'; document.getElementById('bp-tab-info').style.borderBottom='2px solid #0F9A5F';
+  document.getElementById('bp-tab-trans').style.color='#8C91AB'; document.getElementById('bp-tab-trans').style.borderBottom='none';
+}
+function bpShowTransitions(){
+  document.getElementById('bp-panel-info').style.display='none';
+  document.getElementById('bp-panel-trans').style.display='block';
+  document.getElementById('bp-canvas-empty').style.display='none';
+  document.getElementById('bp-canvas-nodes').style.display='block';
+  document.getElementById('bp-tab-trans').style.color='#0F9A5F'; document.getElementById('bp-tab-trans').style.borderBottom='2px solid #0F9A5F';
+  document.getElementById('bp-tab-info').style.color='#8C91AB'; document.getElementById('bp-tab-info').style.borderBottom='none';
+  bpTransTab('before');
+}
+function bpTransTab(which){
+  ['before','during','after'].forEach(function(t){
+    document.getElementById('bp-tc-'+t).style.display = (t===which)?'block':'none';
+    document.getElementById('bp-ttab-'+t).className = 'bp-ttab' + (t===which?' on':'');
+  });
+}
+function bpAfterTplChanged(){
+  var nm=document.getElementById('bp-after-tpl') ? document.getElementById('bp-after-tpl').textContent : '';
+  var box=document.getElementById('bp-after-associated');
+  if(nm && box){ document.getElementById('bp-after-associated-name').textContent=nm; box.style.display='block'; }
 }
 </script>
 
