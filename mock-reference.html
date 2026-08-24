@@ -3802,7 +3802,7 @@ tbody tr:hover{background:#f5f7ff;}
         </div>
         <div class="sd-survey-icon">S</div>
         <div>
-          <div class="sd-survey-title" id="sd-survey-name">CSAT Survey</div>
+          <div style="display:flex;align-items:center;gap:10px;"><div class="sd-survey-title" id="sd-survey-name">CSAT Survey</div><span id="sd-survey-status" style="display:none;font-size:11px;font-weight:700;border-radius:100px;padding:2px 10px;"></span></div>
           <div class="sd-tags">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             Add Tags
@@ -5695,6 +5695,20 @@ function openSurveyDetail(survey) {
     survey._collectors = collectors;
   }
   document.getElementById('sd-survey-name').textContent = survey.name || 'CSAT Survey';
+  // Draft / Published badge next to the survey name
+  var stBadge = document.getElementById('sd-survey-status');
+  if (stBadge) {
+    if (survey.status) {
+      var pub = survey.status === 'Published';
+      stBadge.textContent = survey.status;
+      stBadge.style.color = pub ? '#1F8A54' : '#B8791A';
+      stBadge.style.background = pub ? '#EAF7F0' : '#FBF3E4';
+      stBadge.style.border = '1px solid ' + (pub ? '#1F8A5444' : '#B8791A44');
+      stBadge.style.display = 'inline-block';
+    } else {
+      stBadge.style.display = 'none';
+    }
+  }
   document.getElementById('sd-survey-type-val').textContent = survey.surveyTypeLabel || 'Create From Scratch';
   document.getElementById('sd-survey-category-val').textContent = survey.surveyCategory || 'Human Resource';
   document.getElementById('sd-survey-createdby-val').textContent = survey.createdBy || 'Jay';
@@ -14404,18 +14418,6 @@ function enAppendAction(detail){ var rule=(typeof workflowRulesData!=='undefined
   </div>
 </div>
 
-<!-- Done / publish-nudge modal -->
-<div id="svc-donemodal" style="display:none;position:fixed;inset:0;z-index:948;background:rgba(31,39,51,.55);font-family:'Zoho Puvi','Segoe UI',Roboto,Arial,sans-serif;align-items:flex-start;justify-content:center;">
-  <div style="background:#fff;width:440px;max-width:92vw;border-radius:12px;margin-top:200px;box-shadow:0 10px 40px rgba(31,39,51,.4);padding:26px 28px;">
-    <div style="font-size:18px;font-weight:700;color:#1F2733;margin-bottom:8px;">Publish before you go?</div>
-    <div style="font-size:14px;color:#5B6473;line-height:1.5;margin-bottom:22px;">Your survey is saved as a draft. Publish it now so you can send it to your CRM records right away.</div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;">
-      <button onclick="svcReturn(false)" style="background:linear-gradient(#FFFFFF,#F1F0F7);border:1px solid #D5D8E9;border-radius:6px;padding:10px 18px;font-size:14px;color:#2B3346;font-weight:600;cursor:pointer;font-family:inherit;">Return as Draft</button>
-      <button onclick="svcReturn(true)" style="background:linear-gradient(#5767F6,#124DC3);border:none;border-radius:6px;padding:10px 20px;font-size:14px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;">Publish &amp; Return</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ── Survey-native create flow ──
 var SVC_QTYPES=[
@@ -14438,7 +14440,7 @@ var SVC_QTYPES=[
   ['Matrix Dropdown','','<rect x="3" y="5" width="8" height="5" rx="1"/><rect x="13" y="5" width="8" height="5" rx="1"/><rect x="3" y="14" width="8" height="5" rx="1"/><rect x="13" y="14" width="8" height="5" rx="1"/>']
 ];
 function openSvCreate(){ document.getElementById('svc-landing').style.display='flex'; }
-function closeSvCreate(){ ['svc-landing','svc-builder','svc-modal','svc-donemodal'].forEach(function(id){document.getElementById(id).style.display='none';}); }
+function closeSvCreate(){ ['svc-landing','svc-builder','svc-modal'].forEach(function(id){var e=document.getElementById(id); if(e) e.style.display='none';}); }
 function openSvcModal(){ document.getElementById('svc-name').value=''; document.getElementById('svc-modal').style.display='flex'; setTimeout(function(){document.getElementById('svc-name').focus();},50); }
 function closeSvcModal(){ document.getElementById('svc-modal').style.display='none'; }
 var svcDraft={name:'Untitled',category:''};
@@ -14454,9 +14456,8 @@ function svcCreate(){
   }).join('');
   document.getElementById('svc-builder').style.display='flex';
 }
-function svcDone(){ document.getElementById('svc-donemodal').style.display='flex'; }
-function svcReturn(published){
-  document.getElementById('svc-donemodal').style.display='none';
+function svcDone(){
+  // No publish/draft dialog — a newly created survey returns to CRM as a Draft (empty insights).
   closeSvCreate();
   if(typeof openSurveyDetail==='function'){
     openSurveyDetail({
@@ -14464,8 +14465,9 @@ function svcReturn(published){
       surveyTypeLabel: 'Create From Scratch',
       surveyCategory: svcDraft.category || 'Uncategorized',
       createdBy: 'Jay',
-      status: published ? 'Published' : 'Draft',
-      responses: null
+      status: 'Draft',
+      responses: null,
+      fresh: true
     });
   }
 }
