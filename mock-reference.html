@@ -3896,30 +3896,31 @@ tbody tr:hover{background:#f5f7ff;}
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
               <div style="display:grid;grid-template-columns:repeat(6,1fr);margin:0 24px 16px;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
               <div style="padding:18px 12px;text-align:center;border-right:1px solid #e8e8e8;">
-                <div style="font-size:26px;font-weight:700;color:#e53935;">37</div>
+                <div id="sd-stat-sent" style="font-size:26px;font-weight:700;color:#e53935;">37</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey's Sent</div>
               </div>
               <div style="padding:18px 12px;text-align:center;border-right:1px solid #e8e8e8;">
-                <div style="font-size:26px;font-weight:700;color:#1a73e8;">37</div>
+                <div id="sd-stat-visits" style="font-size:26px;font-weight:700;color:#1a73e8;">37</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey Visits</div>
               </div>
               <div style="padding:18px 12px;text-align:center;border-right:1px solid #e8e8e8;">
-                <div style="font-size:26px;font-weight:700;color:#e53935;">13</div>
+                <div id="sd-stat-responses" style="font-size:26px;font-weight:700;color:#e53935;">13</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Total Responses</div>
               </div>
               <div style="padding:18px 12px;text-align:center;border-right:1px solid #e8e8e8;">
-                <div style="font-size:26px;font-weight:700;color:#1a73e8;">2</div>
+                <div id="sd-stat-completed" style="font-size:26px;font-weight:700;color:#1a73e8;">2</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Completed Responses</div>
               </div>
               <div style="padding:18px 12px;text-align:center;border-right:1px solid #e8e8e8;">
-                <div style="font-size:26px;font-weight:700;color:#e53935;">0</div>
+                <div id="sd-stat-partial" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Partial Responses</div>
               </div>
               <div style="padding:18px 12px;text-align:center;">
-                <div style="font-size:26px;font-weight:700;color:#43a047;">11</div>
+                <div id="sd-stat-overquota" style="font-size:26px;font-weight:700;color:#43a047;">11</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Over Quota Responses</div>
               </div>
             </div>
+            <div id="sd-empty-note" style="display:none;margin:0 24px 16px;padding:22px;text-align:center;background:#F7F8FA;border:1px dashed #D6D6E3;border-radius:8px;color:#8C91AB;font-size:13.5px;">No responses yet — send the survey to your CRM records to start collecting insights.</div>
             </div><!-- /Response Statistics -->
 
             <!-- 2. Survey Quota (shown only when quota enabled) -->
@@ -3974,7 +3975,7 @@ tbody tr:hover{background:#f5f7ff;}
             </div><!-- /Survey Quota -->
 
             <!-- 3. Survey Reports -->
-            <div style="border-top:2px solid #e8e8e8;margin-top:8px;">
+            <div id="sd-reports-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Reports</span></div>
               <div style="padding:16px 0 0;position:relative;">
               <!-- Scroll wrapper -->
@@ -4319,7 +4320,7 @@ tbody tr:hover{background:#f5f7ff;}
             </div><!-- /Survey Reports -->
 
             <!-- 4. All Respondents -->
-            <div style="border-top:2px solid #e8e8e8;margin-top:8px;">
+            <div id="sd-respondents-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;">
                 <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">All Respondents</span>
                 <span id="sd-resp-count-badge" style="background:#0d904f;color:#fff;border-radius:10px;font-size:11px;padding:2px 8px;font-weight:700;">6</span>
@@ -4397,7 +4398,7 @@ tbody tr:hover{background:#f5f7ff;}
             </div><!-- /All Respondents -->
 
             <!-- 5. Responses based on Questions -->
-            <div style="border-top:2px solid #e8e8e8;margin-top:8px;">
+            <div id="sd-qresp-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Responses based on Questions</span></div>
               <div style="padding:8px 24px 20px;">
               <!-- Container with border -->
@@ -5769,7 +5770,29 @@ function openSurveyDetail(survey) {
   var hdChev = document.getElementById('sd-hide-details-chevron');
   if (hdBody) hdBody.style.display = 'block';
   if (hdChev) hdChev.style.transform = 'rotate(0deg)';
+  // Empty-first: a freshly created survey has no responses until it is sent
+  sdSetData(!survey.fresh);
   document.getElementById('survey-detail-page').classList.add('visible');
+}
+
+// Toggle the detail page between "no responses yet" (empty) and "has data"
+function sdSetData(hasData) {
+  var stats = hasData
+    ? {sent:'37', visits:'37', responses:'13', completed:'2', partial:'0', overquota:'11'}
+    : {sent:'0', visits:'0', responses:'0', completed:'0', partial:'0', overquota:'0'};
+  var set = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; };
+  set('sd-stat-sent',stats.sent); set('sd-stat-visits',stats.visits); set('sd-stat-responses',stats.responses);
+  set('sd-stat-completed',stats.completed); set('sd-stat-partial',stats.partial); set('sd-stat-overquota',stats.overquota);
+  var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
+  show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
+  show('sd-empty-note',!hasData);
+  // Invited / Send-Survey related list is empty until the survey is sent
+  if (!hasData) { sdInvPeople = []; sdInvSelectedIds = []; if (typeof sdInvRender==='function') sdInvRender(); }
+}
+// After a survey is sent from its detail page, populate the insights
+function sdMarkSent() {
+  if (currentDetailSurvey) currentDetailSurvey.fresh = false;
+  openSurveyDetail(currentDetailSurvey);
 }
 
 function closeSurveyDetail() {
@@ -8568,7 +8591,7 @@ function removeScoringAll() {
           </div>
         </div>
       </div>
-      <div class="ss-field-row" style="align-items:flex-start;border-top:1px solid #eee;padding-top:14px;margin-top:6px;">
+      <div class="ss-field-row" style="display:none;align-items:flex-start;border-top:1px solid #eee;padding-top:14px;margin-top:6px;">
         <div class="ss-field-label"></div>
         <div class="ss-field-control" style="width:100%;">
           <div id="ss-adv-toggle" onclick="ssToggleAdvanced()" style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#5464F2;user-select:none;">
@@ -10792,7 +10815,12 @@ function ssSendMassEmail() {
     selectedPeople = ssLeads.slice(0, Math.min(5, ssLeads.length));
   }
   sdInvAddPeopleFromSend(selectedPeople);
-  ssShowToast('Survey sent successfully to ' + (selectedPeople.length || 99) + ' recipients!');
+  if (typeof ssShowToast === 'function') ssShowToast('Survey sent successfully to ' + (selectedPeople.length || 99) + ' recipients!');
+  // If this was a freshly created survey with no data yet, populate its insights now
+  var dp = document.getElementById('survey-detail-page');
+  if (typeof sdMarkSent === 'function' && currentDetailSurvey && currentDetailSurvey.fresh && dp && dp.classList.contains('visible')) {
+    sdMarkSent();
+  }
 }
 
 function ssCloseAll() {
