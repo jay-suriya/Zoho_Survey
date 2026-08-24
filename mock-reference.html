@@ -14226,7 +14226,7 @@ function openENTplPicker(){ document.getElementById('en-tpl-list').innerHTML=enT
   }).join(''); document.getElementById('en-tplpicker').style.display='flex'; }
 function closeENTplPicker(){ document.getElementById('en-tplpicker').style.display='none'; }
 function enPickTemplate(i){ document.getElementById('en-tpl-selected').textContent=enTemplates[i].name; closeENTplPicker(); }
-function enSaveAndAssociate(){ var nm=document.getElementById('en-form').querySelector('.en-inp').value.trim() || 'New Email Notification'; enAppendAction(nm); closeENForm(); }
+function enSaveAndAssociate(){ var nm=document.getElementById('en-form').querySelector('.en-inp').value.trim() || 'New Email Notification'; enAppendAction(nm); closeENForm(); closeENPicker(); }
 function enAppendAction(detail){ var rule=(typeof workflowRulesData!=='undefined')&&workflowRulesData.find(function(r){return r.id===wfActiveRuleId;}); if(rule){ rule.actions.push({type:'Email Notification',detail:detail}); if(typeof renderWfActionsList==='function') renderWfActionsList(); } }
 </script>
 
