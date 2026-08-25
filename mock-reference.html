@@ -12169,18 +12169,21 @@ function cvRenderSignals(body, data, meta, unit){
   cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+meta.lastAgo+'</div><div class="fs">most recent of '+responded.length+'</div></div>');
   cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+data.length+'</div><div class="fs">transitions on this '+unit+'</div></div>');
   var html = '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
-  // Per-transition breakdown (attribution) — which transition fired which survey and what it scored
-  html += '<div style="margin-top:16px;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">'+
-    '<div style="padding:10px 14px;font-size:12.5px;font-weight:700;color:#5B6473;background:#F7F8FA;border-bottom:1px solid #EDF0F4;">By transition</div>'+
-    data.map(function(s){
-      var mets = s.status==='responded'
-        ? s.metrics.map(function(m){var b=dsBand(m.norm);return '<span style="color:'+b.c+';font-weight:600;">'+m.label+' '+m.value+'</span>';}).join(' <span style="color:#D6D6E3;">·</span> ')
-        : '<span style="color:#B8791A;">Yet to respond</span>';
-      return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F2F3F7;">'+
-        '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#33475B;">'+s.name+'</div>'+
-        '<div style="font-size:11.5px;color:#97A0B0;margin-top:2px;">'+s.trigger+'</div></div>'+
-        '<div style="font-size:12.5px;text-align:right;">'+mets+'</div></div>';
-    }).join('')+'</div>';
+  // Per-transition breakdown (attribution) — which transition fired which survey and what it scored.
+  // Shown on the contact (not the deal, per request).
+  if (unit !== 'deal') {
+    html += '<div style="margin-top:16px;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">'+
+      '<div style="padding:10px 14px;font-size:12.5px;font-weight:700;color:#5B6473;background:#F7F8FA;border-bottom:1px solid #EDF0F4;">By transition</div>'+
+      data.map(function(s){
+        var mets = s.status==='responded'
+          ? s.metrics.map(function(m){var b=dsBand(m.norm);return '<span style="color:'+b.c+';font-weight:600;">'+m.label+' '+m.value+'</span>';}).join(' <span style="color:#D6D6E3;">·</span> ')
+          : '<span style="color:#B8791A;">Yet to respond</span>';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F2F3F7;">'+
+          '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#33475B;">'+s.name+'</div>'+
+          '<div style="font-size:11.5px;color:#97A0B0;margin-top:2px;">'+s.trigger+'</div></div>'+
+          '<div style="font-size:12.5px;text-align:right;">'+mets+'</div></div>';
+      }).join('')+'</div>';
+  }
   body.innerHTML = html;
 }
 function dsToggle(id){ dealSurveyExpanded[id] = !dealSurveyExpanded[id]; renderDealSurveys(); }
