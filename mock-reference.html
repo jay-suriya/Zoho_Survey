@@ -15105,6 +15105,20 @@ function anPie(items, colors){
 }
 
 // multi-series line chart
+// mini sparkline (no axes) for at-a-glance trend tiles
+function anSpark(points, color){
+  var w=160,h=40,pad=3;
+  var mn=Math.min.apply(null,points), mx=Math.max.apply(null,points), rng=(mx-mn)||1;
+  var X=function(i){return pad+(w-2*pad)*i/(points.length-1);};
+  var Y=function(v){return pad+(h-2*pad)*(1-(v-mn)/rng);};
+  var d=points.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');
+  var area='M'+X(0).toFixed(1)+' '+(h-pad)+' '+d.replace('M','L')+' L'+X(points.length-1).toFixed(1)+' '+(h-pad)+' Z';
+  var last=points.length-1;
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="none" style="display:block;">'+
+    '<path d="'+area+'" fill="'+color+'" opacity="0.10"/>'+
+    '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+
+    '<circle cx="'+X(last).toFixed(1)+'" cy="'+Y(points[last]).toFixed(1)+'" r="3" fill="'+color+'"/></svg>';
+}
 function anLine(series, opt){
   opt=opt||{}; var w=560,h=300,pl=48,pr=16,pt=18,pb=42;
   var labels=opt.labels||[]; var n=labels.length;
@@ -15265,10 +15279,35 @@ function anSurveyCards(){
 
   // ── SECTION 3 : TRENDS ──
   var wk=['W-5','W-4','W-3','W-2','W-1','Now'];
-  var trendRisk=anLine([
-      {name:'At-Risk Revenue',color:'#C8324A',points:[72,80,88,99,101,96.3]},
-      {name:'Recovered (cumulative)',color:'#1F8A54',points:[4,8,12,16,20,22.5]}
-    ],{labels:wk,yMax:110,fmtY:function(v){return '₹'+v.toFixed(0)+'L';},legend:true});
+  // At-Risk vs Recovered — shown as two plain-language trend tiles + a recovery funnel bar (easier than a dual-line chart)
+  var atRiskSeries=[72,80,88,99,101,96.3];
+  var recoveredSeries=[4,8,12,16,20,22.5];
+  var atRiskNow=atRiskSeries[atRiskSeries.length-1], atRiskPrev=atRiskSeries[atRiskSeries.length-2];
+  var recNow=recoveredSeries[recoveredSeries.length-1], recPrev=recoveredSeries[recoveredSeries.length-2];
+  var flagged=atRiskNow+recNow; // total ₹ ever flagged this period
+  var recPct=Math.round(recNow/flagged*100);
+  function cvTrendTile(label, val, delta, goodDown, spark, sparkColor){
+    var improved = goodDown ? (delta<0) : (delta>0);
+    var arrow = delta<0?'&#9660;':'&#9650;';
+    var arrowColor = improved?'#1F8A54':'#C8324A';
+    return '<div style="flex:1;min-width:240px;border:1px solid #EDEEF3;border-radius:12px;padding:16px 18px;">'+
+      '<div style="font-size:12px;color:#8C91AB;text-transform:uppercase;letter-spacing:.03em;">'+label+'</div>'+
+      '<div style="display:flex;align-items:baseline;gap:10px;margin:6px 0 4px;">'+
+        '<span style="font-size:30px;font-weight:800;color:#1F2733;">'+cvL(val*100000)+'</span>'+
+        '<span style="font-size:14px;font-weight:700;color:'+arrowColor+';">'+arrow+' '+cvL(Math.abs(delta)*100000)+'</span></div>'+
+      '<div style="font-size:11.5px;color:#97A0B0;margin-bottom:8px;">'+(improved?'improving':'worsening')+' vs last week</div>'+
+      anSpark(spark, sparkColor)+'</div>';
+  }
+  var trendRisk =
+    '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">'+
+      cvTrendTile('At-Risk Revenue', atRiskNow, +(atRiskNow-atRiskPrev).toFixed(1), true, atRiskSeries, '#C8324A')+
+      cvTrendTile('Recovered This Week', recNow, +(recNow-recPrev).toFixed(1), false, recoveredSeries, '#1F8A54')+
+    '</div>'+
+    '<div style="font-size:12px;color:#8C91AB;margin-bottom:6px;">Of '+cvL(flagged*100000)+' flagged at-risk this period, you’ve recovered <b style="color:#1F8A54;">'+recPct+'%</b>.</div>'+
+    '<div style="display:flex;height:26px;border-radius:8px;overflow:hidden;font-size:11.5px;font-weight:700;color:#fff;">'+
+      '<div style="width:'+recPct+'%;background:#1F8A54;display:flex;align-items:center;justify-content:center;min-width:60px;">Recovered '+cvL(recNow*100000)+'</div>'+
+      '<div style="flex:1;background:#C8324A;display:flex;align-items:center;justify-content:center;">Still at risk '+cvL(atRiskNow*100000)+'</div>'+
+    '</div>';
   var trendCsat=anLine([
       {name:'Test Drive',color:CV_TP['Test Drive'],points:[3.7,3.8,3.6,3.5,3.6,3.7]},
       {name:'Quotation',color:CV_TP['Quotation'],points:[3.9,3.8,3.7,3.6,3.7,3.8]},
