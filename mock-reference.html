@@ -15226,6 +15226,7 @@ var cvUsers={
 // ═══ filter state ═══
 var cvF={ band:{period:'This month'},
           proc:{period:'This month',survey:'All',module:'All'},
+          surv:{period:'This month',survey:'All'},
           user:{period:'This month',process:'All',user:'All'} };
 var cvMenu=null;
 // Volume multiplier + score adjustment per period. 'Last month' uses each
@@ -15237,6 +15238,11 @@ var CV_PERIODS={
  'Last 6 months':{m:6.10, a:0.25, dm:1.8},
  'This year':    {m:8.30, a:0.30, dm:2.0}};
 var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
+// The survey is the instrument: its own question count and completion behaviour.
+var CV_SURVEYS={
+ 'Experience CSAT': {q:6, partial:0.09, mins:2.4},
+ 'Loss Reason':     {q:4, partial:0.21, mins:1.6},
+ 'Relationship NPS':{q:2, partial:0.05, mins:0.8}};
 
 function cvDash(){ return '<span style="color:#C3C7D2;">&#8212;</span>'; }
 function cvNum(v,dec,strong){ if(v===null||v===undefined) return cvDash();
@@ -15319,11 +15325,12 @@ function cvScaleUser(u,p,period){
   return o;
 }
 function cvTotals(list){
-  var t={sent:0,resp:0,happy:0,unhappy:0,done:0}, w={csat:[0,0],nps:[0,0],rating:[0,0],score:[0,0],d:[0,0]};
+  var t={sent:0,resp:0,happy:null,unhappy:null,done:0,n:{}}, w={csat:[0,0],nps:[0,0],rating:[0,0],score:[0,0],d:[0,0]};
+  ['csat','nps','rating','score'].forEach(function(k){ t.n[k]=0; });
   list.forEach(function(p){
     t.sent+=p.sent; t.resp+=p.resp; t.done+=p.done;
-    if(p.happy!==null){ t.happy+=p.happy; t.unhappy+=p.unhappy; }
-    ['csat','nps','rating','score'].forEach(function(k){ if(p[k]!==null){ w[k][0]+=p[k]*p.resp; w[k][1]+=p.resp; } });
+    if(p.happy!==null){ t.happy=(t.happy||0)+p.happy; t.unhappy=(t.unhappy||0)+p.unhappy; }
+    ['csat','nps','rating','score'].forEach(function(k){ if(p[k]!==null){ w[k][0]+=p[k]*p.resp; w[k][1]+=p.resp; t.n[k]++; } });
     // only CSAT-scale deltas roll up — an NPS delta is a different unit and would swamp them
     if(p.d!==null && p.dUnit==='csat'){ w.d[0]+=p.d*p.resp; w.d[1]+=p.resp; }
   });
@@ -15435,6 +15442,52 @@ function cvProcessReport(){
     '', true);
 }
 
+// ═══ REPORT : Feedback by Survey (the instrument, not the business) ═══
+function cvSurveyReport(){
+  var f=cvF.surv;
+  var names=cvUniq(cvProc.map(function(p){ return p.survey; }))
+    .filter(function(n){ return f.survey==='All'||n===f.survey; });
+  var rows=names.map(function(nm){
+    var group=cvProc.filter(function(p){ return p.survey===nm; })
+                    .map(function(p){ return cvScaleProc(p,f.period); });
+    var t=cvTotals(group), meta=CV_SURVEYS[nm]||{q:0,partial:0,mins:0};
+    var partial=Math.round(t.resp*meta.partial);
+    var star=function(k){ return t.n[k]>1; };
+    return '<tr>'+
+      cvTd('<a class="cv-proc-link" onclick="cvOpenSurvey(\''+nm+'\')">'+nm+'</a>'+
+           '<div style="font-size:11px;color:#8C91AB;margin-top:2px;">'+meta.q+' questions</div>','left')+
+      cvTd(group.map(function(p){ return p.name; }).join(', '),'left',
+           'white-space:normal;font-size:12px;color:#616E88;max-width:230px;')+
+      cvTd(t.sent.toLocaleString())+
+      cvTd(t.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(t.resp,t.sent)+')</span>')+
+      cvTd('<span style="color:#8C91AB;">'+partial.toLocaleString()+'</span>')+
+      cvTd('<span style="color:#8C91AB;">'+meta.mins.toFixed(1)+' min</span>')+
+      cvTd(cvMood(t.happy,t.resp,'#1F8A54'))+
+      cvTd(cvMood(t.unhappy,t.resp,'#C8324A'))+
+      cvTd(t.csat===null?cvDash():(star('csat')
+            ? '<span title="blended across '+t.n.csat+' processes" style="color:#8C91AB;">'+t.csat.toFixed(1)+'*</span>'
+            : '<b style="color:#1F2733;">'+t.csat.toFixed(1)+'</b>'))+
+      cvTd(t.nps===null?cvDash():(star('nps')
+            ? '<span title="blended across '+t.n.nps+' processes" style="color:#8C91AB;">'+t.nps+'*</span>'
+            : '<b style="color:#1F2733;">'+t.nps+'</b>'))+
+      cvTd(t.rating===null?cvDash():t.rating.toFixed(1))+
+      cvTd(t.score===null?cvDash():t.score+'%')+
+    '</tr>'; }).join('');
+  if(!names.length) rows=cvEmpty(12,'No survey matches these filters.');
+  return anCard('Feedback by Survey',
+    cvChipRow([cvChip('surv','period','Period',CV_PERIOD_LIST),
+               cvChip('surv','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;}))))])+
+    cvTable(cvTh(['Survey','Used by','Sent','Responded','Partial','Avg time','Happy','Unhappy','CSAT','NPS','Rating','Score'],2)+rows)+
+    '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">* Blended across more than one process &mdash; read the per-process rows above for a score you can act on.</div>',
+    '', true);
+}
+function cvOpenSurvey(name){
+  cvMenu=null;
+  var s=(typeof surveys!=='undefined') ? surveys.filter(function(x){ return x.name===name; })[0] : null;
+  document.getElementById('analytics-page').style.display='none';
+  openSurveyDetail(s || {name:name, category:'Customer Experience', status:'Published', _collectors:[]});
+}
+
 // ═══ REPORT 2 : Feedback by User ═══
 function cvUserReport(){
   var f=cvF.user, body='', shown=0;
@@ -15483,7 +15536,7 @@ function cvOpenWorkflow(id){
 }
 
 function anSurveyCards(){
-  return cvBand() + cvProcessReport() + cvUserReport();
+  return cvBand() + cvProcessReport() + cvSurveyReport() + cvUserReport();
 }
 
 function renderAnalytics(){ document.getElementById('an-grid').innerHTML = (anDash==='leads'? anLeadsCards(): anSurveyCards()); }
