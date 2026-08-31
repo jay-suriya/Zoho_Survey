@@ -15267,16 +15267,14 @@ function cvUserReport(){
   cvProc.forEach(function(p){
     var list=cvUsers[p.key]||[]; if(!list.length) return;
     var prim=(p.dUnit==='nps')?'nps':'csat';
-    var base=p[prim];
     var head=[];
     if(p.csat!==null) head.push('CSAT '+p.csat.toFixed(1));
     if(p.nps!==null)  head.push('NPS '+p.nps);
     head.push(list.length+' '+p.role.toLowerCase()+(list.length>1?'s':''));
-    body+='<tr><td colspan="8" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
+    body+='<tr><td colspan="7" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
       '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+p.name+'</span>'+
       '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process avg &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
     list.forEach(function(u){
-      var d=(base===null||u[prim]===null)? null : +(u[prim]-base).toFixed(prim==='nps'?0:1);
       body+='<tr>'+
         cvTd('<span style="font-weight:600;color:#1F2733;">'+u.u+'</span>','left')+
         cvTd(u.sent.toLocaleString())+
@@ -15285,12 +15283,11 @@ function cvUserReport(){
         cvTd(cvNum(u.nps,0,prim==='nps'))+
         cvTd(cvNum(u.rating,1))+
         cvTd(u.score===null?cvDash():u.score+'%')+
-        cvTd(cvDelta(d,prim==='nps'?0:1))+
       '</tr>'; });
   });
   return anCard('Feedback by User',
     cvFilters(['Period: This month','Process: All'])+
-    cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs process'])+body),
+    cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score'])+body),
     '', true);
 }
 
