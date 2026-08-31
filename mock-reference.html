@@ -12122,6 +12122,13 @@ var dealSignals = [
   {trigger:'Stage → Negotiation', wf:'WF-3 · Offer Feedback', metric:'RATING', value:'3.0 / 5', band:'neu', bandLabel:'Neutral', responded:true},
   {trigger:'Post-delivery (time-based)', wf:'WF-4 · Relationship NPS', metric:'NPS', value:'Pending', band:'', bandLabel:'—', responded:false}
 ];
+// a survey only shows the metrics it actually collected
+function ddMetric(sv,label){
+  var m=(sv.metrics||[]).filter(function(x){ return x.label===label; })[0];
+  if(!m) return '<span style="color:#C3C7D2;">&#8212;</span>';
+  var b=dsBand(m.norm);
+  return '<span style="color:'+b.c+';font-weight:600;">'+m.value+'</span>';
+}
 function ddRenderSurveyList(){
   var tb=document.getElementById('dd-survey-tbody'); if(!tb) return;
   tb.innerHTML=dealSurveysData.map(function(sv,i){
@@ -12135,6 +12142,9 @@ function ddRenderSurveyList(){
       '<td class="dd-td">'+(done? sv.responded : '<span style="color:#8C91AB;">&#8212;</span>')+'</td>'+
       '<td class="dd-td">ssunderjan@gmail.com</td>'+
       '<td class="dd-td">Send Email Option (Individual)</td>'+
+      '<td class="dd-td" style="text-align:right;">'+ddMetric(sv,'CSAT')+'</td>'+
+      '<td class="dd-td" style="text-align:right;">'+ddMetric(sv,'NPS')+'</td>'+
+      '<td class="dd-td" style="text-align:right;">'+ddMetric(sv,'Rating')+'</td>'+
     '</tr>'; }).join('');
   var n=dealSurveysData.length;
   var c=document.getElementById('dd-survey-count'); if(c) c.textContent=n;
@@ -13919,6 +13929,7 @@ function closeMarketplaceZohoPage() {
             <thead><tr style="background:#F7F8FA;">
               <th class="dd-th">Title</th><th class="dd-th">Response</th><th class="dd-th">Sent Date</th>
               <th class="dd-th">Responded Date</th><th class="dd-th">Sent By</th><th class="dd-th">Source</th>
+              <th class="dd-th" style="text-align:right;">CSAT</th><th class="dd-th" style="text-align:right;">NPS</th><th class="dd-th" style="text-align:right;">Avg Rating</th>
             </tr></thead>
             <tbody id="dd-survey-tbody"></tbody>
           </table></div>
