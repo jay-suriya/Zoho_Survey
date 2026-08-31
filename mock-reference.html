@@ -15359,7 +15359,7 @@ function cvBand(){
   var declining=scored.filter(function(p){ return p.d<0; });
   var byU=scored.slice().sort(function(a,b){ return (b.unhappy/b.resp)-(a.unhappy/a.resp); });
   var byH=scored.slice().sort(function(a,b){ return (b.happy/b.resp)-(a.happy/a.resp); });
-  var worst=byU[0], best=byH[0], gap=t.done-t.sent;
+  var worst=byU[0], best=byH[0];
   var pM=function(p){ return p.csat!==null? p.csat.toFixed(1) : 'NPS '+p.nps; };
   var bar='<div style="display:flex;height:18px;border-radius:9px;overflow:hidden;background:#F0F1F5;margin:4px 0 18px;">'+
     '<div style="width:'+pc(h)+'%;background:linear-gradient(#19B171,#11985E);"></div>'+
@@ -15379,8 +15379,8 @@ function cvBand(){
     '</div>'+
     '<div style="height:1px;background:#EDEEF3;margin:20px 0 18px;"></div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:14px;">'+
-      cvBandTile('#5464F2','Coverage', Math.round(t.sent/t.done*100)+'% surveyed',
-        t.sent.toLocaleString()+' of '+t.done.toLocaleString()+' completed'+(gap>0?' &middot; '+gap.toLocaleString()+' missed':''))+
+      cvBandTile('#5464F2','Responses', cvPct(r,t.sent)+' responded',
+        r.toLocaleString()+' responded &middot; '+(t.sent-r).toLocaleString()+' not responded')+
       cvBandTile('#E28C27','Processes declining', declining.length+' of '+scored.length,
         declining.map(function(p){ return p.name; }).join(', ')||'None')+
       cvBandTile('#FF4657','Needs attention', worst.name,
