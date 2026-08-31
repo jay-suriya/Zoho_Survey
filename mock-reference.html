@@ -15379,6 +15379,22 @@ function cvBandTile(accent,label,value,sub){
     '<div style="font-size:17px;font-weight:800;color:#1F2733;margin-top:7px;line-height:1.2;">'+value+'</div>'+
     '<div style="font-size:11.5px;color:#8C91AB;margin-top:5px;">'+sub+'</div></div>';
 }
+function cvCmpRow(pct,color,label,strong){
+  return '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;">'+
+    '<div style="width:56px;height:5px;border-radius:3px;background:#EDEEF3;overflow:hidden;flex:none;">'+
+      '<div style="width:'+pct+'%;height:100%;background:'+color+';border-radius:3px;"></div></div>'+
+    '<span style="font-size:11.5px;color:'+(strong?'#1F2733':'#8C91AB')+';'+(strong?'font-weight:700;':'')+'">'+pct+'%</span>'+
+    '<span style="font-size:11px;color:#9AA0B1;">'+label+'</span></div>';
+}
+function cvBandTilePerson(accent,label,name,meta,pct,procPct,color,word){
+  return '<div style="flex:1;min-width:212px;border:1px solid #EDEEF3;border-left:3px solid '+accent+';border-radius:10px;padding:13px 16px;background:#FCFCFD;">'+
+    '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">'+label+'</div>'+
+    '<div style="font-size:17px;font-weight:800;color:#1F2733;margin-top:7px;line-height:1.2;">'+name+'</div>'+
+    '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+meta+'</div>'+
+    cvCmpRow(pct,color,word,true)+
+    cvCmpRow(procPct,'#C6CBD8','process average',false)+
+  '</div>';
+}
 function cvBandLeg(color,label,n,pct){
   return '<div style="display:flex;align-items:center;gap:10px;">'+
     '<span style="width:10px;height:10px;border-radius:3px;background:'+color+';flex:none;"></span>'+
@@ -15441,12 +15457,12 @@ function cvBand(){
         pM(worst)+(worst.d<0?' &#9660; '+Math.abs(worst.d):'')+' &middot; '+worst.unhappy+' unhappy ('+Math.round(worst.unhappy/worst.resp*100)+'%)')+
       cvBandTile('#11B670','Doing well', best.name,
         pM(best)+' &middot; '+Math.round(best.happy/best.resp*100)+'% happy')+
-      (lowP? cvBandTile('#FF4657','Lowest rated user', lowP.u.u,
-        lowP.p.name+' &middot; '+uM(lowP)+' &middot; '+Math.round(lowP.x*100)+'% unhappy '+
-        '<span style="color:#B9BECD;">(process '+pShare(lowP,'unhappy')+'%)</span>'):'')+
-      (topP? cvBandTile('#11B670','Highest rated user', topP.u.u,
-        topP.p.name+' &middot; '+uM(topP)+' &middot; '+Math.round(topP.h*100)+'% happy '+
-        '<span style="color:#B9BECD;">(process '+pShare(topP,'happy')+'%)</span>'):'')+
+      (lowP? cvBandTilePerson('#FF4657','Lowest rated user', lowP.u.u,
+        lowP.p.name+' &middot; '+uM(lowP), Math.round(lowP.x*100), pShare(lowP,'unhappy'),
+        '#FF4D5B','unhappy'):'')+
+      (topP? cvBandTilePerson('#11B670','Highest rated user', topP.u.u,
+        topP.p.name+' &middot; '+uM(topP), Math.round(topP.h*100), pShare(topP,'happy'),
+        '#19B171','happy'):'')+
     '</div></div>';
 }
 
