@@ -2086,7 +2086,7 @@ tbody tr:hover{background:#f5f7ff;}
       </div>
     </div>
     <div class="sb-nav">
-      <div class="sb-item" onclick="openContactsListPage()" style="cursor:pointer;">
+      <div class="sb-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</div>
       <div class="sb-item" onclick="openLeadsListPage()" style="cursor:pointer;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Leads</div>
@@ -12187,11 +12187,14 @@ function svVerdict(o){
 var SV_VERDICT={happy:{t:'Happy',c:'#10975E',bg:'#E9FBF4',b:'#19B171'},
                 neutral:{t:'Neutral',c:'#616E88',bg:'#F4F5F9',b:'#C0C8E2'},
                 unhappy:{t:'Unhappy',c:'#C8324A',bg:'#FFF2F3',b:'#FF4D5B'}};
-function svTile(label,value,sub,color){
-  return '<div style="flex:1;min-width:132px;border:1px solid #EDEEF3;border-radius:10px;padding:12px 14px;background:#fff;">'+
+// norm 0-1 -> dsBand colour + label, the same banding the old signal cards used
+function svTile(label,value,sub,norm){
+  var b=(norm===null||norm===undefined)? {c:'#1F2733',l:''} : dsBand(norm);
+  return '<div style="flex:1;min-width:138px;border:1px solid #EDF0F4;border-top:3px solid '+(b.l?b.c:'#D6D6E3')+';border-radius:9px;padding:12px 14px;background:#fff;">'+
     '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">'+label+'</div>'+
-    '<div style="font-size:20px;font-weight:800;color:'+(color||'#1F2733')+';margin-top:6px;line-height:1;">'+value+'</div>'+
-    (sub? '<div style="font-size:11px;color:#9AA0B1;margin-top:5px;">'+sub+'</div>':'')+'</div>';
+    '<div style="font-size:22px;font-weight:800;color:'+b.c+';margin-top:5px;line-height:1;">'+value+'</div>'+
+    (b.l? '<div style="font-size:11px;font-weight:600;color:'+b.c+';margin-top:3px;">'+b.l+'</div>':'')+
+    (sub? '<div style="font-size:11px;color:#9AA0B1;margin-top:3px;">'+sub+'</div>':'')+'</div>';
 }
 function svOverallSignal(id,o){
   var el=document.getElementById(id); if(!el) return;
@@ -12201,10 +12204,11 @@ function svOverallSignal(id,o){
   }
   var t=[];
   var from=function(k){ var n=o.counts?o.counts[k]:0; return n>1? 'average of '+n+' surveys' : 'from 1 survey'; };
-  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>',from('CSAT'),'#1F2733'));
-  if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/10</span>',from('NPS'),'#1F2733'));
-  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>',from('Rating'),'#1F2733'));
-  t.push(svTile('Last response',o.last,o.lastFrom||'','#1F2733'));
+  var u=function(x){ return '<span style="font-size:12px;color:#9AA0B1;font-weight:600;"> / '+x+'</span>'; };
+  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+u(5),from('CSAT'),o.csat/5));
+  if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+u(10),from('NPS'),o.nps/10));
+  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+u(5),from('Rating'),o.rating/5));
+  t.push(svTile('Last response','<span style="font-size:17px;">'+o.last+'</span>',o.lastFrom||'',null));
   var v=svVerdict(o), k=v?SV_VERDICT[v]:null;
   t.push('<div style="flex:1;min-width:150px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
     '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">Overall</div>'+
@@ -12253,7 +12257,14 @@ function closeLeadDetailPage() {
   document.getElementById('lead-detail-page').style.display = 'none';
 }
 
-var ldSentSurveys = [];
+var ldSentSurveys = [
+  {title:'Product Feedback', sentDate:'08-19-26 10:12', respondedDate:'08-19-26 10:31',
+   sentBy:'ssunderjan@gmail.com', source:'Send Email Option (Individual)',
+   nps:'7 / 10', csat:'3.8 / 5', totalRating:'4.0 / 5'},
+  {title:'Onboarding Check-in', sentDate:'08-27-26 09:40', respondedDate:'',
+   sentBy:'ssunderjan@gmail.com', source:'Send Email Option (Individual)',
+   nps:'\u2014', csat:'\u2014', totalRating:'\u2014'}
+];
 var ldSurveyLinkMap = {
   'Customer Satisfaction Survey Q1 2025': 'https://survey.zohopublic.com/zs/ktBB99?fromservice=ZC',
   'Employee NPS — Q1 2025': 'https://survey.zohopublic.com/zs/npQ4e2?fromservice=ZC',
@@ -12410,7 +12421,9 @@ function ldRenderZohoSurveyTable() {
   ldSentSurveys.forEach(function(s, i) {
     html += '<tr style="border-bottom:1px solid #F5F6FA;">' +
       '<td style="padding:9px 10px;color:#313949;font-weight:600;">' + s.title + '</td>' +
-      '<td style="padding:9px 10px;"><span style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="openViewResponseModal(' + i + ')">View Response</span></td>' +
+      '<td style="padding:9px 10px;">' + (s.respondedDate
+        ? '<span style="color:#5464F2;font-weight:600;cursor:pointer;" onclick="openViewResponseModal(' + i + ')">View Response</span>'
+        : '<span style="color:#8C91AB;">Yet to Respond</span>') + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentDate + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + (s.respondedDate || '—') + '</td>' +
       '<td style="padding:9px 10px;color:#313949;">' + s.sentBy + '</td>' +
@@ -13059,16 +13072,6 @@ function closeMarketplaceZohoPage() {
         <span style="font-size:12px;color:#8C91AB;">&#128337; Last Update : 55 day(s) ago</span>
       </div>
 
-      <!-- Zoho Survey · Overall Signal -->
-      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
-          <span style="flex:1;"></span>
-          <span onclick="document.getElementById('ld-sec-zoho-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
-        </div>
-        <div id="ld-overall-signal"></div>
-      </div>
-
       <!-- Overview fields -->
       <div style="background:#FAFAFC;border:1px solid #EDF0F4;border-radius:10px;padding:20px 24px;margin-bottom:20px;display:flex;gap:60px;">
         <div>
@@ -13116,6 +13119,16 @@ function closeMarketplaceZohoPage() {
       </div>
 
       <!-- Visits - Zoho SalesIQ -->
+      <!-- Zoho Survey · Overall Signal -->
+      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
+          <span style="flex:1;"></span>
+          <span onclick="document.getElementById('ld-sec-zoho-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
+        </div>
+        <div id="ld-overall-signal"></div>
+      </div>
+
       <div id="ld-sec-visits" class="ld-section">
         <div class="ld-section-head">Visits - Zoho SalesIQ</div>
         <div class="ld-section-empty">No records found</div>
@@ -13793,16 +13806,6 @@ function closeMarketplaceZohoPage() {
         <span style="font-size:12px;color:#8C91AB;">&#128337; Last Update : 11:22</span>
       </div>
 
-      <!-- Zoho Survey · Overall Signal -->
-      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
-          <span style="flex:1;"></span>
-          <span onclick="document.getElementById('dd-sec-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
-        </div>
-        <div id="dd-overall-signal"></div>
-      </div>
-
       <!-- Fields + best time -->
       <div style="display:flex;gap:20px;margin-bottom:18px;">
         <div style="flex:1;background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:22px 26px;">
@@ -13827,6 +13830,16 @@ function closeMarketplaceZohoPage() {
           <div style="width:34px;height:34px;border-radius:50%;background:#E9EAF0;"></div>
           <div><div style="font-size:13px;color:#202123;font-weight:600;">jonamsuriya@gmail.com</div><div style="font-size:12px;color:#5464F2;">&#9993; jonamsuriya@gmail.com</div></div>
         </div>
+      </div>
+
+      <!-- Zoho Survey · Overall Signal -->
+      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
+          <span style="flex:1;"></span>
+          <span onclick="document.getElementById('dd-sec-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
+        </div>
+        <div id="dd-overall-signal"></div>
       </div>
 
       <!-- ═══ ZOHO SURVEY RELATED LIST (screenshot style) ═══ -->
@@ -14985,7 +14998,7 @@ function ctdRenderSurveyTable(){
     return '<tr>'+
       '<td style="'+td+'"><span style="font-weight:600;color:#1F2733;">'+r.title+'</span></td>'+
       '<td style="'+td+'">'+(responded
-        ? '<span onclick="sdOpenResponseBox&&sdOpenResponseBox()" style="color:#5464F2;font-weight:600;cursor:pointer;">View Response</span>'
+        ? '<span onclick="openViewResponseModal(0)" style="color:#5464F2;font-weight:600;cursor:pointer;">View Response</span>'
         : '<span style="color:#B8791A;font-weight:600;">Yet to Respond</span>')+'</td>'+
       '<td style="'+td+'">'+r.sent+'</td>'+
       '<td style="'+td+'">'+(r.resp||'<span style="color:#C3C7D2;">&#8212;</span>')+'</td>'+
