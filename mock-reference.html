@@ -15296,7 +15296,7 @@ function cvUserReport(){
       '</tr>'; });
   });
   return anCard('Feedback by User',
-    cvFilters(['Period: This month','Process: All'])+
+    cvFilters(['Period: This month','Process: All','Filter by User: All'])+
     cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score'])+body),
     '', true);
 }
