@@ -15214,7 +15214,6 @@ var cvUsers={
   {u:'K. Divya',   sent:148,resp:18,csat:null,nps:null,rating:null,score:null},
   {u:'S. Mano',    sent:110,resp:13,csat:null,nps:null,rating:null,score:null}]
 };
-var CV_MINRESP=10; // below this a user is shown but not ranked
 
 function cvDash(){ return '<span style="color:#C3C7D2;">&#8212;</span>'; }
 function cvNum(v,dec,strong){ if(v===null||v===undefined) return cvDash();
@@ -15231,7 +15230,6 @@ function cvTd(v,align,style){ return '<td style="text-align:'+(align||'right')+'
 function cvTable(inner){ return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:inherit;">'+inner+'</table></div>'; }
 function cvFilters(txt){ return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:-2px 0 12px;">'+txt.map(function(t){
   return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#434D5E;background:#F4F5F9;border:1px solid #E1E3EA;border-radius:20px;padding:4px 11px;">'+t+' <span style="color:#8C91AB;">&#9662;</span></span>'; }).join('')+'</div>'; }
-function cvNote(t){ return '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">'+t+'</div>'; }
 
 // ── REPORT 1 : Feedback by Process ──
 function cvProcessReport(){
@@ -15258,10 +15256,9 @@ function cvProcessReport(){
     cvTd('<b>'+cvTot.score+'%</b>','right','border-top:2px solid #E6E6EC;')+
     cvTd(cvDelta(cvTot.d,1),'right','border-top:2px solid #E6E6EC;')+'</tr>';
   return anCard('Feedback by Process',
-    cvFilters(['Period: This month','Branch: All','Survey: All','Module: All'])+
-    cvTable(cvTh(['Process','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs last period'])+rows+tot)+
-    cvNote('Sorted worst-first on each process&rsquo;s primary metric. &#8212; means that metric is not collected by the process&rsquo;s survey.'),
-    'Feedback by Process', true);
+    cvFilters(['Period: This month','Survey: All','Module: All'])+
+    cvTable(cvTh(['Process','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs last period'])+rows+tot),
+    '', true);
 }
 
 // ── REPORT 2 : Feedback by User ──
@@ -15279,26 +15276,22 @@ function cvUserReport(){
       '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+p.name+'</span>'+
       '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process avg &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
     list.forEach(function(u){
-      var low=u.resp<CV_MINRESP;
       var d=(base===null||u[prim]===null)? null : +(u[prim]-base).toFixed(prim==='nps'?0:1);
-      var st=low?'color:#9AA0B1;font-style:italic;':'';
       body+='<tr>'+
-        cvTd('<span style="'+(low?'':'font-weight:600;color:#1F2733;')+'">'+u.u+'</span>'+
-             (low?' <span style="font-size:10px;font-weight:700;color:#B8791A;background:#FBF3E4;border:1px solid #B8791A44;border-radius:20px;padding:1px 7px;margin-left:6px;">low volume</span>':''),'left',st)+
-        cvTd(u.sent.toLocaleString(),'right',st)+
-        cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>','right',st)+
-        cvTd(cvNum(u.csat,1,!low&&prim==='csat'),'right',st)+
-        cvTd(cvNum(u.nps,0,!low&&prim==='nps'),'right',st)+
-        cvTd(cvNum(u.rating,1),'right',st)+
-        cvTd(u.score===null?cvDash():u.score+'%','right',st)+
-        cvTd(low?'<span style="color:#9AA0B1;">not ranked</span>':cvDelta(d,prim==='nps'?0:1),'right',st)+
+        cvTd('<span style="font-weight:600;color:#1F2733;">'+u.u+'</span>','left')+
+        cvTd(u.sent.toLocaleString())+
+        cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>')+
+        cvTd(cvNum(u.csat,1,prim==='csat'))+
+        cvTd(cvNum(u.nps,0,prim==='nps'))+
+        cvTd(cvNum(u.rating,1))+
+        cvTd(u.score===null?cvDash():u.score+'%')+
+        cvTd(cvDelta(d,prim==='nps'?0:1))+
       '</tr>'; });
   });
   return anCard('Feedback by User',
-    cvFilters(['Period: This month','Branch: All','Process: All'])+
-    cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs process'])+body)+
-    cvNote('Grouped by process &mdash; a user is compared against their own process&rsquo;s average, never the company average. Users below '+CV_MINRESP+' responses are shown but not ranked.'),
-    'Feedback by User', true);
+    cvFilters(['Period: This month','Process: All'])+
+    cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs process'])+body),
+    '', true);
 }
 
 function anSurveyCards(){
