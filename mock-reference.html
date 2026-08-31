@@ -3900,7 +3900,7 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
               <div style="background:#fff;padding:18px 12px;text-align:center;">
                 <div id="sd-stat-sent" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey's Sent</div>
@@ -3912,18 +3912,6 @@ tbody tr:hover{background:#f5f7ff;}
               <div style="background:#fff;padding:18px 12px;text-align:center;">
                 <div id="sd-stat-responses" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Total Responses</div>
-              </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-completed" style="font-size:26px;font-weight:700;color:#1a73e8;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Completed Responses</div>
-              </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-partial" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Partial Responses</div>
-              </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-overquota" style="font-size:26px;font-weight:700;color:#43a047;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Over Quota Responses</div>
               </div>
               <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
                 <div id="sd-stat-happy" style="font-size:26px;font-weight:700;color:#1F8A54;">0</div>
@@ -5809,11 +5797,10 @@ function sdPreviewSurvey() {
 // Toggle the detail page between "no responses yet" (empty) and "has data"
 function sdSetData(hasData) {
   var stats = hasData
-    ? {sent:'37', visits:'37', responses:'13', completed:'2', partial:'0', overquota:'11'}
-    : {sent:'0', visits:'0', responses:'0', completed:'0', partial:'0', overquota:'0'};
+    ? {sent:'37', visits:'37', responses:'13'}
+    : {sent:'0', visits:'0', responses:'0'};
   var set = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; };
   set('sd-stat-sent',stats.sent); set('sd-stat-visits',stats.visits); set('sd-stat-responses',stats.responses);
-  set('sd-stat-completed',stats.completed); set('sd-stat-partial',stats.partial); set('sd-stat-overquota',stats.overquota);
   // counted from the actual responses, so the tile always matches what the drill-down shows
   set('sd-stat-happy',   hasData? String(sdRespData.filter(sdIsHappy).length)   : '0');
   set('sd-stat-unhappy', hasData? String(sdRespData.filter(sdIsUnhappy).length) : '0');
