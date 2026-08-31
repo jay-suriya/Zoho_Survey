@@ -15450,6 +15450,7 @@ function cvProcessReport(){
     return '<tr>'+
       cvTd('<a class="cv-proc-link" onclick="cvOpenWorkflow('+p.wf+')">'+p.name+'</a>','left')+
       cvTd(p.module,'left')+
+      cvTd('<a class="cv-proc-link" onclick="cvOpenSurvey(\''+p.survey+'\')">'+p.survey+'</a>','left')+
       cvTd(p.sent.toLocaleString())+
       cvTd(p.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(p.resp,p.sent)+')</span>')+
       cvTd(cvMood(p.happy,p.resp,'#1F8A54'))+
@@ -15466,6 +15467,7 @@ function cvProcessReport(){
     tot='<tr style="background:#FAFAFC;">'+
       cvTd('<span style="font-weight:700;color:#1F2733;">Total / weighted</span>','left',bt)+
       cvTd('',        'left', bt)+
+      cvTd('',        'left', bt)+
       cvTd('<b>'+t.sent.toLocaleString()+'</b>','right',bt)+
       cvTd('<b>'+t.resp.toLocaleString()+'</b> <span style="color:#8C91AB;">('+cvPct(t.resp,t.sent)+')</span>','right',bt)+
       cvTd(cvMood(t.happy,t.resp,'#1F8A54'),'right',bt)+
@@ -15475,12 +15477,12 @@ function cvProcessReport(){
       cvTd(t.rating===null?cvDash():'<b>'+t.rating.toFixed(1)+'</b>','right',bt)+
       cvTd(t.score===null?cvDash():'<b>'+t.score+'%</b>','right',bt)+
       cvTd(cvDelta(t.d,1),'right',bt)+'</tr>';
-  } else rows=cvEmpty(11,'No process matches these filters.');
+  } else rows=cvEmpty(12,'No process matches these filters.');
   return anCard('Feedback by Process',
     cvChipRow([cvChip('proc','period','Period',CV_PERIOD_LIST),
                cvChip('proc','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;})))),
                cvChip('proc','module','Module',['All'].concat(cvUniq(cvProc.map(function(p){return p.module;}))))])+
-    cvTable(cvTh(['Process','Modules','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score','&#916; vs last period'],2)+rows+tot),
+    cvTable(cvTh(['Process','Modules','Survey Name','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score','&#916; vs last period'],3)+rows+tot),
     '', true);
 }
 
