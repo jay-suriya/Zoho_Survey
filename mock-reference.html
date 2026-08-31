@@ -11657,7 +11657,14 @@ var workflowRulesData = [
   {id:6, name:'Notify when call is created or modified', module:'Calls', when:'—', modified:'03-02-24', status:'Active', actions:[{type:'Email Notification', detail:'Notify call owner'}]},
   {id:7, name:'Create lead', module:'Leads', when:'Create or Edit', modified:'02-24-26', status:'Active', actions:[{type:'Field Update', detail:'Update Lead Status'},{type:'Task', detail:'Follow-up call'},{type:'Email Notification', detail:'Notify owner'}]},
   {id:8, name:'Create Edit', module:'Contacts', when:'Create or Edit', modified:'11-01-22', status:'Inactive', actions:[{type:'Task', detail:'Review contact'}]},
-  {id:9, name:'Renewal Reminder', module:'Deals', when:'Edit', modified:'06-15-23', status:'Inactive', actions:[{type:'Task', detail:'Follow up with account owner'}]}
+  {id:9, name:'Renewal Reminder', module:'Deals', when:'Edit', modified:'06-15-23', status:'Inactive', actions:[{type:'Task', detail:'Follow up with account owner'}]},
+  {id:10, name:'Post-Service Feedback', module:'Service Requests', when:'Edit', modified:'08-28-26', status:'Active', actions:[{type:'Email Notification', detail:'Experience CSAT survey to customer'}]},
+  {id:11, name:'Renewal Feedback', module:'Renewals', when:'Edit', modified:'08-26-26', status:'Active', actions:[{type:'Email Notification', detail:'Experience CSAT survey to customer'}]},
+  {id:12, name:'Post-Delivery Feedback', module:'Deliveries', when:'Edit', modified:'08-27-26', status:'Active', actions:[{type:'Email Notification', detail:'Experience CSAT survey to customer'}]},
+  {id:13, name:'Post-Purchase Feedback', module:'Potentials', when:'Edit', modified:'08-27-26', status:'Active', actions:[{type:'Email Notification', detail:'Experience CSAT survey to customer'}]},
+  {id:14, name:'6-Month Ownership NPS', module:'Vehicles', when:'Date Based', modified:'08-20-26', status:'Active', actions:[{type:'Email Notification', detail:'Relationship NPS survey to customer'}]},
+  {id:15, name:'Lost Deal Feedback', module:'Potentials', when:'Edit', modified:'08-25-26', status:'Active', actions:[{type:'Email Notification', detail:'Loss Reason survey to customer'}]},
+  {id:16, name:'Dropped Enquiry Feedback', module:'Leads', when:'Edit', modified:'08-25-26', status:'Active', actions:[{type:'Email Notification', detail:'Loss Reason survey to customer'}]}
 ];
 var wfActiveRuleId = null;
 
@@ -15039,6 +15046,8 @@ function bpAfterTplChanged(){
 .an-card-title{font-size:15px;font-weight:700;color:#33475B;margin-bottom:10px;}
 .an-card-foot{font-size:11.5px;color:#97A0B0;margin-top:12px;padding-top:10px;border-top:1px solid #F0F0F4;}
 .an-card-foot a{color:#C42D5B;text-decoration:none;}
+.cv-proc-link{color:#5464F2;font-weight:600;cursor:pointer;text-decoration:none;}
+.cv-proc-link:hover{color:#3752CA;text-decoration:underline;}
 .an-kpi{flex:1;min-width:120px;border:1px solid #EDEEF3;border-radius:8px;padding:11px 13px;}
 .an-kpi-v{font-size:22px;font-weight:800;color:#1F2733;line-height:1;}
 .an-kpi-l{font-size:11px;color:#8C91AB;margin-top:5px;text-transform:uppercase;letter-spacing:.03em;}
@@ -15161,13 +15170,13 @@ function anLeadsCards(){
 // by its own CRM workflow. Metrics are show-if-present: a process only displays
 // the metrics its survey actually collects.
 var cvProc=[
- {key:'service',  name:'Service job',        module:'Service Requests', role:'Service Advisor',   sent:1118, resp:508, csat:3.1, nps:12,   rating:3.3, score:62, d:-0.5, dUnit:'csat'},
- {key:'renewal',  name:'Insurance renewal',  module:'Renewals',         role:'Renewal Owner',     sent:214,  resp:71,  csat:3.9, nps:null, rating:3.8, score:74, d:0.1,  dUnit:'csat'},
- {key:'delivery', name:'Delivery',           module:'Deliveries',       role:'Delivery Executive',sent:186,  resp:108, csat:4.4, nps:null, rating:4.3, score:81, d:0,    dUnit:'csat'},
- {key:'purchase', name:'Vehicle purchase',   module:'Potentials',       role:'Sales Consultant',  sent:186,  resp:119, csat:4.7, nps:null, rating:4.6, score:88, d:0.2,  dUnit:'csat'},
- {key:'pulse',    name:'Ownership pulse',    module:'Vehicles',         role:'Sales Consultant',  sent:165,  resp:46,  csat:null,nps:34,   rating:null,score:null,d:-6,  dUnit:'nps'},
- {key:'lost',     name:'Lost sale',          module:'Potentials',       role:'Deal Owner',        sent:175,  resp:39,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''},
- {key:'enquiry',  name:'Enquiry handling',   module:'Leads',            role:'Lead Owner',        sent:420,  resp:50,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''}
+ {key:'service',  name:'Service job',        module:'Service Requests', role:'Service Advisor',   wf:10, sent:1118, resp:508, csat:3.1, nps:12,   rating:3.3, score:62, d:-0.5, dUnit:'csat'},
+ {key:'renewal',  name:'Insurance renewal',  module:'Renewals',         role:'Renewal Owner',     wf:11, sent:214,  resp:71,  csat:3.9, nps:null, rating:3.8, score:74, d:0.1,  dUnit:'csat'},
+ {key:'delivery', name:'Delivery',           module:'Deliveries',       role:'Delivery Executive',wf:12, sent:186,  resp:108, csat:4.4, nps:null, rating:4.3, score:81, d:0,    dUnit:'csat'},
+ {key:'purchase', name:'Vehicle purchase',   module:'Potentials',       role:'Sales Consultant',  wf:13, sent:186,  resp:119, csat:4.7, nps:null, rating:4.6, score:88, d:0.2,  dUnit:'csat'},
+ {key:'pulse',    name:'Ownership pulse',    module:'Vehicles',         role:'Sales Consultant',  wf:14, sent:165,  resp:46,  csat:null,nps:34,   rating:null,score:null,d:-6,  dUnit:'nps'},
+ {key:'lost',     name:'Lost sale',          module:'Potentials',       role:'Deal Owner',        wf:15, sent:175,  resp:39,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''},
+ {key:'enquiry',  name:'Enquiry handling',   module:'Leads',            role:'Lead Owner',        wf:16, sent:420,  resp:50,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''}
 ];
 var cvTot={sent:2464,resp:941,csat:3.5,nps:18,rating:3.6,score:68,d:-0.3};
 
@@ -15224,8 +15233,8 @@ function cvDelta(d,dec){ if(d===null||d===undefined) return cvDash();
   if(d>0) return '<span style="color:#1F8A54;font-weight:700;">&#9650; '+Math.abs(d).toFixed(dec)+'</span>';
   if(d<0) return '<span style="color:#C8324A;font-weight:700;">&#9660; '+Math.abs(d).toFixed(dec)+'</span>';
   return '<span style="color:#B9BECD;">&#9644; 0.0</span>'; }
-function cvTh(cols){ return '<tr style="background:#F7F8FA;">'+cols.map(function(c,i){
-  return '<th style="text-align:'+(i?'right':'left')+';font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;padding:9px 12px;border-bottom:1px solid #E6E6EC;white-space:nowrap;">'+c+'</th>'; }).join('')+'</tr>'; }
+function cvTh(cols,leftN){ leftN=leftN||1; return '<tr style="background:#F7F8FA;">'+cols.map(function(c,i){
+  return '<th style="text-align:'+(i<leftN?'left':'right')+';font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;padding:9px 12px;border-bottom:1px solid #E6E6EC;white-space:nowrap;">'+c+'</th>'; }).join('')+'</tr>'; }
 function cvTd(v,align,style){ return '<td style="text-align:'+(align||'right')+';font-size:13px;color:#434D5E;padding:10px 12px;border-bottom:1px solid #F0F0F4;white-space:nowrap;'+(style||'')+'">'+v+'</td>'; }
 function cvTable(inner){ return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:inherit;">'+inner+'</table></div>'; }
 function cvFilters(txt){ return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:-2px 0 12px;">'+txt.map(function(t){
@@ -15236,8 +15245,8 @@ function cvProcessReport(){
   var rows=cvProc.map(function(p){
     var prim=(p.dUnit==='nps')?'nps':'csat';
     return '<tr>'+
-      cvTd('<span style="font-weight:600;color:#1F2733;">'+p.name+'</span>'+
-           '<div style="font-size:11px;color:#8C91AB;margin-top:2px;">'+p.module+'</div>','left')+
+      cvTd('<a class="cv-proc-link" onclick="cvOpenWorkflow('+p.wf+')">'+p.name+'</a>','left')+
+      cvTd(p.module,'left')+
       cvTd(p.sent.toLocaleString())+
       cvTd(p.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(p.resp,p.sent)+')</span>')+
       cvTd(cvNum(p.csat,1,prim==='csat'))+
@@ -15248,6 +15257,7 @@ function cvProcessReport(){
     '</tr>'; }).join('');
   var tot='<tr style="background:#FAFAFC;">'+
     cvTd('<span style="font-weight:700;color:#1F2733;">Total / weighted</span>','left','border-top:2px solid #E6E6EC;')+
+    cvTd('','left','border-top:2px solid #E6E6EC;')+
     cvTd('<b>'+cvTot.sent.toLocaleString()+'</b>','right','border-top:2px solid #E6E6EC;')+
     cvTd('<b>'+cvTot.resp.toLocaleString()+'</b> <span style="color:#8C91AB;">('+cvPct(cvTot.resp,cvTot.sent)+')</span>','right','border-top:2px solid #E6E6EC;')+
     cvTd('<b>'+cvTot.csat.toFixed(1)+'</b>','right','border-top:2px solid #E6E6EC;')+
@@ -15257,7 +15267,7 @@ function cvProcessReport(){
     cvTd(cvDelta(cvTot.d,1),'right','border-top:2px solid #E6E6EC;')+'</tr>';
   return anCard('Feedback by Process',
     cvFilters(['Period: This month','Survey: All','Module: All'])+
-    cvTable(cvTh(['Process','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs last period'])+rows+tot),
+    cvTable(cvTh(['Process','Modules','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs last period'],2)+rows+tot),
     '', true);
 }
 
@@ -15289,6 +15299,12 @@ function cvUserReport(){
     cvFilters(['Period: This month','Process: All'])+
     cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score'])+body),
     '', true);
+}
+
+function cvOpenWorkflow(id){
+  document.getElementById('analytics-page').style.display='none';
+  document.getElementById('workflow-rules-list-page').style.display='block';
+  openWorkflowRuleSetupPage(id);
 }
 
 function anSurveyCards(){
