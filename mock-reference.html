@@ -15155,204 +15155,154 @@ function anLeadsCards(){
     anCard('Call Status Report', anPie(calls), 'Call Status Report');
 }
 
-// ═══ SURVEY dashboard: Customer Voice (Sundaram Kia) ═══
-// Auto-sent after every Test Drive, Delivery, and Service.
-// Touchpoint = the deal Blueprint stage at which a "Send Survey" transition action fires.
-// (Generic to any business; shown here with a car-sales pipeline.)
-var CV_TP={'Test Drive':'#5B9BE8','Quotation':'#8E7CC3','Negotiation':'#E8A13F','Booking':'#3FBFB0','Delivery':'#6FCF97'};
-var CV_SENT={'Test Drive':{sent:30,resp:20,cov:85},'Quotation':{sent:26,resp:17,cov:80},'Negotiation':{sent:22,resp:14,cov:78},'Booking':{sent:20,resp:15,cov:88},'Delivery':{sent:24,resp:19,cov:92}};
-var cvResp=[
- // ── Test Drive (Open) ──
- {deal:'KIA-EV6-003',status:'Open',dname:'Meera S — EV6',cust:'Meera S',model:'EV6',tp:'Test Drive',val:3400000,csat:4.8,nps:10,rating:5.0,score:90,owner:'Priya Venkat',center:'OMR',ago:'3h',trend:1,txt:'Loved it — Priya was fantastic, zero pressure.',comments:[{q:'What did you love?',a:'Priya was fantastic — zero pressure and super knowledgeable.'},{q:'Any other comments?',a:'Best test-drive experience I have had.'}]},
- {deal:'KIA-SEL-002',status:'Open',dname:'Ramesh Kumar — Seltos',cust:'Ramesh Kumar',model:'Seltos',tp:'Test Drive',val:1260000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Consultant rushed the drive, barely explained the features.',comments:[{q:'What could we improve?',a:'Consultant rushed the drive, barely explained the features.'},{q:'What would have made it better?',a:'More time behind the wheel and a proper feature walkthrough.'}]},
- {deal:'KIA-SON-041',status:'Open',dname:'Vikram N — Sonet',cust:'Vikram N',model:'Sonet',tp:'Test Drive',val:980000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'5h',trend:1,txt:'Great walkthrough, very knowledgeable.',comments:[{q:'What did you love?',a:'Great walkthrough — every feature explained clearly.'},{q:'Any other comments?',a:'The consultant really knew the car.'}]},
- // ── Quotation (Open) ──
- {deal:'KIA-EV6-051',status:'Open',dname:'Divya M — EV6',cust:'Divya M',model:'EV6',tp:'Quotation',val:3200000,csat:4.9,nps:10,rating:5.0,score:92,owner:'Priya Venkat',center:'OMR',ago:'7h',trend:1,txt:'Quote was clear and fully transparent.',comments:[{q:'What did you love?',a:'The quote was clear and fully transparent.'},{q:'Any other comments?',a:'No hidden charges — exactly what I was told.'}]},
- {deal:'KIA-SEL-021',status:'Open',dname:'Arjun Rao — Seltos',cust:'Arjun Rao',model:'Seltos',tp:'Quotation',val:1180000,csat:3.1,nps:5,rating:3.5,score:55,owner:'Jay Suriya',center:'Velachery',ago:'1d',trend:-1,txt:'The quote took two days and had hidden charges.',comments:[{q:'What could we improve?',a:'The quote took two days and still had hidden charges.'},{q:'Any other comments?',a:'Had to ask twice for a proper on-road price breakup.'}]},
- // ── Negotiation (Open) ──
- {deal:'KIA-SEL-060',status:'Open',dname:'Nisha K — Seltos',cust:'Nisha K',model:'Seltos',tp:'Negotiation',val:1150000,csat:4.4,nps:9,rating:4.5,score:80,owner:'Jay Suriya',center:'Velachery',ago:'9h',trend:1,txt:'Fair negotiation, never felt pressured.',comments:[{q:'What did you love?',a:'Fair negotiation — I never felt pressured.'},{q:'Any other comments?',a:'Clear estimate up front, no surprises.'}]},
- {deal:'KIA-SON-072',status:'Open',dname:'Mohan R — Sonet',cust:'Mohan R',model:'Sonet',tp:'Negotiation',val:990000,csat:2.6,nps:5,rating:2.5,score:44,owner:'Morrison Troy',center:'Anna Nagar',ago:'5h',trend:-1,txt:'Felt pressured to close, the discount kept changing.',comments:[{q:'What went wrong?',a:'Felt pressured to close, and the discount kept changing.'},{q:'What could we improve?',a:'Give a firm price instead of endless back-and-forth.'}]},
- // ── Booking (Open) ──
- {deal:'KIA-SEL-033',status:'Open',dname:'Sanjay P — Seltos',cust:'Sanjay P',model:'Seltos',tp:'Booking',val:1300000,csat:4.2,nps:8,rating:4.0,score:74,owner:'Jay Suriya',center:'Velachery',ago:'8h',trend:1,txt:'Booking was smooth and quick.'},
- {deal:'KIA-SON-030',status:'Open',dname:'Karthik V — Sonet',cust:'Karthik V',model:'Sonet',tp:'Booking',val:1020000,csat:2.2,nps:4,rating:2.5,score:38,owner:'Jay Suriya',center:'Anna Nagar',ago:'2h',trend:-1,txt:'Booking amount was debited twice.',comments:[{q:'What went wrong?',a:'Booking amount was debited twice and took days to reverse.'},{q:'What would you like us to do?',a:'Confirm the payment instantly next time.'}]},
- {deal:'KIA-CAR-027',status:'Open',dname:'Ravi T — Carens',cust:'Ravi T',model:'Carens',tp:'Booking',val:1120000,csat:3.0,nps:6,rating:3.0,score:58,owner:'Morrison Troy',center:'T. Nagar',ago:'1d',trend:0,txt:'No confirmation of my booking for a week.',comments:[{q:'What could we improve?',a:'I had no confirmation of my booking for a week.'},{q:'Any other comments?',a:'A simple SMS or email would have reassured me.'}]},
- // ── Delivery (Closed-Won) ──
- {deal:'KIA-SON-014',status:'Closed-Won',dname:'Anita Rao — Sonet',cust:'Anita Rao',model:'Sonet',tp:'Delivery',val:1050000,csat:4.6,nps:9,rating:4.5,score:82,owner:'Priya Venkat',center:'OMR',ago:'6h',trend:1,txt:'Smooth handover, felt special.',comments:[{q:'What did you love?',a:'Smooth handover — they made it feel special.'},{q:'Any other comments?',a:'Would happily recommend to friends.'}]},
- {deal:'KIA-CAR-009',status:'Closed-Won',dname:'Fleet Corp — Carens ×5',cust:'Fleet Corp',model:'Carens',tp:'Delivery',val:2940000,csat:2.4,nps:3,rating:2.0,score:41,owner:'Morrison Troy',center:'T. Nagar',ago:'4h',trend:-1,txt:'Car delivered with a scratch on the driver door.',comments:[{q:'What went wrong?',a:'Car delivered with a scratch on the driver door.'},{q:'What would you like us to do?',a:'Inspect the car with me before delivery next time.'},{q:'Any other comments?',a:'Otherwise the sales process itself was fine.'}]},
- {deal:'KIA-CAR-018',status:'Closed-Won',dname:'Latha R — Carens',cust:'Latha R',model:'Carens',tp:'Delivery',val:1120000,csat:3.6,nps:6,rating:3.0,score:62,owner:'Morrison Troy',center:'Anna Nagar',ago:'1d',trend:0,txt:'Paperwork took far too long at handover.',comments:[{q:'What could we improve?',a:'Paperwork took far too long at handover.'},{q:'Any other comments?',a:'The car itself is great, just the process dragged.'}]}
+// ═══ SURVEY dashboard: two reports — by Process, and by User ═══
+// A "process" is a business process that ends in a customer-facing moment
+// (Deal → Closed Won, Job Card → Closed, Renewal → Renewed …). Each one is sent
+// by its own CRM workflow. Metrics are show-if-present: a process only displays
+// the metrics its survey actually collects.
+var cvProc=[
+ {key:'service',  name:'Service job',        module:'Service Requests', role:'Service Advisor',   sent:1118, resp:508, csat:3.1, nps:12,   rating:3.3, score:62, d:-0.5, dUnit:'csat'},
+ {key:'renewal',  name:'Insurance renewal',  module:'Renewals',         role:'Renewal Owner',     sent:214,  resp:71,  csat:3.9, nps:null, rating:3.8, score:74, d:0.1,  dUnit:'csat'},
+ {key:'delivery', name:'Delivery',           module:'Deliveries',       role:'Delivery Executive',sent:186,  resp:108, csat:4.4, nps:null, rating:4.3, score:81, d:0,    dUnit:'csat'},
+ {key:'purchase', name:'Vehicle purchase',   module:'Potentials',       role:'Sales Consultant',  sent:186,  resp:119, csat:4.7, nps:null, rating:4.6, score:88, d:0.2,  dUnit:'csat'},
+ {key:'pulse',    name:'Ownership pulse',    module:'Vehicles',         role:'Sales Consultant',  sent:165,  resp:46,  csat:null,nps:34,   rating:null,score:null,d:-6,  dUnit:'nps'},
+ {key:'lost',     name:'Lost sale',          module:'Potentials',       role:'Deal Owner',        sent:175,  resp:39,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''},
+ {key:'enquiry',  name:'Enquiry handling',   module:'Leads',            role:'Lead Owner',        sent:420,  resp:50,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''}
 ];
-// Collector = the distribution channel each survey was sent through.
-var CV_COLLECTOR={'KIA-EV6-003':'WhatsApp','KIA-SEL-002':'SMS','KIA-SON-041':'Email','KIA-EV6-051':'Email','KIA-SEL-021':'SMS','KIA-SEL-060':'WhatsApp','KIA-SON-072':'SMS','KIA-SEL-033':'Email','KIA-SON-030':'In-store QR','KIA-CAR-027':'In-store QR','KIA-SON-014':'WhatsApp','KIA-CAR-009':'Email','KIA-CAR-018':'SMS'};
-cvResp.forEach(function(r){ r.collector=CV_COLLECTOR[r.deal]; });
-function cvL(r){ return '₹'+(r/100000).toFixed(1)+'L'; }
-function cvIsRisk(r){ return r.nps<=6; }
-function cvTag(tp){ var c=CV_TP[tp]; return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:'+c+';background:'+c+'18;border:1px solid '+c+'44;border-radius:20px;padding:2px 8px;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:'+c+';"></span>'+tp+'</span>'; }
-function cvStatus(s){ var open=s==='Open'; var c=open?'#B8791A':'#3E8E5A', bg=open?'#FBF3E4':'#EAF7F0'; return '<span style="font-size:10.5px;font-weight:700;color:'+c+';background:'+bg+';border:1px solid '+c+'44;border-radius:20px;padding:2px 9px;white-space:nowrap;">'+s+'</span>'; }
-function cvSec(title,sub){ return '<div style="grid-column:1/-1;display:flex;align-items:baseline;gap:12px;margin:16px 2px 0;border-top:1px solid #E1E3EA;padding-top:16px;"><span style="font-size:15px;font-weight:800;color:#1F2733;">'+title+'</span><span style="font-size:12px;color:#8C91AB;">'+sub+'</span></div>'; }
-function cvArrow(t){ if(t>0) return '<span style="color:#1F8A54;">&#9650;</span>'; if(t<0) return '<span style="color:#C8324A;">&#9660;</span>'; return '<span style="color:#B9BECD;">&#8212;</span>'; }
-function cvTpStats(tp){ var r=cvResp.filter(function(x){return x.tp===tp;}); var n=r.length||1;
-  var avg=function(k){return r.reduce(function(a,x){return a+x[k];},0)/n;};
-  var detr=r.filter(cvIsRisk), prom=r.filter(function(x){return x.nps>=9;});
-  return {n:r.length,csat:avg('csat'),nps:avg('nps'),score:avg('score'),detr:detr.length,prom:prom.length,atrisk:detr.reduce(function(a,x){return a+x.val;},0)}; }
-function cvReps(){ var m={}; cvResp.forEach(function(r){ (m[r.owner]=m[r.owner]||[]).push(r); });
-  return Object.keys(m).map(function(o){ var r=m[o],n=r.length;
-    var detr=r.filter(cvIsRisk);
-    return {owner:o,n:n,csat:r.reduce(function(a,x){return a+x.csat;},0)/n,nps:r.reduce(function(a,x){return a+x.nps;},0)/n,
-      prom:r.filter(function(x){return x.nps>=9;}).length,detr:detr.length,atrisk:detr.reduce(function(a,x){return a+x.val;},0)}; })
-    .sort(function(a,b){return b.csat-a.csat;}); }
+var cvTot={sent:2464,resp:941,csat:3.5,nps:18,rating:3.6,score:68,d:-0.3};
+
+// Responsible user per process (snapshotted on the response at send time).
+var cvUsers={
+ service:[
+  {u:'M. Iqbal',   sent:118,resp:54,csat:4.5,nps:55, rating:4.4,score:87},
+  {u:'G. Ravi',    sent:131,resp:59,csat:3.7,nps:30, rating:3.8,score:74},
+  {u:'N. Latha',   sent:124,resp:52,csat:3.4,nps:22, rating:3.5,score:69},
+  {u:'D. Suresh',  sent:76, resp:39,csat:3.3,nps:18, rating:3.2,score:66},
+  {u:'J. Prakash', sent:138,resp:66,csat:3.0,nps:10, rating:3.1,score:61},
+  {u:'T. Farhan',  sent:119,resp:48,csat:2.9,nps:8,  rating:3.0,score:58},
+  {u:'V. Anand',   sent:122,resp:55,csat:2.8,nps:0,  rating:2.9,score:56},
+  {u:'R. Balaji',  sent:149,resp:74,csat:2.7,nps:-5, rating:2.8,score:54},
+  {u:'S. Kumar',   sent:141,resp:61,csat:2.4,nps:-12,rating:2.5,score:48}],
+ renewal:[
+  {u:'P. Devi',    sent:84, resp:28,csat:4.3,nps:null,rating:4.2,score:82},
+  {u:'K. Suresh',  sent:71, resp:24,csat:3.8,nps:null,rating:3.7,score:73},
+  {u:'A. Bhavani', sent:59, resp:19,csat:3.4,nps:null,rating:3.3,score:66}],
+ delivery:[
+  {u:'K. Vasanth', sent:41, resp:24,csat:4.8,nps:null,rating:4.7,score:90},
+  {u:'A. Deepak',  sent:38, resp:22,csat:4.7,nps:null,rating:4.6,score:89},
+  {u:'S. Ilango',  sent:33, resp:19,csat:4.6,nps:null,rating:4.5,score:86},
+  {u:'M. Vinoth',  sent:22, resp:13,csat:4.5,nps:null,rating:4.4,score:85},
+  {u:'R. Menon',   sent:52, resp:30,csat:3.2,nps:null,rating:3.3,score:64}],
+ purchase:[
+  {u:'A. Rahman',  sent:34, resp:22,csat:4.9,nps:null,rating:4.9,score:94},
+  {u:'S. Meera',   sent:29, resp:19,csat:4.8,nps:null,rating:4.7,score:91},
+  {u:'H. Nagraj',  sent:33, resp:21,csat:4.8,nps:null,rating:4.7,score:90},
+  {u:'L. Fatima',  sent:31, resp:20,csat:4.7,nps:null,rating:4.6,score:88},
+  {u:'D. Anbu',    sent:29, resp:20,csat:4.6,nps:null,rating:4.5,score:86},
+  {u:'B. Karthik', sent:21, resp:13,csat:4.3,nps:null,rating:4.2,score:79},
+  {u:'P. Nithya',  sent:9,  resp:4, csat:4.0,nps:null,rating:4.1,score:76}],
+ pulse:[
+  {u:'A. Rahman',  sent:58, resp:17,csat:null,nps:48,rating:null,score:null},
+  {u:'H. Nagraj',  sent:54, resp:16,csat:null,nps:33,rating:null,score:null},
+  {u:'L. Fatima',  sent:53, resp:13,csat:null,nps:18,rating:null,score:null}],
+ lost:[
+  {u:'Jay Suriya',    sent:68,resp:16,csat:null,nps:null,rating:null,score:null},
+  {u:'Morrison Troy', sent:59,resp:13,csat:null,nps:null,rating:null,score:null},
+  {u:'Priya Venkat',  sent:48,resp:10,csat:null,nps:null,rating:null,score:null}],
+ enquiry:[
+  {u:'R. Anand',   sent:162,resp:19,csat:null,nps:null,rating:null,score:null},
+  {u:'K. Divya',   sent:148,resp:18,csat:null,nps:null,rating:null,score:null},
+  {u:'S. Mano',    sent:110,resp:13,csat:null,nps:null,rating:null,score:null}]
+};
+var CV_MINRESP=10; // below this a user is shown but not ranked
+
+function cvDash(){ return '<span style="color:#C3C7D2;">&#8212;</span>'; }
+function cvNum(v,dec,strong){ if(v===null||v===undefined) return cvDash();
+  var t=(dec===0)? String(v) : v.toFixed(dec);
+  return strong? '<b style="color:#1F2733;">'+t+'</b>' : t; }
+function cvPct(a,b){ return b? Math.round(a/b*100)+'%' : '0%'; }
+function cvDelta(d,dec){ if(d===null||d===undefined) return cvDash();
+  if(d>0) return '<span style="color:#1F8A54;font-weight:700;">&#9650; '+Math.abs(d).toFixed(dec)+'</span>';
+  if(d<0) return '<span style="color:#C8324A;font-weight:700;">&#9660; '+Math.abs(d).toFixed(dec)+'</span>';
+  return '<span style="color:#B9BECD;">&#9644; 0.0</span>'; }
+function cvTh(cols){ return '<tr style="background:#F7F8FA;">'+cols.map(function(c,i){
+  return '<th style="text-align:'+(i?'right':'left')+';font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;padding:9px 12px;border-bottom:1px solid #E6E6EC;white-space:nowrap;">'+c+'</th>'; }).join('')+'</tr>'; }
+function cvTd(v,align,style){ return '<td style="text-align:'+(align||'right')+';font-size:13px;color:#434D5E;padding:10px 12px;border-bottom:1px solid #F0F0F4;white-space:nowrap;'+(style||'')+'">'+v+'</td>'; }
+function cvTable(inner){ return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:inherit;">'+inner+'</table></div>'; }
+function cvFilters(txt){ return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:-2px 0 12px;">'+txt.map(function(t){
+  return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#434D5E;background:#F4F5F9;border:1px solid #E1E3EA;border-radius:20px;padding:4px 11px;">'+t+' <span style="color:#8C91AB;">&#9662;</span></span>'; }).join('')+'</div>'; }
+function cvNote(t){ return '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">'+t+'</div>'; }
+
+// ── REPORT 1 : Feedback by Process ──
+function cvProcessReport(){
+  var rows=cvProc.map(function(p){
+    var prim=(p.dUnit==='nps')?'nps':'csat';
+    return '<tr>'+
+      cvTd('<span style="font-weight:600;color:#1F2733;">'+p.name+'</span>'+
+           '<div style="font-size:11px;color:#8C91AB;margin-top:2px;">'+p.module+'</div>','left')+
+      cvTd(p.sent.toLocaleString())+
+      cvTd(p.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(p.resp,p.sent)+')</span>')+
+      cvTd(cvNum(p.csat,1,prim==='csat'))+
+      cvTd(cvNum(p.nps,0,prim==='nps'))+
+      cvTd(cvNum(p.rating,1))+
+      cvTd(p.score===null?cvDash():p.score+'%')+
+      cvTd(cvDelta(p.d, p.dUnit==='nps'?0:1))+
+    '</tr>'; }).join('');
+  var tot='<tr style="background:#FAFAFC;">'+
+    cvTd('<span style="font-weight:700;color:#1F2733;">Total / weighted</span>','left','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.sent.toLocaleString()+'</b>','right','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.resp.toLocaleString()+'</b> <span style="color:#8C91AB;">('+cvPct(cvTot.resp,cvTot.sent)+')</span>','right','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.csat.toFixed(1)+'</b>','right','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.nps+'</b>','right','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.rating.toFixed(1)+'</b>','right','border-top:2px solid #E6E6EC;')+
+    cvTd('<b>'+cvTot.score+'%</b>','right','border-top:2px solid #E6E6EC;')+
+    cvTd(cvDelta(cvTot.d,1),'right','border-top:2px solid #E6E6EC;')+'</tr>';
+  return anCard('Feedback by Process',
+    cvFilters(['Period: This month','Branch: All','Survey: All','Module: All'])+
+    cvTable(cvTh(['Process','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs last period'])+rows+tot)+
+    cvNote('Sorted worst-first on each process&rsquo;s primary metric. &#8212; means that metric is not collected by the process&rsquo;s survey.'),
+    'Feedback by Process', true);
+}
+
+// ── REPORT 2 : Feedback by User ──
+function cvUserReport(){
+  var body='';
+  cvProc.forEach(function(p){
+    var list=cvUsers[p.key]||[]; if(!list.length) return;
+    var prim=(p.dUnit==='nps')?'nps':'csat';
+    var base=p[prim];
+    var head=[];
+    if(p.csat!==null) head.push('CSAT '+p.csat.toFixed(1));
+    if(p.nps!==null)  head.push('NPS '+p.nps);
+    head.push(list.length+' '+p.role.toLowerCase()+(list.length>1?'s':''));
+    body+='<tr><td colspan="8" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
+      '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+p.name+'</span>'+
+      '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process avg &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
+    list.forEach(function(u){
+      var low=u.resp<CV_MINRESP;
+      var d=(base===null||u[prim]===null)? null : +(u[prim]-base).toFixed(prim==='nps'?0:1);
+      var st=low?'color:#9AA0B1;font-style:italic;':'';
+      body+='<tr>'+
+        cvTd('<span style="'+(low?'':'font-weight:600;color:#1F2733;')+'">'+u.u+'</span>'+
+             (low?' <span style="font-size:10px;font-weight:700;color:#B8791A;background:#FBF3E4;border:1px solid #B8791A44;border-radius:20px;padding:1px 7px;margin-left:6px;">low volume</span>':''),'left',st)+
+        cvTd(u.sent.toLocaleString(),'right',st)+
+        cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>','right',st)+
+        cvTd(cvNum(u.csat,1,!low&&prim==='csat'),'right',st)+
+        cvTd(cvNum(u.nps,0,!low&&prim==='nps'),'right',st)+
+        cvTd(cvNum(u.rating,1),'right',st)+
+        cvTd(u.score===null?cvDash():u.score+'%','right',st)+
+        cvTd(low?'<span style="color:#9AA0B1;">not ranked</span>':cvDelta(d,prim==='nps'?0:1),'right',st)+
+      '</tr>'; });
+  });
+  return anCard('Feedback by User',
+    cvFilters(['Period: This month','Branch: All','Process: All'])+
+    cvTable(cvTh(['User','Sent','Responded','CSAT','NPS','Rating','Score','&#916; vs process'])+body)+
+    cvNote('Grouped by process &mdash; a user is compared against their own process&rsquo;s average, never the company average. Users below '+CV_MINRESP+' responses are shown but not ranked.'),
+    'Feedback by User', true);
+}
 
 function anSurveyCards(){
-  var risk=cvResp.filter(cvIsRisk).sort(function(a,b){return b.val-a.val;});
-  var riskRev=risk.reduce(function(a,r){return a+r.val;},0);
-  var wSent=cvResp.reduce(function(a,r){return a+r.score*r.val;},0)/cvResp.reduce(function(a,r){return a+r.val;},0);
-  var proms=cvResp.filter(function(r){return r.nps>=9;}).sort(function(a,b){return b.val-a.val;});
-  var totSent=0,totResp=0; Object.keys(CV_SENT).forEach(function(k){totSent+=CV_SENT[k].sent;totResp+=CV_SENT[k].resp;});
-  var respRate=Math.round(totResp/totSent*100);
-  var avgCsat=cvResp.reduce(function(a,r){return a+r.csat;},0)/cvResp.length;
-
-  // ── SECTION 1 : HANDLE BAD FEEDBACK ──
-  var hk=function(v,l,sub,col){ return '<div class="an-kpi" style="flex:1;min-width:150px;"><div class="an-kpi-v" style="color:'+(col||'#1F2733')+';">'+v+'</div><div class="an-kpi-l">'+l+'</div><div style="font-size:11px;color:#8C91AB;margin-top:6px;">'+sub+'</div></div>'; };
-  var hero='<div class="an-card" style="grid-column:1/-1;">'+
-    '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+
-      hk(cvL(riskRev),'At-Risk Revenue','','#C8324A')+
-      hk(risk.length,'At-Risk Deals',risk.filter(function(r){return r.val>=1000000;}).length+' high-value (&ge;₹10L)','#1F2733')+
-      hk(respRate+'<span style="font-size:14px;color:#8C91AB;">%</span>','Response Rate',totResp+' of '+totSent+' replied','#1F2733')+
-      hk(avgCsat.toFixed(1)+'<span style="font-size:14px;color:#8C91AB;">/5</span>','Avg CSAT','across all touchpoints','#B8791A')+
-      hk(proms.length,'Happy Customers','NPS 9–10','#1F8A54')+
-      hk(risk.length,'Unhappy Customers','NPS 0–6','#C8324A')+
-    '</div></div>';
-
-  // worklist
-  var wrows=risk.map(function(r){
-    var npsC=r.nps<=6?'#C8324A':(r.nps>=9?'#1F8A54':'#B8791A');
-    var csatC=r.csat<3?'#C8324A':(r.csat>=4.5?'#1F8A54':'#33475B');
-    var scoreC=r.score<50?'#C8324A':(r.score>=80?'#1F8A54':'#B8791A');
-    return '<tr style="border-bottom:1px solid #F2F3F7;">'+
-    '<td style="padding:9px 10px;"><span style="color:#5464F2;font-weight:600;">'+r.deal+'</span></td>'+
-    '<td style="padding:9px 10px;">'+cvStatus(r.status)+'</td>'+
-    '<td style="padding:9px 10px;color:#33475B;font-weight:600;white-space:nowrap;">'+r.dname+'</td>'+
-    '<td style="padding:9px 10px;color:#616E88;">'+r.cust+'</td>'+
-    '<td style="padding:9px 10px;color:#616E88;">'+r.model+'</td>'+
-    '<td style="padding:9px 10px;font-weight:600;color:'+npsC+';">'+r.nps+'</td>'+
-    '<td style="padding:9px 10px;font-weight:600;color:'+csatC+';">'+r.csat.toFixed(1)+'</td>'+
-    '<td style="padding:9px 10px;font-weight:600;color:'+scoreC+';">'+r.score+'%</td>'+
-    '<td style="padding:9px 10px;">'+cvArrow(r.trend)+'</td>'+
-    '<td style="padding:9px 10px;color:#616E88;">'+r.owner+'</td>'+
-    '<td style="padding:9px 10px;color:#97A0B0;white-space:nowrap;">'+r.ago+' ago</td></tr>'; }).join('');
-  var worklist='<div class="an-card" style="grid-column:1/-1;">'+
-    '<div class="an-card-title">At-Risk Deals — ranked by revenue <span style="font-size:11.5px;font-weight:500;color:#8C91AB;">· open &amp; closed · work top-down</span></div>'+
-    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:900px;"><thead><tr style="border-bottom:1px solid #E6E6EC;text-align:left;color:#8C91AB;font-weight:600;">'+
-    '<th style="padding:8px 10px;">Deal</th><th style="padding:8px 10px;">Deal Status</th><th style="padding:8px 10px;">Name</th><th style="padding:8px 10px;">Contact</th><th style="padding:8px 10px;">Product</th><th style="padding:8px 10px;">NPS</th><th style="padding:8px 10px;">CSAT</th><th style="padding:8px 10px;">Score</th><th style="padding:8px 10px;">Trend</th><th style="padding:8px 10px;">Owner</th><th style="padding:8px 10px;">Last response</th></tr></thead>'+
-    '<tbody>'+wrows+'</tbody></table></div></div>';
-
-  // Shared feed — Contact · Deal · NPS · CSAT header, then every text box (labelled)
-  var cvFeed=function(list){ return '<div style="margin-top:-4px;">'+list.map(function(r){
-    var boxes=(r.comments||[{q:'Comment',a:r.txt}]).map(function(c){
-      return '<div style="font-size:12px;color:#5B6473;margin-top:5px;line-height:1.45;"><span style="color:#8C91AB;">'+c.q+'</span><br><span style="font-style:italic;">“'+c.a+'”</span></div>'; }).join('');
-    return '<div style="padding:12px 0;border-bottom:1px solid #F2F3F7;">'+
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">'+
-        '<b style="font-size:12.5px;color:#33475B;">'+r.cust+'</b>'+
-        '<span style="font-size:11px;color:#5464F2;font-weight:600;">'+r.deal+'</span>'+
-        '<span style="margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap;">'+
-          '<span style="color:'+(r.nps<=6?'#C8324A':(r.nps>=9?'#1F8A54':'#33475B'))+';">NPS '+r.nps+'</span> '+
-          '<span style="color:#D6D6E3;">·</span> '+
-          '<span style="color:'+(r.csat<3?'#C8324A':(r.csat>=4.5?'#1F8A54':'#33475B'))+';">CSAT '+r.csat.toFixed(1)+'</span></span>'+
-      '</div>'+boxes+'</div>'; }).join('')+'</div>'; };
-  var voice=anCard('The Voice — what unhappy customers actually said', cvFeed(risk));
-
-  // ── SECTION 2 : METRICS BY TOUCHPOINT ──
-  var tpCols=Object.keys(CV_TP).map(function(tp){ var s=cvTpStats(tp), sr=CV_SENT[tp]; var c=CV_TP[tp];
-    return '<div style="flex:1;min-width:200px;border:1px solid #EDEEF3;border-radius:10px;padding:14px;border-top:3px solid '+c+';">'+
-      '<div style="font-size:13px;font-weight:800;color:#33475B;margin-bottom:2px;">'+tp+'</div>'+
-      '<div style="font-size:11px;color:#8C91AB;margin-bottom:10px;">From '+s.n+' deal'+(s.n===1?'':'s')+'</div>'+
-      '<div style="display:flex;gap:8px;text-align:center;margin-bottom:10px;">'+
-        '<div style="flex:1;"><div style="font-size:18px;font-weight:800;color:#1F2733;">'+s.csat.toFixed(1)+'</div><div style="font-size:9.5px;color:#8C91AB;text-transform:uppercase;">CSAT</div></div>'+
-        '<div style="flex:1;"><div style="font-size:18px;font-weight:800;color:#1F2733;">'+s.nps.toFixed(0)+'</div><div style="font-size:9.5px;color:#8C91AB;text-transform:uppercase;">NPS</div></div>'+
-        '<div style="flex:1;"><div style="font-size:18px;font-weight:800;color:#1F2733;">'+s.score.toFixed(0)+'</div><div style="font-size:9.5px;color:#8C91AB;text-transform:uppercase;">Score</div></div></div>'+
-      '<div style="display:flex;gap:6px;font-size:11px;">'+
-        '<span style="flex:1;background:#EAF7F0;color:#1F8A54;border-radius:6px;padding:5px 8px;text-align:center;font-weight:600;">'+s.prom+' happy</span>'+
-        '<span style="flex:1;background:#FCECEE;color:#C8324A;border-radius:6px;padding:5px 8px;text-align:center;font-weight:600;">'+s.detr+' unhappy</span></div>'+
-      '<div style="margin-top:9px;font-size:11.5px;color:#616E88;">At-risk here: <b style="color:#C8324A;">'+cvL(s.atrisk)+'</b> <span style="color:#97A0B0;">· '+s.detr+' deal'+(s.detr===1?'':'s')+'</span></div>'+
-    '</div>'; }).join('');
-  var byTp='<div class="an-card" style="grid-column:1/-1;"><div class="an-card-title">Sentiment by touchpoint <span style="font-size:11.5px;font-weight:500;color:#8C91AB;">· by deal Blueprint stage (a survey fires at each stage)</span></div>'+
-    '<div style="display:flex;gap:12px;flex-wrap:wrap;">'+tpCols+'</div></div>';
-
-  // ── SECTION 3 : TRENDS ──
-  var wk=['W-5','W-4','W-3','W-2','W-1','Now'];
-  // At-Risk vs Recovered — shown as two plain-language trend tiles + a recovery funnel bar (easier than a dual-line chart)
-  var atRiskSeries=[72,80,88,99,101,96.3];
-  var recoveredSeries=[4,8,12,16,20,22.5];
-  var atRiskNow=atRiskSeries[atRiskSeries.length-1], atRiskPrev=atRiskSeries[atRiskSeries.length-2];
-  var recNow=recoveredSeries[recoveredSeries.length-1], recPrev=recoveredSeries[recoveredSeries.length-2];
-  var flagged=atRiskNow+recNow; // total ₹ ever flagged this period
-  var recPct=Math.round(recNow/flagged*100);
-  function cvTrendTile(label, val, delta, goodDown, spark, sparkColor){
-    var improved = goodDown ? (delta<0) : (delta>0);
-    var arrow = delta<0?'&#9660;':'&#9650;';
-    var arrowColor = improved?'#1F8A54':'#C8324A';
-    return '<div style="flex:1;min-width:240px;border:1px solid #EDEEF3;border-radius:12px;padding:16px 18px;">'+
-      '<div style="font-size:12px;color:#8C91AB;text-transform:uppercase;letter-spacing:.03em;">'+label+'</div>'+
-      '<div style="display:flex;align-items:baseline;gap:10px;margin:6px 0 4px;">'+
-        '<span style="font-size:30px;font-weight:800;color:#1F2733;">'+cvL(val*100000)+'</span>'+
-        '<span style="font-size:14px;font-weight:700;color:'+arrowColor+';">'+arrow+' '+cvL(Math.abs(delta)*100000)+'</span></div>'+
-      '<div style="font-size:11.5px;color:#97A0B0;margin-bottom:8px;">'+(improved?'improving':'worsening')+' vs last week</div>'+
-      anSpark(spark, sparkColor)+'</div>';
-  }
-  var trendRisk =
-    '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">'+
-      cvTrendTile('At-Risk Revenue', atRiskNow, +(atRiskNow-atRiskPrev).toFixed(1), true, atRiskSeries, '#C8324A')+
-      cvTrendTile('Recovered This Week', recNow, +(recNow-recPrev).toFixed(1), false, recoveredSeries, '#1F8A54')+
-    '</div>'+
-    '<div style="font-size:12px;color:#8C91AB;margin-bottom:6px;">Of '+cvL(flagged*100000)+' flagged at-risk this period, you’ve recovered <b style="color:#1F8A54;">'+recPct+'%</b>.</div>'+
-    '<div style="display:flex;height:26px;border-radius:8px;overflow:hidden;font-size:11.5px;font-weight:700;color:#fff;">'+
-      '<div style="width:'+recPct+'%;background:#1F8A54;display:flex;align-items:center;justify-content:center;min-width:60px;">Recovered '+cvL(recNow*100000)+'</div>'+
-      '<div style="flex:1;background:#C8324A;display:flex;align-items:center;justify-content:center;">Still at risk '+cvL(atRiskNow*100000)+'</div>'+
-    '</div>';
-  var trendCsat=anLine([
-      {name:'Test Drive',color:CV_TP['Test Drive'],points:[3.7,3.8,3.6,3.5,3.6,3.7]},
-      {name:'Quotation',color:CV_TP['Quotation'],points:[3.9,3.8,3.7,3.6,3.7,3.8]},
-      {name:'Negotiation',color:CV_TP['Negotiation'],points:[3.6,3.4,3.2,3.0,3.1,3.0]},
-      {name:'Booking',color:CV_TP['Booking'],points:[3.5,3.4,3.3,3.2,3.3,3.2]},
-      {name:'Delivery',color:CV_TP['Delivery'],points:[4.0,3.9,3.7,3.6,3.7,3.7]}
-    ],{labels:wk,yMin:2.5,yMax:5,fmtY:function(v){return v.toFixed(1);},legend:true});
-
-  // ── SECTION 4 : ROOT CAUSE ── (avg CSAT sliced by product / user / collector, + NPS split)
-  var cvCsatBy=function(keyFn){ var m={}; cvResp.forEach(function(r){ var k=keyFn(r); (m[k]=m[k]||{label:k,s:0,n:0}); m[k].s+=r.csat; m[k].n++; }); return Object.keys(m).map(function(k){ var x=m[k], v=+(x.s/x.n).toFixed(1); return {label:x.label,value:v,color:v<3.5?'#E86A5E':'#6FCF97'}; }); };
-  var byProduct=cvCsatBy(function(r){return r.model;});
-  var byUser=cvCsatBy(function(r){return r.owner.split(' ')[0];});
-  var byCollector=cvCsatBy(function(r){return r.collector;});
-  var npsDist=[{label:'Happy (9-10)',value:cvResp.filter(function(r){return r.nps>=9;}).length,color:'#6FCF97'},{label:'Neutral (7-8)',value:cvResp.filter(function(r){return r.nps>=7&&r.nps<=8;}).length,color:'#E0C341'},{label:'Unhappy (0-6)',value:cvResp.filter(cvIsRisk).length,color:'#E86A5E'}];
-
-  // ── SECTION 5 : REWARD GOOD FEEDBACK ──
-  var lrows=cvReps().map(function(x,i){ return '<tr style="border-bottom:1px solid #F2F3F7;">'+
-    '<td style="padding:9px 10px;color:#97A0B0;">#'+(i+1)+'</td>'+
-    '<td style="padding:9px 10px;color:#33475B;font-weight:600;">'+x.owner+'</td>'+
-    '<td style="padding:9px 10px;font-weight:600;color:'+(x.csat>=4?'#1F8A54':(x.csat<3.2?'#C8324A':'#33475B'))+';">'+x.csat.toFixed(1)+'</td>'+
-    '<td style="padding:9px 10px;color:#33475B;">'+x.nps.toFixed(0)+'</td>'+
-    '<td style="padding:9px 10px;color:#1F8A54;font-weight:600;">'+x.prom+'</td>'+
-    '<td style="padding:9px 10px;color:#C8324A;font-weight:600;">'+x.detr+'</td>'+
-    '<td style="padding:9px 10px;color:#616E88;">'+cvL(x.atrisk)+'</td></tr>'; }).join('');
-  var leaderboard='<div class="an-card" style="grid-column:1/-1;"><div class="an-card-title">Consultant leaderboard <span style="font-size:11.5px;font-weight:500;color:#8C91AB;">· recognise the top, coach the tail</span></div>'+
-    '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="border-bottom:1px solid #E6E6EC;text-align:left;color:#8C91AB;font-weight:600;">'+
-    '<th style="padding:8px 10px;">Rank</th><th style="padding:8px 10px;">Consultant</th><th style="padding:8px 10px;">Avg CSAT</th><th style="padding:8px 10px;">Avg NPS</th><th style="padding:8px 10px;">Happy</th><th style="padding:8px 10px;">Unhappy</th><th style="padding:8px 10px;">₹ at risk</th></tr></thead>'+
-    '<tbody>'+lrows+'</tbody></table></div>';
-
-  var happy=anCard('Happy customers &amp; referral opportunities <span style="font-size:11px;font-weight:500;color:#8C91AB;">· '+proms.length+' happy customers</span>', cvFeed(proms));
-
-  return cvSec('Handle bad feedback','revenue at risk, ranked and named — act top-down')+
-    hero + worklist + voice + happy +
-    cvSec('Metrics','response health &amp; sentiment, per Blueprint stage')+
-    byTp +
-    cvSec('Trends','is exposure rising, and did acting on it pay off?')+
-    anCard('At-Risk vs Recovered Revenue', trendRisk, 'At-Risk Revenue Trend') +
-    anCard('CSAT trend by touchpoint <span style="font-size:11px;font-weight:500;color:#8C91AB;">· Negotiation is sliding</span>', trendCsat, 'CSAT by Touchpoint') +
-    cvSec('Root cause','fix the process, not each symptom')+
-    anCard('Avg CSAT by product', anBar(byProduct,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Product') +
-    anCard('Avg CSAT by user', anBar(byUser,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by User') +
-    anCard('Avg CSAT by collector', anBar(byCollector,{yLabel:'Avg CSAT /5',maxY:5,fmtV:function(v){return v.toFixed(1);},fmtY:function(v){return v.toFixed(0);}}), 'CSAT by Collector') +
-    anCard('NPS distribution', anPie(npsDist), 'NPS Distribution') +
-    cvSec('Reward good feedback','recognise reps, capture referrals &amp; reviews')+
-    leaderboard;
+  return cvProcessReport() + cvUserReport();
 }
 
 function renderAnalytics(){ document.getElementById('an-grid').innerHTML = (anDash==='leads'? anLeadsCards(): anSurveyCards()); }
