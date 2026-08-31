@@ -15089,9 +15089,6 @@ function bpAfterTplChanged(){
 .sd-stat-click:hover{background:#F7F8FA !important;}
 .sd-stat-click:hover div:first-child{text-decoration:underline;}
 .cv-proc-link{color:#5464F2;font-weight:600;cursor:pointer;text-decoration:none;}
-.cv-row{transition:background .12s ease;}
-.cv-row:hover{background:#F4F6FB !important;}
-.cv-row:hover .cv-proc-link{color:#3752CA;text-decoration:underline;}
 .cv-proc-link:hover{color:#3752CA;text-decoration:underline;}
 .an-kpi{flex:1;min-width:120px;border:1px solid #EDEEF3;border-radius:8px;padding:11px 13px;}
 .an-kpi-v{font-size:22px;font-weight:800;color:#1F2733;line-height:1;}
@@ -15302,39 +15299,8 @@ function cvDelta(d,dec){ if(d===null||d===undefined) return cvDash();
   return '<span style="color:#B9BECD;">&#9644; 0.0</span>'; }
 function cvTh(cols,leftN){ leftN=leftN||1; return '<tr style="background:#F7F8FA;">'+cols.map(function(c,i){
   return '<th style="text-align:'+(i<leftN?'left':'right')+';font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;padding:9px 12px;border-bottom:1px solid #E6E6EC;white-space:nowrap;">'+c+'</th>'; }).join('')+'</tr>'; }
-var CV_SEP='border-left:1px solid #EDEEF3;';
-function cvTd(v,align,style){ return '<td style="text-align:'+(align||'right')+';font-size:13px;color:#434D5E;padding:12px;border-bottom:1px solid #F0F0F4;white-space:nowrap;font-variant-numeric:tabular-nums;'+(style||'')+'">'+v+'</td>'; }
+function cvTd(v,align,style){ return '<td style="text-align:'+(align||'right')+';font-size:13px;color:#434D5E;padding:10px 12px;border-bottom:1px solid #F0F0F4;white-space:nowrap;'+(style||'')+'">'+v+'</td>'; }
 function cvTable(inner){ return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-family:inherit;">'+inner+'</table></div>'; }
-// score pill — only ever applied to a row's PRIMARY metric, so the table doesn't turn into a heatmap
-function cvBand5(v){ return v>=4.2?'g':(v>=3.5?'a':'r'); }
-function cvBandNps(v){ return v>=30?'g':(v>=0?'a':'r'); }
-var CV_PILL={g:{c:'#10975E',bg:'#E9FBF4',b:'#19B171'},a:{c:'#B8791A',bg:'#FFF9ED',b:'#E28C27'},r:{c:'#C8324A',bg:'#FFF2F3',b:'#FF4D5B'}};
-function cvPill(txt,band){ var k=CV_PILL[band];
-  return '<span style="display:inline-block;min-width:42px;font-size:13px;font-weight:800;color:'+k.c+';background:'+k.bg+';border:1px solid '+k.b+'55;border-radius:20px;padding:3px 10px;">'+txt+'</span>'; }
-function cvMetric(o,prim,which){
-  var v=o[which]; if(v===null||v===undefined) return cvDash();
-  if(which!==prim) return which==='score'? v+'%' : (which==='nps'? String(v) : v.toFixed(1));
-  if(which==='nps') return cvPill(String(v),cvBandNps(v));
-  return cvPill(v.toFixed(1),cvBand5(v));
-}
-// response rate as a number plus a track you can compare by length
-function cvRate(resp,sent){ var pct=sent? Math.round(resp/sent*100):0;
-  return '<div style="display:inline-block;text-align:right;min-width:92px;">'+
-    '<div><b style="color:#1F2733;">'+resp.toLocaleString()+'</b> <span style="color:#8C91AB;">'+pct+'%</span></div>'+
-    '<div style="height:4px;border-radius:2px;background:#EDEEF3;margin-top:6px;overflow:hidden;">'+
-    '<div style="width:'+pct+'%;height:100%;background:#9AA7C7;border-radius:2px;"></div></div></div>'; }
-// the shape of a row's sentiment, readable without reading a digit
-function cvSentBar(o){
-  if(o.happy===null||o.happy===undefined||!o.resp) return cvDash();
-  var h=Math.round(o.happy/o.resp*100), u=Math.round(o.unhappy/o.resp*100), n=Math.max(0,100-h-u);
-  return '<div title="'+h+'% happy &middot; '+n+'% neutral &middot; '+u+'% unhappy" '+
-    'style="display:inline-flex;width:96px;height:8px;border-radius:5px;overflow:hidden;background:#F0F1F5;vertical-align:middle;">'+
-    '<div style="width:'+h+'%;background:#19B171;"></div><div style="width:'+n+'%;background:#D3D8E4;"></div>'+
-    '<div style="width:'+u+'%;background:#FF4D5B;"></div></div>'; }
-function cvEmph(isWorst,isBest){
-  return { bg: isWorst?'background:#FFF8F8;':(isBest?'background:#F6FCF9;':''),
-           acc: isWorst?'box-shadow:inset 3px 0 0 #FF4657;':(isBest?'box-shadow:inset 3px 0 0 #11B670;':'') }; }
-
 function cvEmpty(cols,msg){ return '<tr><td colspan="'+cols+'" style="padding:26px 12px;text-align:center;font-size:13px;color:#8C91AB;">'+msg+'</td></tr>'; }
 
 // ═══ interactive filter chips ═══
@@ -15479,25 +15445,20 @@ function cvProcessReport(){
   var list=cvProc.filter(function(p){
       return (f.survey==='All'||p.survey===f.survey) && (f.module==='All'||p.module===f.module); })
     .map(function(p){ return cvScaleProc(p,f.period); });
-  var scored=list.filter(function(p){ return p.happy!==null; });
-  var worst=scored.slice().sort(function(a,b){ return (b.unhappy/b.resp)-(a.unhappy/a.resp); })[0];
-  var best =scored.slice().sort(function(a,b){ return (b.happy/b.resp)-(a.happy/a.resp); })[0];
   var rows=list.map(function(p){
     var prim=(p.dUnit==='nps')?'nps':'csat';
-    var e=cvEmph(worst&&p.key===worst.key, best&&p.key===best.key);
-    return '<tr class="cv-row" style="cursor:pointer;'+e.bg+'" onclick="cvOpenWorkflow('+p.wf+')">'+
-      cvTd('<a class="cv-proc-link">'+p.name+'</a>','left',e.acc+'font-size:13.5px;')+
-      cvTd(p.module,'left','color:#8C91AB;font-size:12px;')+
-      cvTd(p.sent.toLocaleString(),'right',CV_SEP)+
-      cvTd(cvRate(p.resp,p.sent))+
-      cvTd(cvMood(p.happy,p.resp,'#1F8A54'),'right',CV_SEP)+
+    return '<tr>'+
+      cvTd('<a class="cv-proc-link" onclick="cvOpenWorkflow('+p.wf+')">'+p.name+'</a>','left')+
+      cvTd(p.module,'left')+
+      cvTd(p.sent.toLocaleString())+
+      cvTd(p.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(p.resp,p.sent)+')</span>')+
+      cvTd(cvMood(p.happy,p.resp,'#1F8A54'))+
       cvTd(cvMood(p.unhappy,p.resp,'#C8324A'))+
-      cvTd(cvSentBar(p))+
-      cvTd(cvMetric(p,prim,'csat'),'right',CV_SEP)+
-      cvTd(cvMetric(p,prim,'nps'))+
-      cvTd(cvMetric(p,prim,'rating'))+
-      cvTd(cvMetric(p,prim,'score'))+
-      cvTd(cvDelta(p.d, p.dUnit==='nps'?0:1),'right',CV_SEP)+
+      cvTd(cvNum(p.csat,1,prim==='csat'))+
+      cvTd(cvNum(p.nps,0,prim==='nps'))+
+      cvTd(cvNum(p.rating,1))+
+      cvTd(p.score===null?cvDash():p.score+'%')+
+      cvTd(cvDelta(p.d, p.dUnit==='nps'?0:1))+
     '</tr>'; }).join('');
   var tot='';
   if(list.length){
@@ -15505,22 +15466,21 @@ function cvProcessReport(){
     tot='<tr style="background:#FAFAFC;">'+
       cvTd('<span style="font-weight:700;color:#1F2733;">Total / weighted</span>','left',bt)+
       cvTd('',        'left', bt)+
-      cvTd('<b>'+t.sent.toLocaleString()+'</b>','right',bt+CV_SEP)+
-      cvTd(cvRate(t.resp,t.sent),'right',bt)+
-      cvTd(cvMood(t.happy,t.resp,'#1F8A54'),'right',bt+CV_SEP)+
+      cvTd('<b>'+t.sent.toLocaleString()+'</b>','right',bt)+
+      cvTd('<b>'+t.resp.toLocaleString()+'</b> <span style="color:#8C91AB;">('+cvPct(t.resp,t.sent)+')</span>','right',bt)+
+      cvTd(cvMood(t.happy,t.resp,'#1F8A54'),'right',bt)+
       cvTd(cvMood(t.unhappy,t.resp,'#C8324A'),'right',bt)+
-      cvTd(cvSentBar(t),'right',bt)+
-      cvTd(t.csat===null?cvDash():'<b>'+t.csat.toFixed(1)+'</b>','right',bt+CV_SEP)+
+      cvTd(t.csat===null?cvDash():'<b>'+t.csat.toFixed(1)+'</b>','right',bt)+
       cvTd(t.nps===null?cvDash():'<b>'+t.nps+'</b>','right',bt)+
       cvTd(t.rating===null?cvDash():'<b>'+t.rating.toFixed(1)+'</b>','right',bt)+
       cvTd(t.score===null?cvDash():'<b>'+t.score+'%</b>','right',bt)+
-      cvTd(cvDelta(t.d,1),'right',bt+CV_SEP)+'</tr>';
-  } else rows=cvEmpty(12,'No process matches these filters.');
+      cvTd(cvDelta(t.d,1),'right',bt)+'</tr>';
+  } else rows=cvEmpty(11,'No process matches these filters.');
   return anCard('Feedback by Process',
     cvChipRow([cvChip('proc','period','Period',CV_PERIOD_LIST),
                cvChip('proc','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;})))),
                cvChip('proc','module','Module',['All'].concat(cvUniq(cvProc.map(function(p){return p.module;}))))])+
-    cvTable(cvTh(['Process','Modules','Sent','Responded','Happy','Unhappy','Sentiment','CSAT','NPS','Rating','Score','&#916; vs last period'],2)+rows+tot),
+    cvTable(cvTh(['Process','Modules','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score','&#916; vs last period'],2)+rows+tot),
     '', true);
 }
 
@@ -15535,32 +15495,31 @@ function cvSurveyReport(){
     var t=cvTotals(group), meta=CV_SURVEYS[nm]||{q:0,partial:0,mins:0};
     var partial=Math.round(t.resp*meta.partial);
     var star=function(k){ return t.n[k]>1; };
-    return '<tr class="cv-row" style="cursor:pointer;" onclick="cvOpenSurvey(\''+nm+'\')">'+
-      cvTd('<a class="cv-proc-link" style="font-size:13.5px;">'+nm+'</a>'+
-           '<div style="font-size:11px;color:#8C91AB;margin-top:3px;">'+meta.q+' questions</div>','left')+
+    return '<tr>'+
+      cvTd('<a class="cv-proc-link" onclick="cvOpenSurvey(\''+nm+'\')">'+nm+'</a>'+
+           '<div style="font-size:11px;color:#8C91AB;margin-top:2px;">'+meta.q+' questions</div>','left')+
       cvTd(group.map(function(p){ return p.name; }).join(', '),'left',
-           'white-space:normal;font-size:12px;color:#8C91AB;max-width:230px;')+
-      cvTd(t.sent.toLocaleString(),'right',CV_SEP)+
-      cvTd(cvRate(t.resp,t.sent))+
+           'white-space:normal;font-size:12px;color:#616E88;max-width:230px;')+
+      cvTd(t.sent.toLocaleString())+
+      cvTd(t.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(t.resp,t.sent)+')</span>')+
       cvTd('<span style="color:#8C91AB;">'+partial.toLocaleString()+'</span>')+
       cvTd('<span style="color:#8C91AB;">'+meta.mins.toFixed(1)+' min</span>')+
-      cvTd(cvMood(t.happy,t.resp,'#1F8A54'),'right',CV_SEP)+
+      cvTd(cvMood(t.happy,t.resp,'#1F8A54'))+
       cvTd(cvMood(t.unhappy,t.resp,'#C8324A'))+
-      cvTd(cvSentBar(t))+
       cvTd(t.csat===null?cvDash():(star('csat')
             ? '<span title="blended across '+t.n.csat+' processes" style="color:#8C91AB;">'+t.csat.toFixed(1)+'*</span>'
-            : cvPill(t.csat.toFixed(1),cvBand5(t.csat))),'right',CV_SEP)+
+            : '<b style="color:#1F2733;">'+t.csat.toFixed(1)+'</b>'))+
       cvTd(t.nps===null?cvDash():(star('nps')
             ? '<span title="blended across '+t.n.nps+' processes" style="color:#8C91AB;">'+t.nps+'*</span>'
             : '<b style="color:#1F2733;">'+t.nps+'</b>'))+
       cvTd(t.rating===null?cvDash():t.rating.toFixed(1))+
       cvTd(t.score===null?cvDash():t.score+'%')+
     '</tr>'; }).join('');
-  if(!names.length) rows=cvEmpty(13,'No survey matches these filters.');
+  if(!names.length) rows=cvEmpty(12,'No survey matches these filters.');
   return anCard('Feedback by Survey',
     cvChipRow([cvChip('surv','period','Period',CV_PERIOD_LIST),
                cvChip('surv','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;}))))])+
-    cvTable(cvTh(['Survey','Used by','Sent','Responded','Partial','Avg time','Happy','Unhappy','Sentiment','CSAT','NPS','Rating','Score'],2)+rows)+
+    cvTable(cvTh(['Survey','Used by','Sent','Responded','Partial','Avg time','Happy','Unhappy','CSAT','NPS','Rating','Score'],2)+rows)+
     '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">* Blended across more than one process &mdash; read the per-process rows above for a score you can act on.</div>',
     '', true);
 }
@@ -15585,34 +15544,29 @@ function cvUserReport(){
     if(p.nps!==null)  head.push('NPS '+p.nps);
     head.push(list.length+' '+p.role.toLowerCase()+(list.length>1?'s':''));
     shown+=list.length;
-    body+='<tr><td colspan="10" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
+    body+='<tr><td colspan="9" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
       '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+p.name+'</span>'+
       '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process avg &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
-    var uScored=list.filter(function(u){ return u.happy!==null; });
-    var uWorst=uScored.slice().sort(function(a,b){ return (b.unhappy/b.resp)-(a.unhappy/a.resp); })[0];
-    var uBest =uScored.slice().sort(function(a,b){ return (b.happy/b.resp)-(a.happy/a.resp); })[0];
     list.forEach(function(u){
-      var e=cvEmph(uWorst&&u.u===uWorst.u, uBest&&u.u===uBest.u);
-      body+='<tr class="cv-row" style="'+e.bg+'">'+
-        cvTd('<span style="font-weight:600;color:#1F2733;font-size:13.5px;">'+u.u+'</span>','left',e.acc)+
-        cvTd(u.sent.toLocaleString(),'right',CV_SEP)+
-        cvTd(cvRate(u.resp,u.sent))+
-        cvTd(cvMood(u.happy,u.resp,'#1F8A54'),'right',CV_SEP)+
+      body+='<tr>'+
+        cvTd('<span style="font-weight:600;color:#1F2733;">'+u.u+'</span>','left')+
+        cvTd(u.sent.toLocaleString())+
+        cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>')+
+        cvTd(cvMood(u.happy,u.resp,'#1F8A54'))+
         cvTd(cvMood(u.unhappy,u.resp,'#C8324A'))+
-        cvTd(cvSentBar(u))+
-        cvTd(cvMetric(u,prim,'csat'),'right',CV_SEP)+
-        cvTd(cvMetric(u,prim,'nps'))+
-        cvTd(cvMetric(u,prim,'rating'))+
-        cvTd(cvMetric(u,prim,'score'))+
+        cvTd(cvNum(u.csat,1,prim==='csat'))+
+        cvTd(cvNum(u.nps,0,prim==='nps'))+
+        cvTd(cvNum(u.rating,1))+
+        cvTd(u.score===null?cvDash():u.score+'%')+
       '</tr>'; });
   });
-  if(!shown) body=cvEmpty(10,'No user matches these filters.');
+  if(!shown) body=cvEmpty(9,'No user matches these filters.');
   var allUsers=[]; Object.keys(cvUsers).forEach(function(k){ cvUsers[k].forEach(function(u){ allUsers.push(u.u); }); });
   return anCard('Feedback by User',
     cvChipRow([cvChip('user','period','Period',CV_PERIOD_LIST),
                cvChip('user','process','Process',['All'].concat(cvProc.map(function(p){return p.name;}))),
                cvChip('user','user','Filter by User',['All'].concat(cvUniq(allUsers).sort()))])+
-    cvTable(cvTh(['User','Sent','Responded','Happy','Unhappy','Sentiment','CSAT','NPS','Rating','Score'])+body),
+    cvTable(cvTh(['User','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score'])+body),
     '', true);
 }
 
