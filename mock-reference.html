@@ -15178,7 +15178,6 @@ var cvProc=[
  {key:'lost',     name:'Lost sale',          module:'Potentials',       role:'Deal Owner',        done:175, wf:15, sent:175,  resp:39, happy:null, unhappy:null,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''},
  {key:'enquiry',  name:'Enquiry handling',   module:'Leads',            role:'Lead Owner',        done:420, wf:16, sent:420,  resp:50, happy:null, unhappy:null,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''}
 ];
-var cvPrev={resp:912,happy:401,unhappy:214};
 var cvTot={sent:2464,resp:941,happy:438,unhappy:198,csat:3.5,nps:18,rating:3.6,score:68,d:-0.3};
 
 // Responsible user per process (snapshotted on the response at send time).
@@ -15324,16 +15323,9 @@ function cvBandLeg(color,label,n,pct){
     '<span style="font-size:13px;font-weight:600;color:#8C91AB;margin-left:6px;">'+pct+'%</span></div>'+
     '<div style="font-size:11.5px;color:#616E88;margin-top:4px;">'+label+'</div></div></div>';
 }
-function cvBandChip(d,unit,downIsGood){
-  var up=d>0, good=downIsGood? d<0 : d>0;
-  var col=d===0?'#8C91AB':(good?'#1F8A54':'#C8324A'), bg=d===0?'#F4F5F9':(good?'#EAF7F0':'#FDEEF1');
-  return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:'+col+';background:'+bg+';border:1px solid '+col+'33;border-radius:20px;padding:3px 10px;">'+
-    (up?'&#9650;':(d<0?'&#9660;':'&#9644;'))+' '+Math.abs(d)+' '+unit+'</span>';
-}
 function cvBand(){
   var r=cvTot.resp, h=cvTot.happy, u=cvTot.unhappy, n=r-h-u;
   var pc=function(x){ return Math.round(x/r*100); };
-  var prevH=Math.round(cvPrev.happy/cvPrev.resp*100), prevU=Math.round(cvPrev.unhappy/cvPrev.resp*100);
   var scored=cvProc.filter(function(p){ return p.csat!==null||p.nps!==null; });
   var declining=scored.filter(function(p){ return p.d<0; });
   var byUnhappy=scored.slice().sort(function(a,b){ return (b.unhappy/b.resp)-(a.unhappy/a.resp); });
@@ -15351,18 +15343,16 @@ function cvBand(){
   return '<div class="an-card" style="grid-column:1/-1;padding:22px 24px;">'+
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:16px;">'+
       '<div><div style="font-size:15px;font-weight:700;color:#33475B;">Overall Feedback</div>'+
-      '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">Across '+cvProc.length+' processes &middot; This month</div></div>'+
+      '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">Across '+cvProc.length+' processes</div></div>'+
       '<div style="text-align:right;"><div style="font-size:15px;font-weight:700;color:#1F2733;">'+r.toLocaleString()+' responses</div>'+
       '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+Math.round(r/cvTot.sent*100)+'% response rate &middot; '+cvTot.sent.toLocaleString()+' sent</div></div>'+
     '</div>'+
+    cvFilters(['Time Range: This month'])+
     bar+
     '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:38px;">'+
       cvBandLeg('#11985E','Happy',h,pc(h))+
       cvBandLeg('#D3D8E4','Neutral',n,pc(n))+
       cvBandLeg('#E23041','Unhappy',u,pc(u))+
-      '<div style="margin-left:auto;display:flex;align-items:center;gap:10px;">'+
-        cvBandChip(pc(h)-prevH,'pts happy')+cvBandChip(pc(u)-prevU,'pts unhappy',true)+
-        '<span style="font-size:11.5px;color:#8C91AB;">vs last month</span></div>'+
     '</div>'+
     '<div style="height:1px;background:#EDEEF3;margin:20px 0 18px;"></div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:14px;">'+
