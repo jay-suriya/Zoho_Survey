@@ -12144,6 +12144,7 @@ function renderDealSignalsTable() {
   tbody.innerHTML = html;
 }
 function openDealDetailPage(name) {
+  svOverallSignal('dd-overall-signal', svSignalData.deal);
   renderDealSignalsTable();
   renderDealSurveys();
   document.getElementById('deal-detail-page').style.display = 'block';
@@ -12182,6 +12183,52 @@ function renderDealSurveys(){
 // Shared per-transition-attributed survey signals — used by Deal and Contact detail.
 // Each metric shows its LATEST value + WHICH transition/survey it came from (attribution,
 // not a blended average across transitions), then per-transition rows.
+// ═══ Overall Survey Signal — one summary strip reused on every record type ═══
+// Shows only the metrics the record's surveys actually collected (show-if-present),
+// plus how recently they answered and one overall happy/unhappy verdict.
+// Verdict precedence matches the rest of the product: CSAT -> NPS -> Avg rating.
+function svVerdict(o){
+  var v,band;
+  if(o.csat!==null&&o.csat!==undefined) v=o.csat, band=(v>=4?'happy':(v<=2?'unhappy':'neutral'));
+  else if(o.nps!==null&&o.nps!==undefined) v=o.nps, band=(v>=9?'happy':(v<=6?'unhappy':'neutral'));
+  else if(o.rating!==null&&o.rating!==undefined) v=o.rating, band=(v>=4?'happy':(v<=2?'unhappy':'neutral'));
+  else return null;
+  return band;
+}
+var SV_VERDICT={happy:{t:'Happy',c:'#10975E',bg:'#E9FBF4',b:'#19B171'},
+                neutral:{t:'Neutral',c:'#616E88',bg:'#F4F5F9',b:'#C0C8E2'},
+                unhappy:{t:'Unhappy',c:'#C8324A',bg:'#FFF2F3',b:'#FF4D5B'}};
+function svTile(label,value,sub,color){
+  return '<div style="flex:1;min-width:132px;border:1px solid #EDEEF3;border-radius:10px;padding:12px 14px;background:#fff;">'+
+    '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">'+label+'</div>'+
+    '<div style="font-size:20px;font-weight:800;color:'+(color||'#1F2733')+';margin-top:6px;line-height:1;">'+value+'</div>'+
+    (sub? '<div style="font-size:11px;color:#9AA0B1;margin-top:5px;">'+sub+'</div>':'')+'</div>';
+}
+function svOverallSignal(id,o){
+  var el=document.getElementById(id); if(!el) return;
+  if(!o || !o.responded){
+    el.innerHTML='<div style="border:1px dashed #D6D6E3;border-radius:10px;padding:18px;text-align:center;font-size:13px;color:#8C91AB;background:#FAFBFD;">No survey responses on this record yet.</div>';
+    return;
+  }
+  var t=[];
+  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>','','#1F2733'));
+  if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/10</span>','','#1F2733'));
+  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>','','#1F2733'));
+  t.push(svTile('Last response',o.last,o.lastFrom||'','#1F2733'));
+  var v=svVerdict(o), k=v?SV_VERDICT[v]:null;
+  t.push('<div style="flex:1;min-width:150px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
+    '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">Overall</div>'+
+    '<div style="font-size:20px;font-weight:800;color:'+(k?k.c:'#1F2733')+';margin-top:6px;line-height:1;">'+(k?k.t:'&#8212;')+'</div>'+
+    '<div style="font-size:11px;color:#9AA0B1;margin-top:5px;">'+o.responded+' of '+o.total+' responded</div></div>');
+  el.innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;">'+t.join('')+'</div>';
+}
+// Per-record roll-ups (latest value per metric across that record's responses)
+var svSignalData={
+  lead:    {csat:3.8, nps:7,  rating:4.0, last:'2 days ago', lastFrom:'Product Feedback', responded:1, total:1},
+  deal:    {csat:3.1, nps:9,  rating:3.0, last:'6 hours ago', lastFrom:'Post-Delivery CSAT', responded:2, total:3},
+  contact: {csat:3.2, nps:7,  rating:3.0, last:'5h ago', lastFrom:'Post-Service CSAT', responded:3, total:4}
+};
+
 function cvRenderSignals(body, data, meta, unit){
   if(!body) return;
   unit = unit || 'record';
@@ -12234,6 +12281,7 @@ function closeLeadsListPage() {
 function openLeadDetailPage(name) {
   document.getElementById('lead-detail-page').style.display = 'block';
   document.getElementById('lead-detail-page').scrollTop = 0;
+  svOverallSignal('ld-overall-signal', svSignalData.lead);
   ldRenderZohoSurveyTable();
 }
 function closeLeadDetailPage() {
@@ -13046,6 +13094,16 @@ function closeMarketplaceZohoPage() {
         <span style="font-size:12px;color:#8C91AB;">&#128337; Last Update : 55 day(s) ago</span>
       </div>
 
+      <!-- Zoho Survey · Overall Signal -->
+      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
+          <span style="flex:1;"></span>
+          <span onclick="document.getElementById('ld-sec-zoho-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
+        </div>
+        <div id="ld-overall-signal"></div>
+      </div>
+
       <!-- Overview fields -->
       <div style="background:#FAFAFC;border:1px solid #EDF0F4;border-radius:10px;padding:20px 24px;margin-bottom:20px;display:flex;gap:60px;">
         <div>
@@ -13786,6 +13844,16 @@ function closeMarketplaceZohoPage() {
           <div class="leads-tab" style="padding:6px 16px;">Timeline</div>
         </div>
         <span style="font-size:12px;color:#8C91AB;">&#128337; Last Update : 11:22</span>
+      </div>
+
+      <!-- Zoho Survey · Overall Signal -->
+      <div style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey &middot; Overall Signal</span>
+          <span style="flex:1;"></span>
+          <span onclick="document.getElementById('dd-sec-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span>
+        </div>
+        <div id="dd-overall-signal"></div>
       </div>
 
       <!-- Fields + best time -->
@@ -14706,13 +14774,35 @@ function disableIntegration(){ document.getElementById('sint-config').style.disp
   </div>
   <div style="max-width:1080px;margin:20px auto;padding:0 24px;">
     <div style="background:#fff;border:1px solid #E6E6EC;border-radius:10px;padding:20px 22px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:15px;font-weight:700;color:#1F2733;">Zoho Survey · Signals</span><span id="ctd-survey-subtitle" style="font-size:12px;color:#97A0B0;"></span></div>
-      <div style="font-size:12px;color:#97A0B0;margin-bottom:14px;">Sentiment attributed to the Blueprint transition that fired each survey.</div>
-      <div id="ctd-survey-body"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:15px;font-weight:700;color:#1F2733;">Zoho Survey &middot; Overall Signal</span><span id="ctd-survey-subtitle" style="font-size:12px;color:#97A0B0;"></span>
+        <span style="flex:1;"></span>
+        <span onclick="document.getElementById('ctd-sec-survey').scrollIntoView({behavior:'smooth',block:'start'});" style="font-size:12px;color:#5464F2;cursor:pointer;font-weight:600;">View responses &rarr;</span></div>
+      <div id="ctd-overall-signal" style="margin-bottom:16px;"></div>
+
     </div>
     <div style="background:#fff;border:1px solid #E6E6EC;border-radius:10px;padding:20px 22px;">
       <div style="font-size:15px;font-weight:700;color:#1F2733;margin-bottom:6px;">Contact Details</div>
       <div id="ctd-fields" style="font-size:13.5px;color:#3C4557;line-height:2;"></div>
+    </div>
+
+    <!-- Zoho Survey related list -->
+    <div id="ctd-sec-survey" style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:18px 22px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:14px;font-weight:700;color:#202123;">Zoho Survey</span>
+        <span id="ctd-survey-count" style="font-size:11px;font-weight:700;color:#3752CA;background:#EBEDFF;border-radius:20px;padding:1px 8px;"></span>
+      </div>
+      <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:#F7F8FA;">
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">Title</th>
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">Response</th>
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">Sent Date</th>
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">Responded Date</th>
+          <th style="text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">CSAT</th>
+          <th style="text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">NPS</th>
+          <th style="text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;">Rating</th>
+        </tr></thead>
+        <tbody id="ctd-survey-tbody"></tbody>
+      </table></div>
     </div>
   </div>
 </div>
@@ -14938,9 +15028,36 @@ function openContactDetailPage(i){
   var responded=contactSurveysData.filter(function(s){return s.status==='responded';});
   var pending=contactSurveysData.filter(function(s){return s.status==='pending';});
   document.getElementById('ctd-survey-subtitle').textContent='· '+contactSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
-  cvRenderSignals(document.getElementById('ctd-survey-body'), contactSurveysData, contactSurveyMeta, 'contact');
+  svOverallSignal('ctd-overall-signal', svSignalData.contact);
+  ctdRenderSurveyTable();
   document.getElementById('ctd-page').style.display='block';
   document.getElementById('ctd-page').scrollTop=0;
+}
+// Zoho Survey related list on a contact — one row per survey sent to this record
+var ctdSurveyRows=[
+  {title:'Welcome / Onboarding CSAT', sent:'12 Jun 2026', resp:'13 Jun 2026', csat:'4.4', nps:'—',  rating:'—'},
+  {title:'Post-Service CSAT',        sent:'02 Aug 2026', resp:'02 Aug 2026', csat:'3.2', nps:'—',  rating:'3.0'},
+  {title:'Relationship NPS',         sent:'26 Aug 2026', resp:'26 Aug 2026', csat:'—',   nps:'7',  rating:'—'},
+  {title:'Renewal Pulse',            sent:'29 Aug 2026', resp:'',            csat:'—',   nps:'—',  rating:'—'}
+];
+function ctdRenderSurveyTable(){
+  var tb=document.getElementById('ctd-survey-tbody'); if(!tb) return;
+  var td='padding:11px 12px;border-bottom:1px solid #F0F0F4;font-size:13px;color:#434D5E;';
+  tb.innerHTML=ctdSurveyRows.map(function(r){
+    var responded=!!r.resp;
+    return '<tr>'+
+      '<td style="'+td+'"><span style="font-weight:600;color:#1F2733;">'+r.title+'</span></td>'+
+      '<td style="'+td+'">'+(responded
+        ? '<span onclick="sdOpenResponseBox&&sdOpenResponseBox()" style="color:#5464F2;font-weight:600;cursor:pointer;">View Response</span>'
+        : '<span style="color:#B8791A;font-weight:600;">Yet to Respond</span>')+'</td>'+
+      '<td style="'+td+'">'+r.sent+'</td>'+
+      '<td style="'+td+'">'+(r.resp||'<span style="color:#C3C7D2;">&#8212;</span>')+'</td>'+
+      '<td style="'+td+'text-align:right;">'+(r.csat==='—'?'<span style="color:#C3C7D2;">&#8212;</span>':r.csat)+'</td>'+
+      '<td style="'+td+'text-align:right;">'+(r.nps==='—'?'<span style="color:#C3C7D2;">&#8212;</span>':r.nps)+'</td>'+
+      '<td style="'+td+'text-align:right;">'+(r.rating==='—'?'<span style="color:#C3C7D2;">&#8212;</span>':r.rating)+'</td>'+
+    '</tr>'; }).join('');
+  var b=document.getElementById('ctd-survey-count');
+  if(b) b.textContent=ctdSurveyRows.length;
 }
 function closeContactDetailPage(){ document.getElementById('ctd-page').style.display='none'; }
 
