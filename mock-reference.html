@@ -15267,6 +15267,7 @@ var CV_PERIODS={
  'Last 6 months':{m:6.10, a:0.25, dm:1.8},
  'This year':    {m:8.30, a:0.30, dm:2.0}};
 var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
+var CV_MINPEOPLE=10; // below this a person's share is too noisy to rank on
 // The survey is the instrument: its own question count and completion behaviour.
 var CV_SURVEYS={
  'Experience CSAT': {q:6, partial:0.09, mins:2.4},
@@ -15397,6 +15398,23 @@ function cvBand(){
   var byH=scored.slice().sort(function(a,b){ return (b.happy/b.resp)-(a.happy/a.resp); });
   var worst=byU[0], best=byH[0];
   var pM=function(p){ return p.csat!==null? p.csat.toFixed(1) : 'NPS '+p.nps; };
+  // People are ranked by SHARE of happy/unhappy, not raw score: a share is a
+  // proportion so it compares across processes, and it is the same basis the two
+  // process tiles use. Raw score would crown whoever works the easiest process.
+  var byKey={}; list.forEach(function(p){ byKey[p.key]=p; });
+  var people=[];
+  cvProc.forEach(function(p0){
+    var p=byKey[p0.key]; if(!p || p.happy===null) return;
+    (cvUsers[p0.key]||[]).forEach(function(u0){
+      var u=cvScaleUser(u0,p0,per);
+      if(u.happy===null || u.resp<CV_MINPEOPLE) return;
+      people.push({u:u,p:p,h:u.happy/u.resp,x:u.unhappy/u.resp});
+    });
+  });
+  var topP=people.slice().sort(function(a,b){ return b.h-a.h; })[0];
+  var lowP=people.slice().sort(function(a,b){ return b.x-a.x; })[0];
+  var uM=function(o){ return o.p.csat!==null? o.u.csat.toFixed(1) : 'NPS '+o.u.nps; };
+  var pShare=function(o,k){ return Math.round(o.p[k]/o.p.resp*100); };
   var bar='<div style="display:flex;height:18px;border-radius:9px;overflow:hidden;background:#F0F1F5;margin:4px 0 18px;">'+
     '<div style="width:'+pc(h)+'%;background:linear-gradient(#19B171,#11985E);"></div>'+
     '<div style="width:'+pc(n)+'%;background:#D3D8E4;"></div>'+
@@ -15423,6 +15441,12 @@ function cvBand(){
         pM(worst)+(worst.d<0?' &#9660; '+Math.abs(worst.d):'')+' &middot; '+worst.unhappy+' unhappy ('+Math.round(worst.unhappy/worst.resp*100)+'%)')+
       cvBandTile('#11B670','Doing well', best.name,
         pM(best)+' &middot; '+Math.round(best.happy/best.resp*100)+'% happy')+
+      (lowP? cvBandTile('#FF4657','Lowest rated user', lowP.u.u,
+        lowP.p.name+' &middot; '+uM(lowP)+' &middot; '+Math.round(lowP.x*100)+'% unhappy '+
+        '<span style="color:#B9BECD;">(process '+pShare(lowP,'unhappy')+'%)</span>'):'')+
+      (topP? cvBandTile('#11B670','Highest rated user', topP.u.u,
+        topP.p.name+' &middot; '+uM(topP)+' &middot; '+Math.round(topP.h*100)+'% happy '+
+        '<span style="color:#B9BECD;">(process '+pShare(topP,'happy')+'%)</span>'):'')+
     '</div></div>';
 }
 
