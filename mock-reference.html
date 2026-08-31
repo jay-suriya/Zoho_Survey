@@ -12144,9 +12144,8 @@ function renderDealSignalsTable() {
   tbody.innerHTML = html;
 }
 function openDealDetailPage(name) {
-  svOverallSignal('dd-overall-signal', svSignalData.deal);
+  svOverallSignal('dd-overall-signal', svAvgFrom(dealSurveysData,'6h ago','Post-Delivery CSAT'));
   renderDealSignalsTable();
-  renderDealSurveys();
   document.getElementById('deal-detail-page').style.display = 'block';
   document.getElementById('deal-detail-page').scrollTop = 0;
 }
@@ -12169,17 +12168,7 @@ var dealSurveysData = [
     sent:'22 Aug', responded:'22 Aug', status:'responded', norm:0.62,
     metrics:[{label:'CSAT',value:'3.1 / 5',norm:0.62},{label:'Rating',value:'3.0 / 5',norm:0.60}] }
 ];
-var dealSurveyMeta = { lastAgo:'2h ago', speed:'4 min' };
-var dealSurveyExpanded = {};
 function dsBand(n){ if(n==null) return {c:'#8C91AB',l:'—'}; if(n<=0.4) return {c:'#C8324A',l:'At Risk'}; if(n<=0.6) return {c:'#DB842F',l:'Weak'}; if(n<0.75) return {c:'#B8791A',l:'Neutral'}; return {c:'#1F8A54',l:'Positive'}; }
-function renderDealSurveys(){
-  var body = document.getElementById('dd-survey-body'); if(!body) return;
-  var responded = dealSurveysData.filter(function(s){return s.status==='responded';});
-  var pending = dealSurveysData.filter(function(s){return s.status==='pending';});
-  var sub = document.getElementById('dd-survey-subtitle');
-  if(sub) sub.textContent = dealSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
-  cvRenderSignals(body, dealSurveysData, dealSurveyMeta, 'deal');
-}
 // Shared per-transition-attributed survey signals — used by Deal and Contact detail.
 // Each metric shows its LATEST value + WHICH transition/survey it came from (attribution,
 // not a blended average across transitions), then per-transition rows.
@@ -12211,9 +12200,10 @@ function svOverallSignal(id,o){
     return;
   }
   var t=[];
-  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>','','#1F2733'));
-  if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/10</span>','','#1F2733'));
-  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>','','#1F2733'));
+  var from=function(k){ var n=o.counts?o.counts[k]:0; return n>1? 'average of '+n+' surveys' : 'from 1 survey'; };
+  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>',from('CSAT'),'#1F2733'));
+  if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/10</span>',from('NPS'),'#1F2733'));
+  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+'<span style="font-size:12px;color:#9AA0B1;font-weight:600;">/5</span>',from('Rating'),'#1F2733'));
   t.push(svTile('Last response',o.last,o.lastFrom||'','#1F2733'));
   var v=svVerdict(o), k=v?SV_VERDICT[v]:null;
   t.push('<div style="flex:1;min-width:150px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
@@ -12222,52 +12212,27 @@ function svOverallSignal(id,o){
     '<div style="font-size:11px;color:#9AA0B1;margin-top:5px;">'+o.responded+' of '+o.total+' responded</div></div>');
   el.innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;">'+t.join('')+'</div>';
 }
-// Per-record roll-ups (latest value per metric across that record's responses)
-var svSignalData={
-  lead:    {csat:3.8, nps:7,  rating:4.0, last:'2 days ago', lastFrom:'Product Feedback', responded:1, total:1},
-  deal:    {csat:3.1, nps:9,  rating:3.0, last:'6 hours ago', lastFrom:'Post-Delivery CSAT', responded:2, total:3},
-  contact: {csat:3.2, nps:7,  rating:3.0, last:'5h ago', lastFrom:'Post-Service CSAT', responded:3, total:4}
-};
-
-function cvRenderSignals(body, data, meta, unit){
-  if(!body) return;
-  unit = unit || 'record';
-  var responded = data.filter(function(s){return s.status==='responded';});
-  var pending = data.filter(function(s){return s.status==='pending';});
-  // Aggregate each metric across responded surveys (chronological): last one wins = latest, and keep its source transition.
-  var agg = {};
-  responded.forEach(function(s){ s.metrics.forEach(function(m){
-    agg[m.label] = {value:m.value, norm:m.norm, src:s.name, trigger:s.trigger, count:(agg[m.label]?agg[m.label].count:0)+1};
+// Roll-up shown on a record = the AVERAGE of every responded survey sent to it,
+// computed from the same arrays the related list renders, so the two always agree.
+function svParseMetric(v){ var m=String(v).match(/-?\d+(\.\d+)?/); return m? parseFloat(m[0]) : null; }
+function svAvgFrom(data, last, lastFrom){
+  var responded=data.filter(function(s){ return s.status==='responded'; });
+  var acc={};
+  responded.forEach(function(s){ (s.metrics||[]).forEach(function(m){
+    var v=svParseMetric(m.value); if(v===null) return;
+    (acc[m.label]=acc[m.label]||{sum:0,n:0}); acc[m.label].sum+=v; acc[m.label].n++;
   }); });
-  var cards = [];
-  function metricCard(key, title){
-    var e = agg[key]; if(!e) return; var b = dsBand(e.norm);
-    cards.push('<div class="cv-fcard" style="border-top:3px solid '+b.c+';"><div class="fl">'+title+'</div>'+
-      '<div class="fv" style="color:'+b.c+';">'+e.value+'</div><div class="fs">from '+e.src+(e.count>1?' · latest of '+e.count:'')+'</div></div>');
-  }
-  metricCard('NPS','NPS'); metricCard('CSAT','CSAT'); metricCard('Rating','Avg Rating'); metricCard('Score','Score');
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #5464F2;"><div class="fl">Coverage</div><div class="fv" style="color:#3441C8;">'+responded.length+' / '+data.length+'</div><div class="fs">'+(pending.length? pending.length+' pending':'all responded')+'</div></div>');
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #1F8A54;"><div class="fl"><span class="cv-live"></span> Last response</div><div class="fv" style="font-size:16px;color:#202123;">'+meta.lastAgo+'</div><div class="fs">most recent of '+responded.length+'</div></div>');
-  cards.push('<div class="cv-fcard" style="border-top:3px solid #8C91AB;"><div class="fl">Touchpoints</div><div class="fv" style="color:#202123;">'+data.length+'</div><div class="fs">transitions on this '+unit+'</div></div>');
-  var html = '<div style="display:flex;gap:10px;flex-wrap:wrap;">'+cards.join('')+'</div>';
-  // Per-transition breakdown (attribution) — which transition fired which survey and what it scored.
-  // Shown on the contact (not the deal, per request).
-  if (unit !== 'deal') {
-    html += '<div style="margin-top:16px;border:1px solid #EDF0F4;border-radius:10px;overflow:hidden;">'+
-      '<div style="padding:10px 14px;font-size:12.5px;font-weight:700;color:#5B6473;background:#F7F8FA;border-bottom:1px solid #EDF0F4;">By transition</div>'+
-      data.map(function(s){
-        var mets = s.status==='responded'
-          ? s.metrics.map(function(m){var b=dsBand(m.norm);return '<span style="color:'+b.c+';font-weight:600;">'+m.label+' '+m.value+'</span>';}).join(' <span style="color:#D6D6E3;">·</span> ')
-          : '<span style="color:#B8791A;">Yet to respond</span>';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F2F3F7;">'+
-          '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#33475B;">'+s.name+'</div>'+
-          '<div style="font-size:11.5px;color:#97A0B0;margin-top:2px;">'+s.trigger+'</div></div>'+
-          '<div style="font-size:12.5px;text-align:right;">'+mets+'</div></div>';
-      }).join('')+'</div>';
-  }
-  body.innerHTML = html;
+  var avg=function(k){ return acc[k]? acc[k].sum/acc[k].n : null; };
+  var cnt=function(k){ return acc[k]? acc[k].n : 0; };
+  return {csat:avg('CSAT'), nps:avg('NPS')===null?null:Math.round(avg('NPS')*10)/10,
+          rating:avg('Rating'), counts:{CSAT:cnt('CSAT'),NPS:cnt('NPS'),Rating:cnt('Rating')},
+          responded:responded.length, total:data.length, last:last, lastFrom:lastFrom};
 }
-function dsToggle(id){ dealSurveyExpanded[id] = !dealSurveyExpanded[id]; renderDealSurveys(); }
+var leadSurveysData=[
+  {name:'Product Feedback', trigger:'Lead Status \u2192 Contacted', status:'responded',
+   metrics:[{label:'CSAT',value:'3.8 / 5'},{label:'NPS',value:'7 / 10'},{label:'Rating',value:'4.0 / 5'}]}
+];
+
 
 function openLeadsListPage() {
   renderLeadsListTable();
@@ -12281,7 +12246,7 @@ function closeLeadsListPage() {
 function openLeadDetailPage(name) {
   document.getElementById('lead-detail-page').style.display = 'block';
   document.getElementById('lead-detail-page').scrollTop = 0;
-  svOverallSignal('ld-overall-signal', svSignalData.lead);
+  svOverallSignal('ld-overall-signal', svAvgFrom(leadSurveysData,'2 days ago','Product Feedback'));
   ldRenderZohoSurveyTable();
 }
 function closeLeadDetailPage() {
@@ -13187,24 +13152,6 @@ function closeMarketplaceZohoPage() {
           <span style="flex:1;"></span>
           <button class="ld-btn ld-btn-outline" onclick="openSendSurveyModal()">Send Survey</button>
         </div>
-        <!-- Per-lead survey signals (show-if-present) -->
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
-          <div style="flex:1;min-width:120px;border:1px solid #EDF0F4;border-top:3px solid #B8791A;border-radius:9px;padding:12px 14px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.04em;color:#8C91AB;text-transform:uppercase;">CSAT</div>
-            <div style="font-size:23px;font-weight:800;color:#202123;margin-top:3px;">3.8<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5</span></div>
-            <div style="font-size:11px;color:#B8791A;font-weight:600;margin-top:2px;">Neutral</div>
-          </div>
-          <div style="flex:1;min-width:120px;border:1px solid #EDF0F4;border-top:3px solid #1F8A54;border-radius:9px;padding:12px 14px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.04em;color:#8C91AB;text-transform:uppercase;">NPS</div>
-            <div style="font-size:23px;font-weight:800;color:#202123;margin-top:3px;">7<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 10</span></div>
-            <div style="font-size:11px;color:#B8791A;font-weight:600;margin-top:2px;">Passive</div>
-          </div>
-          <div style="flex:1;min-width:120px;border:1px solid #EDF0F4;border-top:3px solid #1F8A54;border-radius:9px;padding:12px 14px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:.04em;color:#8C91AB;text-transform:uppercase;">Rating</div>
-            <div style="font-size:23px;font-weight:800;color:#202123;margin-top:3px;">4.0<span style="font-size:12px;color:#8C91AB;font-weight:600;"> / 5 ★</span></div>
-            <div style="font-size:11px;color:#1F8A54;font-weight:600;margin-top:2px;">Positive</div>
-          </div>
-        </div>
         <div id="ld-survey-empty" class="ld-section-empty">No records found</div>
         <div id="ld-survey-table-wrap" style="display:none;overflow-x:auto;">
           <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
@@ -13880,15 +13827,6 @@ function closeMarketplaceZohoPage() {
           <div style="width:34px;height:34px;border-radius:50%;background:#E9EAF0;"></div>
           <div><div style="font-size:13px;color:#202123;font-weight:600;">jonamsuriya@gmail.com</div><div style="font-size:12px;color:#5464F2;">&#9993; jonamsuriya@gmail.com</div></div>
         </div>
-      </div>
-
-      <!-- ═══ ZOHO SURVEY · DEAL SIGNALS (multi-survey timeline + per-question drill-down) ═══ -->
-      <div id="dd-sec-survey" style="background:#fff;border:1px solid #EDF0F4;border-radius:10px;padding:20px 24px;margin-bottom:18px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
-          <span style="font-size:15px;font-weight:750;color:#202123;">Zoho Survey · Signals</span>
-          <span id="dd-survey-subtitle" style="font-size:11.5px;color:#8C91AB;margin-left:auto;"></span>
-        </div>
-        <div id="dd-survey-body"></div>
       </div>
 
       <!-- ═══ ZOHO SURVEY RELATED LIST (screenshot style) ═══ -->
@@ -15007,7 +14945,6 @@ var contactSurveysData=[
   {name:'Relationship NPS', trigger:'Stage → Active (90-day)', status:'responded', metrics:[{label:'NPS',value:'7 / 10',norm:0.70}]},
   {name:'Renewal Pulse', trigger:'Stage → Renewal Due', status:'pending', metrics:[]}
 ];
-var contactSurveyMeta={ lastAgo:'5h ago', speed:'6 min' };
 function openContactsListPage(){
   document.getElementById('ctl-tbody').innerHTML=ctlData.map(function(c,i){
     return '<tr class="ctl-row" onclick="openContactDetailPage('+i+')">'+
@@ -15028,7 +14965,7 @@ function openContactDetailPage(i){
   var responded=contactSurveysData.filter(function(s){return s.status==='responded';});
   var pending=contactSurveysData.filter(function(s){return s.status==='pending';});
   document.getElementById('ctd-survey-subtitle').textContent='· '+contactSurveysData.length+' surveys · '+responded.length+' responded · '+pending.length+' pending';
-  svOverallSignal('ctd-overall-signal', svSignalData.contact);
+  svOverallSignal('ctd-overall-signal', svAvgFrom(contactSurveysData,'5h ago','Post-Service CSAT'));
   ctdRenderSurveyTable();
   document.getElementById('ctd-page').style.display='block';
   document.getElementById('ctd-page').scrollTop=0;
