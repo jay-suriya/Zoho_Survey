@@ -3932,6 +3932,35 @@ tbody tr:hover{background:#f5f7ff;}
             <div id="sd-results"></div>
 
             <!-- 3. Survey Reports -->
+            <div id="sd-reports-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
+              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Reports</span></div>
+              <div style="padding:0 24px 20px;">
+                <div style="display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;">
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Overall CSAT Score</span>
+                    <span style="font-size:10px;color:#8C91AB;">0 – 100</span>
+                  </div>
+                  <div id="sd-chart-csat" style="padding:12px 12px 10px;"></div>
+                </div>
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Overall NPS</span>
+                    <span style="font-size:10px;color:#8C91AB;">-100 to +100</span>
+                  </div>
+                  <div id="sd-chart-nps" style="padding:12px 12px 10px;"></div>
+                </div>
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Average Ratings</span>
+                    <span style="font-size:10px;color:#8C91AB;">per question scale</span>
+                  </div>
+                  <div id="sd-chart-rate" style="padding:12px 12px 10px;"></div>
+                </div>
+                </div>
+              </div>
+            </div>
+
             <div id="sd-respondents-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;">
                 <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">All Respondents</span>
@@ -5481,7 +5510,7 @@ function sdSetData(hasData) {
   if(vs){ vs.innerHTML = sv? sv.parts.map(function(p){
             return ({csat:'CSAT',nps:'NPS',rating:'Rating'})[p.kind]+' '+p.value.toFixed(2); }).join(' &middot; ') : ''; }
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
-  show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
+  show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
   if(typeof sdInitSections==='function') sdInitSections();
   show('sd-empty-note',!hasData);
@@ -9052,6 +9081,7 @@ function sdGroupRows(groups, label, filterKey){
 // Turn the page's static sections into the same collapsible shape as the results cards.
 var SD_SECTIONS=[
   ['sd-sec-stats',           true ],
+  ['sd-reports-section',     true ],
   ['sd-respondents-section', true ],
   ['sd-qresp-section',       false]  // question-level detail — collapsed until asked for
 ];
@@ -9129,24 +9159,23 @@ function sdRenderResults(){
   var agg=sdMetrics(rows);
 
   var legend=function(items){
-    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-top:14px;">'+
+    return '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">'+
       items.map(function(x){
-        return '<div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#434D5E;">'+
-          '<span style="width:9px;height:9px;border-radius:50%;background:'+x.color+';flex:none;margin-top:4px;"></span>'+
+        return '<div style="display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:#434D5E;line-height:1.35;">'+
+          '<span style="width:8px;height:8px;border-radius:50%;background:'+x.color+';flex:none;margin-top:3px;"></span>'+
           '<span>'+x.q.text+'</span></div>'; }).join('')+'</div>';
   };
   var th=function(t,l){ return '<th class="sdr-th"'+(l?' style="text-align:left;"':'')+'>'+t+'</th>'; };
   // chart on top, table behind a Details toggle, overall figure always visible
+  // one report card: chart, question legend, then Details revealing the table
   var block=function(id,chart,head,body,foot,items){
-    return '<div style="border:1px solid #EDEEF3;border-radius:9px;padding:14px 16px;margin-bottom:16px;">'+
-      '<div style="max-width:520px;margin:0 auto;">'+chart+'</div>' + legend(items) +
-      '<div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #F0F0F4;">'+
-        '<span onclick="sdToggleDetails(\''+id+'\')" id="'+id+'-link" style="font-size:12.5px;font-weight:600;color:#5464F2;cursor:pointer;">Details &#9662;</span>'+
+    return chart + legend(items) +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #F0F0F4;">'+
+        '<span onclick="sdToggleDetails(\''+id+'\')" id="'+id+'-link" style="font-size:12px;font-weight:600;color:#5464F2;cursor:pointer;white-space:nowrap;">Details &#9662;</span>'+
         '<span style="flex:1;"></span>'+
-        '<span style="font-size:12.5px;font-weight:700;color:#1F2733;">'+foot+'</span></div>'+
-      '<div id="'+id+'-body" style="display:none;margin-top:12px;overflow-x:auto;">'+
-        '<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
-    '</div>';
+        '<span style="font-size:11.5px;font-weight:700;color:#1F2733;text-align:right;">'+foot+'</span></div>'+
+      '<div id="'+id+'-body" style="display:none;margin-top:10px;overflow-x:auto;">'+
+        '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
   };
 
   // ── CSAT : bar per question ──
@@ -9164,7 +9193,9 @@ function sdRenderResults(){
     csatQ.forEach(function(x,i){
       var cx=PL+gap*i+gap/2, h=(H-PB)-y(x.st.csat);
       svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.st.csat)+'" width="'+bw+'" height="'+h+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
-           '<text x="'+cx+'" y="'+(y(x.st.csat)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.csat.toFixed(2)+'</text>';
+           ((h > 20)
+             ? '<text x="'+cx+'" y="'+(y(x.st.csat)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.csat.toFixed(2)+'</text>'
+             : '<text x="'+cx+'" y="'+(y(x.st.csat)-5)+'" font-size="10" fill="#434D5E" text-anchor="middle" font-weight="700">'+x.st.csat.toFixed(2)+'</text>');
     });
     return svg+'</svg>';
   })();
@@ -9180,7 +9211,7 @@ function sdRenderResults(){
 
   // ── NPS : the product's gauge ──
   var npsQ=qs.filter(function(x){ return x.q.type==='nps'; });
-  var npsBlock=block('sdd-nps', '<div style="max-width:260px;margin:0 auto;">'+sdNpsGauge(agg.nps===null?0:agg.nps)+'</div>',
+  var npsBlock=block('sdd-nps', '<div style="max-width:230px;margin:0 auto;">'+sdNpsGauge(agg.nps===null?0:agg.nps)+'</div>',
     th('Questions',1)+th('Detractors (0-6)')+th('Passives (7-8)')+th('Promoters (9-10)')+th('Net Promoter Score'),
     npsQ.map(function(x){
       return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
@@ -9205,7 +9236,9 @@ function sdRenderResults(){
       var cx=PL+gap*i+gap/2;
       svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.q.outOf)+'" width="'+bw+'" height="'+((H-PB)-y(x.q.outOf))+'" fill="#E6E7EC"><title>out of '+x.q.outOf+'</title></rect>'+
            '<rect x="'+(cx-bw/2)+'" y="'+y(x.st.avg)+'" width="'+bw+'" height="'+((H-PB)-y(x.st.avg))+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
-           '<text x="'+cx+'" y="'+(y(x.st.avg)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.avg.toFixed(2)+'</text>';
+           (((H-PB)-y(x.st.avg)) > 20
+             ? '<text x="'+cx+'" y="'+(y(x.st.avg)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.avg.toFixed(2)+'</text>'
+             : '<text x="'+cx+'" y="'+(y(x.st.avg)-5)+'" font-size="10" fill="#434D5E" text-anchor="middle" font-weight="700">'+x.st.avg.toFixed(2)+'</text>');
     });
     return svg+'</svg>';
   })();
@@ -9232,9 +9265,6 @@ function sdRenderResults(){
       '<div style="font-size:14px;font-weight:700;color:#1F2733;margin-top:5px;">'+weakest.q.text+'</div>'+
       '<div style="font-size:13px;font-weight:700;color:'+wb.c+';margin-top:4px;">'+wVal+' &middot; '+Math.round(weakest.st.pctOfScale)+'% of scale'+
         (weakest.q.csat?'':' <span style="font-weight:400;color:#8C91AB;">&middot; not counted in CSAT</span>')+'</div></div>'+
-    subhead('Overall CSAT Score')+csatBlock+
-    subhead('Overall NPS')+npsBlock+
-    subhead('Average Ratings','includes questions CSAT does not cover')+rateBlock+
     subhead('In their words')+
     quotes.map(function(r){ var b=dsBand((sdCsat(r)||0)/5);
       return '<div style="border-left:3px solid '+b.c+';padding:6px 0 6px 12px;margin-bottom:10px;">'+
@@ -9262,6 +9292,10 @@ function sdRenderResults(){
     sdPending.length+' invited, no response yet');
 
   host.innerHTML = byProc + said + byOwner + pend;
+  var put=function(id,html){ var e=document.getElementById(id); if(e) e.innerHTML=html; };
+  put('sd-chart-csat', csatBlock);
+  put('sd-chart-nps',  npsBlock);
+  put('sd-chart-rate', rateBlock);
 }
 
 function sdApplyChartFilter(label, testFn) {
