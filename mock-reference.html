@@ -3912,12 +3912,12 @@ tbody tr:hover{background:#f5f7ff;}
               <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
                 <div id="sd-stat-happy" style="font-size:26px;font-weight:700;color:#1F8A54;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Positives</div>
-                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">answers in the top band</div>
+                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">responses, more positive than negative</div>
               </div>
               <div class="sd-stat-click" onclick="sdFilterSentiment('unhappy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
                 <div id="sd-stat-unhappy" style="font-size:26px;font-weight:700;color:#C8324A;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Negatives</div>
-                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">answers in the bottom band</div>
+                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">responses, more negative than positive</div>
               </div>
             </div>
             <div id="sd-empty-note" style="display:none;margin:0 24px 16px;padding:22px;text-align:center;background:#F7F8FA;border:1px dashed #D6D6E3;border-radius:8px;color:#8C91AB;font-size:13.5px;">No responses yet — send the survey to your CRM records to start collecting insights.</div>
@@ -5770,9 +5770,9 @@ function sdSetData(hasData) {
   var set = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; };
   set('sd-stat-sent',stats.sent); set('sd-stat-responses',stats.responses);
   // counted from the actual responses, so the tile always matches what the drill-down shows
-  var mx = (typeof sdMetrics==='function')? sdMetrics(sdRespData) : {pos:0,neg:0};
-  set('sd-stat-happy',   hasData? String(mx.pos) : '0');
-  set('sd-stat-unhappy', hasData? String(mx.neg) : '0');
+  var rc = (typeof sdRespCounts==='function')? sdRespCounts(sdRespData) : {pos:0,neg:0};
+  set('sd-stat-happy',   hasData? String(rc.pos) : '0');
+  set('sd-stat-unhappy', hasData? String(rc.neg) : '0');
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
@@ -9130,11 +9130,11 @@ function sdSentiment(r){
   if(a){ var v=a.d? a.n/a.d*5 : a.n; return v>=4? 'happy' : (v<=2? 'unhappy' : 'neutral'); }
   return null; // no sentiment metric collected
 }
-function sdIsHappy(r){ return sdSentiment(r)==='happy'; }
-function sdIsUnhappy(r){ return sdSentiment(r)==='unhappy'; }
+function sdIsHappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='pos' : sdSentiment(r)==='happy'; }
+function sdIsUnhappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='neg' : sdSentiment(r)==='unhappy'; }
 function sdFilterSentiment(kind){
-  if(kind==='happy') sdApplyChartFilter('Happy responses', sdIsHappy);
-  else               sdApplyChartFilter('Unhappy responses', sdIsUnhappy);
+  if(kind==='happy') sdApplyChartFilter('Positive responses', sdIsHappy);
+  else               sdApplyChartFilter('Negative responses', sdIsUnhappy);
 }
 
 // ═══════════ Zoho Survey metric engine ═══════════
@@ -9194,6 +9194,24 @@ function sdMetrics(rows){
     n: rows.length
   };
 }
+// ── Verdict for ONE response: compare its own positive and negative answers.
+// Every CSAT-eligible answer counts (satisfaction, NPS, rating); scoring never does,
+// because it measures what was answered, not how the respondent felt.
+function sdRespVerdict(r){
+  var pos=0,neg=0,neu=0;
+  SD_Q.forEach(function(q){
+    if(!q.csat) return;
+    var b=sdBandOf(q, sdAnswer(r,q)); if(!b) return;
+    if(b==='pos') pos++; else if(b==='neg') neg++; else neu++;
+  });
+  return {pos:pos, neg:neg, neu:neu,
+          band: pos>neg? 'pos' : (neg>pos? 'neg' : 'neu')};
+}
+function sdRespCounts(rows){
+  var c={pos:0,neu:0,neg:0};
+  rows.forEach(function(r){ c[sdRespVerdict(r).band]++; });
+  return c;
+}
 function sdFmtCsat(v){ return v===null||v===undefined? '—' : v.toFixed(2); }
 function sdFmtNps(v){  return v===null||v===undefined? '—' : (v>0?'+':'')+v.toFixed(2); }
 function sdFmtRate(v){ return v===null||v===undefined? '—' : v.toFixed(2)+' / 10'; }
@@ -9245,11 +9263,11 @@ function sdGroup(rows, key){
   var m={};
   rows.forEach(function(r){ var k=r[key]||'Unassigned'; (m[k]=m[k]||[]).push(r); });
   return Object.keys(m).map(function(k){
-    var g=m[k], mx=sdMetrics(g);
+    var g=m[k], mx=sdMetrics(g), rc=sdRespCounts(g);
     var pending=(typeof sdPending!=='undefined')
       ? sdPending.filter(function(x){ return (x[key]||'Unassigned')===k; }).length : 0;
     return {label:k, n:g.length, pending:pending,
-      pos:mx.pos, neu:mx.neu, neg:mx.neg,
+      pos:rc.pos, neu:rc.neu, neg:rc.neg,
       csat:mx.csat, nps:mx.nps, rating:mx.rating,
       norm:mx.csat===null?null:mx.csat/100};
   }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
@@ -12528,7 +12546,7 @@ function svOverallSignal(id,o){
   if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(2)+u(10),from('Rating'),o.rating/10));
   t.push(svTile('Last response','<span style="font-size:17px;">'+o.last+'</span>',o.lastFrom||'',null));
   var v=svVerdict(o), k=v?SV_VERDICT[v]:null;
-  t.push('<div style="flex:1;min-width:150px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
+  t.push('<div style="flex:1;min-width:160px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
     '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;">Overall</div>'+
     '<div style="font-size:20px;font-weight:800;color:'+(k?k.c:'#1F2733')+';margin-top:6px;line-height:1;">'+(k?k.t:'&#8212;')+'</div>'+
     '<div style="font-size:11px;color:#9AA0B1;margin-top:5px;">'+o.responded+' of '+o.total+' responded</div></div>');
