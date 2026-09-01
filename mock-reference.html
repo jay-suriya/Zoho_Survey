@@ -9206,15 +9206,23 @@ function sdQuestionScores(rows){
   }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
 }
 
+// avg rating and survey score arrive as fractions ('3.0/10', '3/6 (50%)') — normalise both
+function sdFracVal(v, outOf){
+  var f=sdFrac(v); if(!f) return null;
+  return f.d? f.n/f.d*outOf : f.n;
+}
 function sdGroup(rows, key){
   var m={};
   rows.forEach(function(r){ var k=r[key]||'Unassigned'; (m[k]=m[k]||[]).push(r); });
   return Object.keys(m).map(function(k){
-    var g=m[k];
-    var csat=sdAvg(g.map(function(r){return sdNum(r.csatScore);}).filter(function(x){return x!==null;}));
+    var g=m[k], pick=function(fn){ return g.map(fn).filter(function(x){return x!==null;}); };
+    var csat  =sdAvg(pick(function(r){ return sdNum(r.csatScore); }));
+    var nps   =sdAvg(pick(function(r){ return sdNum(r.npsScore); }));
+    var rating=sdAvg(pick(function(r){ return sdFracVal(r.avgRating,5); }));
+    var score =sdAvg(pick(function(r){ return sdFracVal(r.score,100); }));
     return {label:k, n:g.length,
       happy:g.filter(sdIsHappy).length, unhappy:g.filter(sdIsUnhappy).length,
-      csat:csat, norm:csat===null?null:csat/5};
+      csat:csat, nps:nps, rating:rating, score:score, norm:csat===null?null:csat/5};
   }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
 }
 
@@ -9229,12 +9237,18 @@ function sdSplitBar(happy,unhappy,total,w){
   return '<div title="'+h+'% happy · '+n+'% neutral · '+u+'% unhappy" style="display:inline-flex;width:'+(w||90)+'px;height:7px;border-radius:4px;overflow:hidden;background:#F0F1F5;vertical-align:middle;">'+
     '<div style="width:'+h+'%;background:#19B171;"></div><div style="width:'+n+'%;background:#D3D8E4;"></div><div style="width:'+u+'%;background:#FF4D5B;"></div></div>';
 }
+function sdCell(v, outOf, fmt){
+  if(v===null||v===undefined) return '<span style="color:#C3C7D2;">&#8212;</span>';
+  var b=dsBand(v/outOf);
+  return '<span style="color:'+b.c+';font-weight:600;">'+fmt(v)+'</span>';
+}
 function sdGroupRows(groups, label, filterKey){
   return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
     '<thead><tr style="background:#F7F8FA;">'+
       ['<th class="sdr-th" style="text-align:left;">'+label+'</th>','<th class="sdr-th">Responses</th>',
        '<th class="sdr-th">Happy</th>','<th class="sdr-th">Unhappy</th>',
-       '<th class="sdr-th" style="text-align:left;">Sentiment</th>','<th class="sdr-th">CSAT</th>'].join('')+'</tr></thead><tbody>'+
+       '<th class="sdr-th" style="text-align:left;">Sentiment</th>','<th class="sdr-th">CSAT</th>',
+       '<th class="sdr-th">NPS</th>','<th class="sdr-th">Avg Rating</th>','<th class="sdr-th">Score</th>'].join('')+'</tr></thead><tbody>'+
     groups.map(function(g){
       var b=dsBand(g.norm);
       return '<tr class="sdr-row" style="cursor:pointer;" onclick="sdApplyChartFilter(\''+label+': '+g.label+'\', function(r){return r[\''+filterKey+'\']===\''+g.label+'\';})">'+
@@ -9244,6 +9258,9 @@ function sdGroupRows(groups, label, filterKey){
         '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+g.unhappy+'</td>'+
         '<td class="sdr-td" style="text-align:left;">'+sdSplitBar(g.happy,g.unhappy,g.n)+'</td>'+
         '<td class="sdr-td" style="font-weight:700;color:'+b.c+';">'+(g.csat===null?'—':g.csat.toFixed(1))+'</td>'+
+        '<td class="sdr-td">'+sdCell(g.nps,10,function(v){return v.toFixed(1);})+'</td>'+
+        '<td class="sdr-td">'+sdCell(g.rating,5,function(v){return v.toFixed(1);})+'</td>'+
+        '<td class="sdr-td">'+sdCell(g.score,100,function(v){return Math.round(v)+'%';})+'</td>'+
       '</tr>'; }).join('')+'</tbody></table></div>';
 }
 
