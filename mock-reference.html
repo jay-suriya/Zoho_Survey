@@ -3932,319 +3932,6 @@ tbody tr:hover{background:#f5f7ff;}
             <div id="sd-results"></div>
 
             <!-- 3. Survey Reports -->
-            <div id="sd-reports-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
-              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Reports</span></div>
-              <div style="padding:16px 0 0;position:relative;">
-              <!-- Scroll wrapper -->
-              <div id="sd-charts-scroll" style="display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;padding:0 16px 16px;">
-
-                <!-- ── CARD 1: Sentiment Over Time ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Sentiment Over Time</span>
-                    <span style="font-size:10px;color:#8C91AB;">avg CSAT / day</span>
-                  </div>
-                  <div id="sd-sentiment-chart" style="padding:14px 12px 10px;"></div>
-                </div>
-                <!-- ── CARD 2: Overall NPS gauge ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Overall NPS</span>
-                    <span style="font-size:10px;color:#8C91AB;">-100 to +100</span>
-                  </div>
-                  <div id="sd-nps-gauge" style="padding:10px 12px 6px;"></div>
-                </div>
-
-                <!-- ── CARD 3: Responses by Collector ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <div style="display:flex;align-items:center;gap:6px;">
-                      <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Responses by Collector</span>
-                      <div style="position:relative;display:inline-block;" id="sd-chart2-type-wrap">
-                        <span onclick="event.stopPropagation();sdToggleChartTypeDD('sd-chart2-type-dd')" style="color:#1a73e8;font-size:10px;cursor:pointer;border:1px solid #dadce0;border-radius:3px;padding:1px 6px;background:#f8f9fa;">Pie ▾</span>
-                        <div id="sd-chart2-type-dd" style="display:none;position:absolute;top:calc(100% + 2px);left:0;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:600;min-width:100px;">
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart2','pie')">Pie</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart2','bar')">Bar</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart2','donut')">Donut</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart2','line')">Line</div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div id="sd-chart2-container" style="padding:12px 14px;display:flex;align-items:center;gap:16px;min-height:120px;flex:1;">
-                    <div id="sd-chart2-visual">
-                      <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#7c4dff" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#00bcd4" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="-83.7" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#ff7043" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-167.4" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#78909c" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-209.3" transform="rotate(-90 50 50)"/>
-                      </svg>
-                    </div>
-                    <div style="font-size:11px;color:#555;line-height:2;">
-                      <div onclick="sdApplyChartFilter('Collector: Age 20–30', function(r){return r.collector==='Age 20–30';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#7c4dff;flex-shrink:0;"></span> Age 20–30 (2)</div>
-                      <div onclick="sdApplyChartFilter('Collector: Age 35–40', function(r){return r.collector==='Age 35–40';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#00bcd4;flex-shrink:0;"></span> Age 35–40 (2)</div>
-                      <div onclick="sdApplyChartFilter('Collector: Age 60', function(r){return r.collector==='Age 60';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#ff7043;flex-shrink:0;"></span> Age 60 (1)</div>
-                      <div onclick="sdApplyChartFilter('Collector: Default', function(r){return r.collector==='Default';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this collector"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#78909c;flex-shrink:0;"></span> Default (1)</div>
-                    </div>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-2" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Collector</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Responses</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Share</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr onclick="sdApplyChartFilter('Collector: Age 20–30', function(r){return r.collector==='Age 20–30';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#7c4dff;display:inline-block;"></span>Age 20–30</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
-                        <tr onclick="sdApplyChartFilter('Collector: Age 35–40', function(r){return r.collector==='Age 35–40';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span>Age 35–40</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
-                        <tr onclick="sdApplyChartFilter('Collector: Age 60', function(r){return r.collector==='Age 60';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#ff7043;display:inline-block;"></span>Age 60</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">17%</td></tr>
-                        <tr onclick="sdApplyChartFilter('Collector: Default', function(r){return r.collector==='Default';})" style="cursor:pointer;" title="Filter respondents by this collector"><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#78909c;display:inline-block;"></span>Default</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">17%</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- ── CARD 3: Daily Responses Trend ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Daily Responses Trend</span>
-                    <div style="display:flex;align-items:center;gap:6px;">
-                      <span style="background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">6 total</span>
-                      <span style="background:#e3f2fd;color:#1565c0;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;">Apr 1–6</span>
-                    </div>
-                  </div>
-                  <div style="padding:12px 14px;flex:1;">
-                    <svg width="100%" height="100" viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet" style="overflow:visible;">
-                      <line x1="30" y1="15" x2="310" y2="15" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <line x1="30" y1="45" x2="310" y2="45" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <line x1="30" y1="75" x2="310" y2="75" stroke="#f0f0f0" stroke-width="0.5"/>
-                      <text x="24" y="18" font-size="8" fill="#999" text-anchor="end">2</text>
-                      <text x="24" y="78" font-size="8" fill="#999" text-anchor="end">0</text>
-                      <polyline fill="none" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round" points="60,45 105,45 150,45 195,45 240,45 285,45"/>
-                      <circle onclick="sdApplyChartFilter('Response Date: Apr 1', function(r){return r.startTime.indexOf('Apr 1,')===0;})" style="cursor:pointer;" cx="60" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 2', function(r){return r.startTime.indexOf('Apr 2,')===0;})" style="cursor:pointer;" cx="105" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 3', function(r){return r.startTime.indexOf('Apr 3,')===0;})" style="cursor:pointer;" cx="150" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 4', function(r){return r.startTime.indexOf('Apr 4,')===0;})" style="cursor:pointer;" cx="195" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 5', function(r){return r.startTime.indexOf('Apr 5,')===0;})" style="cursor:pointer;" cx="240" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/><circle onclick="sdApplyChartFilter('Response Date: Apr 6', function(r){return r.startTime.indexOf('Apr 6,')===0;})" style="cursor:pointer;" cx="285" cy="45" r="4" fill="#fff" stroke="#5c6bc0" stroke-width="1.5"/>
-                      <text x="60" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 1</text><text x="105" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 2</text><text x="150" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 3</text><text x="195" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 4</text><text x="240" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 5</text><text x="285" y="92" font-size="7" fill="#999" text-anchor="middle">Apr 6</text>
-                    </svg>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-3" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Date</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Responses</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Cumulative</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 1', function(r){return r.startTime.indexOf('Apr 1,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">1</td></tr>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 2', function(r){return r.startTime.indexOf('Apr 2,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 2</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">2</td></tr>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 3', function(r){return r.startTime.indexOf('Apr 3,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 3</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">3</td></tr>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 4', function(r){return r.startTime.indexOf('Apr 4,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 4</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">4</td></tr>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 5', function(r){return r.startTime.indexOf('Apr 5,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;">Apr 5</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#5c6bc0;font-weight:600;">5</td></tr>
-                        <tr onclick="sdApplyChartFilter('Response Date: Apr 6', function(r){return r.startTime.indexOf('Apr 6,')===0;})" style="cursor:pointer;"><td style="padding:7px 14px;color:#555;">Apr 6</td><td style="padding:7px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:7px 14px;text-align:center;color:#5c6bc0;font-weight:600;">6</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">—</td></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- ── CARD 4: Overall CSAT Score (NEW) ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Overall CSAT Score</span>
-                    <button onclick="sdChartToggleTable('chart-tbl-4')" title="Expand table" style="background:none;border:1px solid #e0e0e0;border-radius:5px;cursor:pointer;padding:3px 7px;color:#666;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-                      Details
-                    </button>
-                  </div>
-                  <div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:10px;">
-                    <!-- CSAT donut summary -->
-                    <div style="display:flex;align-items:center;gap:16px;">
-                      <svg width="90" height="90" viewBox="0 0 90 90">
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#f0f0f0" stroke-width="14"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#00bcd4" stroke-width="14" stroke-dasharray="106.8 106.8" stroke-dashoffset="0" transform="rotate(-90 45 45)"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#fbbc04" stroke-width="14" stroke-dasharray="35.6 178" stroke-dashoffset="-106.8" transform="rotate(-90 45 45)"/>
-                        <circle cx="45" cy="45" r="34" fill="none" stroke="#e53935" stroke-width="14" stroke-dasharray="71.2 142.4" stroke-dashoffset="-142.4" transform="rotate(-90 45 45)"/>
-                        <text x="45" y="49" text-anchor="middle" font-size="13" font-weight="700" fill="#333">60%</text>
-                      </svg>
-                      <div style="font-size:11px;color:#555;line-height:2.1;">
-                        <div onclick="sdApplyChartFilter('CSAT: Positive', function(r){return parseInt(r.csatScore)>=4;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#00bcd4;display:inline-block;"></span><span>Positive <strong style="color:#333;">3</strong></span></div>
-                        <div onclick="sdApplyChartFilter('CSAT: Neutral', function(r){var c=parseInt(r.csatScore);return c===2||c===3;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span><span>Neutral <strong style="color:#333;">1</strong></span></div>
-                        <div onclick="sdApplyChartFilter('CSAT: Negative', function(r){return parseInt(r.csatScore)<=1;})" style="display:flex;align-items:center;gap:6px;cursor:pointer;" title="Filter respondents by this CSAT bucket"><span style="width:8px;height:8px;border-radius:2px;background:#e53935;display:inline-block;"></span><span>Negative <strong style="color:#333;">2</strong></span></div>
-                      </div>
-                    </div>
-                    <div style="background:#f5fffe;border-radius:6px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
-                      <span style="font-size:11px;color:#666;">Overall CSAT Score</span>
-                      <span style="font-size:18px;font-weight:700;color:#00bcd4;">60.00</span>
-                    </div>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-4" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Question</th>
-                        <th style="padding:6px 10px;text-align:center;font-weight:600;color:#e53935;border-bottom:1px solid #e8ecf8;">No</th>
-                        <th style="padding:6px 10px;text-align:center;font-weight:600;color:#00bcd4;border-bottom:1px solid #e8ecf8;">Yes</th>
-                        <th style="padding:6px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Positive %</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="How satisfied are you with the product overall?">How satisfied are you with the product overall?</td><td onclick="sdApplyChartFilter('Satisfied overall: No', function(r){return r.qSatisfied===&quot;No&quot;;})" style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#e53935;font-weight:600;cursor:pointer;">1</td><td onclick="sdApplyChartFilter('Satisfied overall: Yes', function(r){return r.qSatisfied===&quot;Yes&quot;;})" style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#00bcd4;font-weight:600;cursor:pointer;">5</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#333;">83%</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="Is the product meeting your current business needs?">Is the product meeting your business needs?</td><td onclick="sdApplyChartFilter('Meeting needs: No', function(r){return r.qMeeting===&quot;No&quot;;})" style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#e53935;font-weight:600;cursor:pointer;">1</td><td onclick="sdApplyChartFilter('Meeting needs: Yes', function(r){return r.qMeeting===&quot;Yes&quot;;})" style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#00bcd4;font-weight:600;cursor:pointer;">5</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#333;">83%</td></tr>
-                        <tr><td style="padding:7px 14px;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="Are there any product limitations that could affect your decision to renew? (No = positive)">Any renewal-blocking limitations? (No = good)</td><td onclick="sdApplyChartFilter('Has limitations: No', function(r){return r.qLimitations===&quot;No&quot;;})" style="padding:7px 10px;text-align:center;color:#00bcd4;font-weight:600;cursor:pointer;">4</td><td onclick="sdApplyChartFilter('Has limitations: Yes', function(r){return r.qLimitations===&quot;Yes&quot;;})" style="padding:7px 10px;text-align:center;color:#e53935;font-weight:600;cursor:pointer;">2</td><td style="padding:7px 10px;text-align:center;font-weight:700;color:#333;">67%</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#e8fffe;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Overall</td><td style="padding:8px 10px;text-align:center;color:#e53935;font-weight:700;">4</td><td style="padding:8px 10px;text-align:center;color:#00bcd4;font-weight:700;">14</td><td style="padding:8px 10px;text-align:center;font-weight:700;color:#00bcd4;font-size:13px;">78%</td></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- ── CARD 5: Average Ratings (NEW) ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Average Ratings</span>
-                    <button onclick="sdChartToggleTable('chart-tbl-5')" title="Expand table" style="background:none;border:1px solid #e0e0e0;border-radius:5px;cursor:pointer;padding:3px 7px;color:#666;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-                      Details
-                    </button>
-                  </div>
-                  <div style="padding:12px 14px;flex:1;">
-                    <!-- Mini bar chart for avg ratings -->
-                    <svg width="100%" height="110" viewBox="0 0 300 110" preserveAspectRatio="xMidYMid meet">
-                      <!-- gridlines -->
-                      <line x1="30" y1="10" x2="295" y2="10" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="30" x2="295" y2="30" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="50" x2="295" y2="50" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="70" x2="295" y2="70" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="90" x2="295" y2="90" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <text x="26" y="13" font-size="7" fill="#bbb" text-anchor="end">5</text>
-                      <text x="26" y="33" font-size="7" fill="#bbb" text-anchor="end">4</text>
-                      <text x="26" y="53" font-size="7" fill="#bbb" text-anchor="end">3</text>
-                      <text x="26" y="73" font-size="7" fill="#bbb" text-anchor="end">2</text>
-                      <text x="26" y="93" font-size="7" fill="#bbb" text-anchor="end">1</text>
-                      <!-- background max bars -->
-                      <rect x="44" y="10" width="32" height="80" fill="#f0f0f0" rx="2"/>
-                      <rect x="96" y="10" width="32" height="80" fill="#f0f0f0" rx="2"/>
-                      <rect x="148" y="10" width="32" height="80" fill="#f0f0f0" rx="2"/>
-                      <rect x="200" y="10" width="32" height="80" fill="#f0f0f0" rx="2"/>
-                      <rect x="252" y="10" width="32" height="80" fill="#f0f0f0" rx="2"/>
-                      <!-- actual bars (avg ~1.1/5 = 22% of 80px = ~18px) -->
-                      <rect x="44" y="72" width="32" height="18" fill="#00BCD4" rx="2"/>
-                      <rect x="96" y="72" width="32" height="18" fill="#3F51B5" rx="2"/>
-                      <rect x="148" y="72" width="32" height="18" fill="#E91E8C" rx="2"/>
-                      <rect x="200" y="72" width="32" height="18" fill="#9C27B0" rx="2"/>
-                      <rect x="252" y="72" width="32" height="18" fill="#FF9800" rx="2"/>
-                      <!-- value labels -->
-                      <text x="60" y="68" text-anchor="middle" font-size="8" fill="#444" font-weight="700">1.20</text>
-                      <text x="112" y="68" text-anchor="middle" font-size="8" fill="#444" font-weight="700">1.09</text>
-                      <text x="164" y="68" text-anchor="middle" font-size="8" fill="#444" font-weight="700">1.00</text>
-                      <text x="216" y="68" text-anchor="middle" font-size="8" fill="#444" font-weight="700">1.00</text>
-                      <text x="268" y="68" text-anchor="middle" font-size="8" fill="#444" font-weight="700">1.00</text>
-                    </svg>
-                    <!-- legend dots -->
-                    <div style="display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:4px;">
-                      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#555;"><span style="width:8px;height:8px;border-radius:50%;background:#00BCD4;display:inline-block;"></span>Q1</div>
-                      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#555;"><span style="width:8px;height:8px;border-radius:50%;background:#3F51B5;display:inline-block;"></span>Q2</div>
-                      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#555;"><span style="width:8px;height:8px;border-radius:50%;background:#E91E8C;display:inline-block;"></span>Q3</div>
-                      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#555;"><span style="width:8px;height:8px;border-radius:50%;background:#9C27B0;display:inline-block;"></span>Q4</div>
-                      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#555;"><span style="width:8px;height:8px;border-radius:50%;background:#FF9800;display:inline-block;"></span>Q5</div>
-                    </div>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-5" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Question</th>
-                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Response</th>
-                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Count</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="How satisfied are you with the product overall?"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#00BCD4;display:inline-block;flex-shrink:0;"></span>Satisfied overall (Q1)</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;"><span onclick="sdApplyChartFilter('Q1 Satisfied overall: Yes', function(r){return r.qSatisfied===&quot;Yes&quot;;})" style="cursor:pointer;color:#00bcd4;font-weight:700;">Yes 5</span> <span onclick="sdApplyChartFilter('Q1 Satisfied overall: No', function(r){return r.qSatisfied===&quot;No&quot;;})" style="cursor:pointer;color:#e53935;font-weight:700;margin-left:8px;">No 1</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#888;">6</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="Is the product meeting your current business needs?"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#3F51B5;display:inline-block;flex-shrink:0;"></span>Meeting business needs (Q2)</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;"><span onclick="sdApplyChartFilter('Q2 Meeting needs: Yes', function(r){return r.qMeeting===&quot;Yes&quot;;})" style="cursor:pointer;color:#00bcd4;font-weight:700;">Yes 5</span> <span onclick="sdApplyChartFilter('Q2 Meeting needs: No', function(r){return r.qMeeting===&quot;No&quot;;})" style="cursor:pointer;color:#e53935;font-weight:700;margin-left:8px;">No 1</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#888;">6</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="Any renewal-blocking limitations? (No = good)"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#E91E8C;display:inline-block;flex-shrink:0;"></span>Renewal limitations (Q3)</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;"><span onclick="sdApplyChartFilter('Q3 Limitations: No', function(r){return r.qLimitations===&quot;No&quot;;})" style="cursor:pointer;color:#00bcd4;font-weight:700;">No 4</span> <span onclick="sdApplyChartFilter('Q3 Limitations: Yes', function(r){return r.qLimitations===&quot;Yes&quot;;})" style="cursor:pointer;color:#e53935;font-weight:700;margin-left:8px;">Yes 2</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#888;">6</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="Would you like a follow-up from our team to discuss this feedback?"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#9C27B0;display:inline-block;flex-shrink:0;"></span>Wants follow-up (Q4)</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;"><span onclick="sdApplyChartFilter('Q4 Wants follow-up: Yes', function(r){return r.qFollowup===&quot;Yes&quot;;})" style="cursor:pointer;color:#00bcd4;font-weight:700;">Yes 4</span> <span onclick="sdApplyChartFilter('Q4 Wants follow-up: No', function(r){return r.qFollowup===&quot;No&quot;;})" style="cursor:pointer;color:#e53935;font-weight:700;margin-left:8px;">No 2</span></td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#888;">6</td></tr>
-                        <tr><td style="padding:7px 14px;color:#555;font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="How would you rate this product?"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#FF9800;display:inline-block;flex-shrink:0;"></span>Product rating (Q5)</span></td><td style="padding:7px 10px;text-align:center;"><span onclick="sdApplyChartFilter('Q5 Product rating: ≥4/5', function(r){return parseInt(String(r.qRate).split(&quot;/&quot;)[0])>=4;})" style="cursor:pointer;color:#00bcd4;font-weight:700;">≥4/5 → 4</span> <span onclick="sdApplyChartFilter('Q5 Product rating: <4/5', function(r){return parseInt(String(r.qRate).split(&quot;/&quot;)[0])<4;})" style="cursor:pointer;color:#e53935;font-weight:700;margin-left:8px;">&lt;4/5 → 2</span></td><td style="padding:7px 10px;text-align:center;color:#888;">6</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#f0f4ff;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Overall avg</td><td style="padding:8px 10px;text-align:center;font-weight:700;color:#3F51B5;">1.06</td><td style="padding:8px 10px;text-align:center;color:#888;font-weight:700;">5</td></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- ── CARD 6: Score Statistics (NEW) ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;overflow:hidden;display:flex;flex-direction:column;">
-                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Score Statistics</span>
-                    <button onclick="sdChartToggleTable('chart-tbl-6')" title="Expand table" style="background:none;border:1px solid #e0e0e0;border-radius:5px;cursor:pointer;padding:3px 7px;color:#666;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-                      Details
-                    </button>
-                  </div>
-                  <div style="padding:12px 14px;flex:1;">
-                    <svg width="100%" height="110" viewBox="0 0 300 110" preserveAspectRatio="xMidYMid meet">
-                      <!-- gridlines -->
-                      <line x1="30" y1="10" x2="295" y2="10" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="30" x2="295" y2="30" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="50" x2="295" y2="50" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="70" x2="295" y2="70" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <line x1="30" y1="90" x2="295" y2="90" stroke="#f0f0f0" stroke-width="0.8"/>
-                      <text x="26" y="13" font-size="7" fill="#bbb" text-anchor="end">100%</text>
-                      <text x="26" y="53" font-size="7" fill="#bbb" text-anchor="end">50%</text>
-                      <text x="26" y="93" font-size="7" fill="#bbb" text-anchor="end">0%</text>
-                      <!-- 0-10% bar: 40% of 80px = 32px -->
-                      <rect x="38" y="58" width="22" height="32" fill="#00BCD4" rx="2"/>
-                      <text x="49" y="54" text-anchor="middle" font-size="7" fill="#444" font-weight="700">40%</text>
-                      <!-- 40-50% bar: 60% of 80px = 48px -->
-                      <rect x="222" y="42" width="22" height="48" fill="#FF9800" rx="2"/>
-                      <text x="233" y="38" text-anchor="middle" font-size="7" fill="#444" font-weight="700">60%</text>
-                      <!-- x-axis labels -->
-                      <text x="49" y="101" text-anchor="middle" font-size="6.5" fill="#999">0-10%</text>
-                      <text x="75" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">10-20</text>
-                      <text x="101" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">20-30</text>
-                      <text x="127" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">30-40</text>
-                      <text x="155" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">40-50</text>
-                      <text x="181" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">50-60</text>
-                      <text x="207" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">60-70</text>
-                      <text x="233" y="101" text-anchor="middle" font-size="6.5" fill="#999">70-80</text>
-                      <text x="259" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">80-90</text>
-                      <text x="285" y="101" text-anchor="middle" font-size="6.5" fill="#ccc">90-100</text>
-                      <line x1="30" y1="90" x2="295" y2="90" stroke="#e0e0e0" stroke-width="1"/>
-                    </svg>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-6" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;max-height:220px;overflow-y:auto;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead style="position:sticky;top:0;"><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Score Range</th>
-                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">% Responses</th>
-                        <th style="padding:8px 10px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Count</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr style="background:#e8fffe;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;font-weight:600;color:#00838f;">0 – 10%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#00bcd4;">40.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#333;">2</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">10.01 – 20%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">20.01 – 30%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">30.01 – 40%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr style="background:#fff8e8;"><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;font-weight:600;color:#e65100;">40.01 – 50%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#FF9800;">60.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;color:#333;">3</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">50.01 – 60%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">60.01 – 70%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">70.01 – 80%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;border-bottom:1px solid #f0f0f0;font-size:11px;color:#888;">80.01 – 90%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#bbb;">0</td></tr>
-                        <tr><td style="padding:7px 14px;font-size:11px;color:#888;">90.01 – 100%</td><td style="padding:7px 10px;text-align:center;color:#bbb;">0.00%</td><td style="padding:7px 10px;text-align:center;color:#bbb;">0</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 10px;text-align:center;font-weight:700;color:#333;">100%</td><td style="padding:8px 10px;text-align:center;font-weight:700;color:#333;">5</td></tr></tfoot>
-                    </table>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Scroll indicator dots -->
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-bottom:12px;">
-                <div style="width:20px;height:3px;border-radius:2px;background:#7B1857;"></div>
-                <div style="width:6px;height:3px;border-radius:2px;background:#d0d0d0;"></div>
-                <div style="width:6px;height:3px;border-radius:2px;background:#d0d0d0;"></div>
-              </div>
-              </div><!-- /charts scroll wrapper -->
-            </div><!-- /Survey Reports -->
-
-            <!-- 4. All Respondents -->
             <div id="sd-respondents-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;">
                 <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">All Respondents</span>
@@ -5794,7 +5481,7 @@ function sdSetData(hasData) {
   if(vs){ vs.innerHTML = sv? sv.parts.map(function(p){
             return ({csat:'CSAT',nps:'NPS',rating:'Rating'})[p.kind]+' '+p.value.toFixed(2); }).join(' &middot; ') : ''; }
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
-  show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
+  show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
   if(typeof sdInitSections==='function') sdInitSections();
   show('sd-empty-note',!hasData);
@@ -9365,7 +9052,6 @@ function sdGroupRows(groups, label, filterKey){
 // Turn the page's static sections into the same collapsible shape as the results cards.
 var SD_SECTIONS=[
   ['sd-sec-stats',           true ],
-  ['sd-reports-section',     true ],
   ['sd-respondents-section', true ],
   ['sd-qresp-section',       false]  // question-level detail — collapsed until asked for
 ];
@@ -9398,40 +9084,6 @@ function sdInitSections(){
 
 // ── Survey Reports charts: CSAT per day, and the NPS gauge the product shows ──
 function sdDayOf(r){ return String(r.startTime||'').split(',')[0]; }   // 'Apr 1'
-function sdRenderCharts(){
-  var rows=sdRespData;
-  // CSAT over time — one point per day, using the real formula on that day's responses
-  var days=[]; rows.forEach(function(r){ var d=sdDayOf(r); if(days.indexOf(d)<0) days.push(d); });
-  var pts=days.map(function(d){
-    var m=sdMetrics(rows.filter(function(r){ return sdDayOf(r)===d; }));
-    return {day:d, v:(m.csat===null?0:m.csat)};
-  });
-  var el=document.getElementById('sd-sentiment-chart');
-  if(el){
-    var W=420,H=170,PL=34,PB=26,PT=12;
-    var x=function(i){ return PL + (pts.length<2?0:i*((W-PL-14)/(pts.length-1))); };
-    var y=function(v){ return (H-PB) - (v/100)*(H-PB-PT); };
-    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
-    [0,25,50,75,100].forEach(function(t){
-      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
-           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t+'</text>';
-    });
-    svg+='<polyline fill="none" stroke="#5464F2" stroke-width="2" points="'+
-      pts.map(function(p,i){ return x(i)+','+y(p.v); }).join(' ')+'"/>';
-    pts.forEach(function(p,i){
-      var b=dsBand(p.v/100);
-      svg+='<circle cx="'+x(i)+'" cy="'+y(p.v)+'" r="4" fill="#fff" stroke="'+b.c+'" stroke-width="2"><title>'+p.day+': CSAT '+p.v.toFixed(2)+'</title></circle>'+
-           '<text x="'+x(i)+'" y="'+(H-8)+'" font-size="9" fill="#9AA0B1" text-anchor="middle">'+p.day+'</text>';
-    });
-    el.innerHTML=svg+'</svg>';
-  }
-  // NPS gauge
-  var g=document.getElementById('sd-nps-gauge');
-  if(g){
-    var nps=sdMetrics(rows).nps;
-    g.innerHTML = sdNpsGauge(nps===null?0:nps);
-  }
-}
 // Semicircular gauge, -100 (left) to +100 (right), red / amber / green like the product's
 function sdNpsGauge(v){
   var W=260,H=152,cx=130,cy=116,R=86,r=66;
@@ -9456,6 +9108,13 @@ function sdNpsGauge(v){
        ((v>0?'+':'')+v.toFixed(2))+'</text></svg>';
   return s;
 }
+function sdToggleDetails(id){
+  var b=document.getElementById(id+'-body'), l=document.getElementById(id+'-link');
+  if(!b) return;
+  var open=b.style.display==='none';
+  b.style.display = open? 'block':'none';
+  if(l) l.innerHTML = open? 'Hide details &#9652;' : 'Details &#9662;';
+}
 function sdRenderResults(){
   var host=document.getElementById('sd-results'); if(!host) return;
   var rows=sdRespData;
@@ -9464,49 +9123,99 @@ function sdRenderResults(){
   var byProc=sdCard('Responses by Process',
     sdGroupRows(sdGroup(rows,'process'),'Process','process'));
 
-  // ── 2. What people said : the product's own three reports ──
-  var th=function(t,l){ return '<th class="sdr-th"'+(l?' style="text-align:left;"':'')+'>'+t+'</th>'; };
-  var tbl=function(head,body,foot){
-    return '<div style="overflow-x:auto;margin-bottom:6px;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
-      '<thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
-      '<div style="font-size:12.5px;font-weight:700;color:#1F2733;text-align:right;padding:2px 12px 14px;">'+foot+'</div>';
-  };
-  var qs=SD_Q.map(function(q){ var st=sdQStats(q,rows); return {q:q,st:st}; });
+  // ── 2. What people said : the product's own three reports, chart first ──
+  var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
+  var qs=SD_Q.map(function(q,i){ var st=sdQStats(q,rows); return {q:q,st:st,color:QCOL[i%QCOL.length]}; });
   var agg=sdMetrics(rows);
 
-  // CSAT report
-  var csatRows=qs.filter(function(x){ return x.q.csat; })
-    .sort(function(a,b){ return (a.st.csat-b.st.csat) || (b.st.neg-a.st.neg); });
-  var csatTbl=tbl(th('Questions',1)+th('Negatives')+th('Neutrals')+th('Positives')+th('CSAT Score'),
-    csatRows.map(function(x){ return '<tr>'+
-      '<td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-      '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
-      '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
-      '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
-      '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.csat/100).c+';">'+sdFmtCsat(x.st.csat)+'</td></tr>'; }).join(''),
-    'Overall CSAT Score: '+sdFmtCsat(agg.csat));
+  var legend=function(items){
+    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-top:14px;">'+
+      items.map(function(x){
+        return '<div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#434D5E;">'+
+          '<span style="width:9px;height:9px;border-radius:50%;background:'+x.color+';flex:none;margin-top:4px;"></span>'+
+          '<span>'+x.q.text+'</span></div>'; }).join('')+'</div>';
+  };
+  var th=function(t,l){ return '<th class="sdr-th"'+(l?' style="text-align:left;"':'')+'>'+t+'</th>'; };
+  // chart on top, table behind a Details toggle, overall figure always visible
+  var block=function(id,chart,head,body,foot,items){
+    return '<div style="border:1px solid #EDEEF3;border-radius:9px;padding:14px 16px;margin-bottom:16px;">'+
+      '<div style="max-width:520px;margin:0 auto;">'+chart+'</div>' + legend(items) +
+      '<div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #F0F0F4;">'+
+        '<span onclick="sdToggleDetails(\''+id+'\')" id="'+id+'-link" style="font-size:12.5px;font-weight:600;color:#5464F2;cursor:pointer;">Details &#9662;</span>'+
+        '<span style="flex:1;"></span>'+
+        '<span style="font-size:12.5px;font-weight:700;color:#1F2733;">'+foot+'</span></div>'+
+      '<div id="'+id+'-body" style="display:none;margin-top:12px;overflow-x:auto;">'+
+        '<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
+    '</div>';
+  };
 
-  // NPS report
-  var npsRows=qs.filter(function(x){ return x.q.type==='nps'; })
-    .sort(function(a,b){ return a.st.nps-b.st.nps; });
-  var npsTbl=tbl(th('Questions',1)+th('Detractors (0-6)')+th('Passives (7-8)')+th('Promoters (9-10)')+th('Net Promoter Score'),
-    npsRows.map(function(x){ return '<tr>'+
-      '<td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-      '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
-      '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
-      '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
-      '<td class="sdr-td" style="font-weight:700;color:'+dsBand((x.st.nps+100)/200).c+';">'+sdFmtNps(x.st.nps)+'</td></tr>'; }).join(''),
-    'Overall NPS: '+sdFmtNps(agg.nps));
+  // ── CSAT : bar per question ──
+  var csatQ=qs.filter(function(x){ return x.q.csat; });
+  var csatChart=(function(){
+    var W=560,H=210,PL=34,PB=16,PT=14, max=Math.max.apply(null,csatQ.map(function(x){return x.st.csat;}))||1;
+    max=Math.max(20, Math.ceil(max/20)*20);          // round axis: 20 / 40 / 60 ...
+    var bw=Math.min(58,(W-PL-14)/csatQ.length*0.5), gap=(W-PL-14)/csatQ.length;
+    var y=function(v){ return (H-PB)-(v/max)*(H-PB-PT); };
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
+    for(var t=0;t<=max;t+=max/4){
+      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
+           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t.toFixed(0)+'</text>';
+    }
+    csatQ.forEach(function(x,i){
+      var cx=PL+gap*i+gap/2, h=(H-PB)-y(x.st.csat);
+      svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.st.csat)+'" width="'+bw+'" height="'+h+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
+           '<text x="'+cx+'" y="'+(y(x.st.csat)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.csat.toFixed(2)+'</text>';
+    });
+    return svg+'</svg>';
+  })();
+  var csatBlock=block('sdd-csat', csatChart,
+    th('Questions',1)+th('Negatives')+th('Neutrals')+th('Positives')+th('CSAT Score'),
+    csatQ.slice().sort(function(a,b){ return a.st.csat-b.st.csat || b.st.neg-a.st.neg; }).map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
+        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.csat/100).c+';">'+sdFmtCsat(x.st.csat)+'</td></tr>'; }).join(''),
+    'Overall CSAT Score: '+sdFmtCsat(agg.csat), csatQ);
 
-  // Average ratings report — includes questions CSAT never sees
-  var rateRows=qs.filter(function(x){ return x.q.rated; })
-    .sort(function(a,b){ return (a.st.avg/a.q.outOf)-(b.st.avg/b.q.outOf); });
-  var rateTbl=tbl(th('Questions',1)+th('Average Ratings')+th('Out of'),
-    rateRows.map(function(x){ return '<tr>'+
-      '<td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-      '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.avg/x.q.outOf).c+';">'+x.st.avg.toFixed(2)+'</td>'+
-      '<td class="sdr-td" style="color:#8C91AB;">'+x.q.outOf+'</td></tr>'; }).join(''),
-    'Overall average survey rating: '+sdFmtRate(agg.rating));
+  // ── NPS : the product's gauge ──
+  var npsQ=qs.filter(function(x){ return x.q.type==='nps'; });
+  var npsBlock=block('sdd-nps', '<div style="max-width:260px;margin:0 auto;">'+sdNpsGauge(agg.nps===null?0:agg.nps)+'</div>',
+    th('Questions',1)+th('Detractors (0-6)')+th('Passives (7-8)')+th('Promoters (9-10)')+th('Net Promoter Score'),
+    npsQ.map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
+        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand((x.st.nps+100)/200).c+';">'+sdFmtNps(x.st.nps)+'</td></tr>'; }).join(''),
+    'Overall NPS: '+sdFmtNps(agg.nps), npsQ);
+
+  // ── Average Ratings : filled bar against the question's own scale ──
+  var rateQ=qs.filter(function(x){ return x.q.rated; });
+  var rateChart=(function(){
+    var W=560,H=210,PL=34,PB=16,PT=14, max=Math.max.apply(null,rateQ.map(function(x){return x.q.outOf;}))||1;
+    var gap=(W-PL-14)/rateQ.length, bw=Math.min(58,gap*0.5);
+    var y=function(v){ return (H-PB)-(v/max)*(H-PB-PT); };
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
+    for(var t=0;t<=max;t+=max/5){
+      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
+           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t.toFixed(0)+'</text>';
+    }
+    rateQ.forEach(function(x,i){
+      var cx=PL+gap*i+gap/2;
+      svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.q.outOf)+'" width="'+bw+'" height="'+((H-PB)-y(x.q.outOf))+'" fill="#E6E7EC"><title>out of '+x.q.outOf+'</title></rect>'+
+           '<rect x="'+(cx-bw/2)+'" y="'+y(x.st.avg)+'" width="'+bw+'" height="'+((H-PB)-y(x.st.avg))+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
+           '<text x="'+cx+'" y="'+(y(x.st.avg)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.avg.toFixed(2)+'</text>';
+    });
+    return svg+'</svg>';
+  })();
+  var rateBlock=block('sdd-rate', rateChart,
+    th('Questions',1)+th('Average Ratings')+th('Out of'),
+    rateQ.slice().sort(function(a,b){ return (a.st.avg/a.q.outOf)-(b.st.avg/b.q.outOf); }).map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.avg/x.q.outOf).c+';">'+x.st.avg.toFixed(2)+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.q.outOf+'</td></tr>'; }).join(''),
+    'Overall average survey rating: '+sdFmtRate(agg.rating), rateQ);
 
   // Weakest question — ranked on % of its own scale, so every question can be compared
   var weakest=qs.slice().sort(function(a,b){ return a.st.pctOfScale-b.st.pctOfScale; })[0];
@@ -9523,9 +9232,9 @@ function sdRenderResults(){
       '<div style="font-size:14px;font-weight:700;color:#1F2733;margin-top:5px;">'+weakest.q.text+'</div>'+
       '<div style="font-size:13px;font-weight:700;color:'+wb.c+';margin-top:4px;">'+wVal+' &middot; '+Math.round(weakest.st.pctOfScale)+'% of scale'+
         (weakest.q.csat?'':' <span style="font-weight:400;color:#8C91AB;">&middot; not counted in CSAT</span>')+'</div></div>'+
-    subhead('CSAT')+csatTbl+
-    subhead('Net Promoter Score')+npsTbl+
-    subhead('Average Ratings','includes questions CSAT does not cover')+rateTbl+
+    subhead('Overall CSAT Score')+csatBlock+
+    subhead('Overall NPS')+npsBlock+
+    subhead('Average Ratings','includes questions CSAT does not cover')+rateBlock+
     subhead('In their words')+
     quotes.map(function(r){ var b=dsBand((sdCsat(r)||0)/5);
       return '<div style="border-left:3px solid '+b.c+';padding:6px 0 6px 12px;margin-bottom:10px;">'+
@@ -9553,7 +9262,6 @@ function sdRenderResults(){
     sdPending.length+' invited, no response yet');
 
   host.innerHTML = byProc + said + byOwner + pend;
-  sdRenderCharts();
 }
 
 function sdApplyChartFilter(label, testFn) {
