@@ -4357,6 +4357,14 @@ tbody tr:hover{background:#f5f7ff;}
                       <div class="sd-inv-dd-item" onclick="sdQRespSetModule('Custom Module')">Custom Module</div>
                     </div>
                   </div>
+                  <!-- Process dropdown -->
+                  <div style="position:relative;display:inline-block;" id="sd-qresp-process-wrap">
+                    <button onclick="event.stopPropagation();sdQRespToggleProcessDD()" style="border:1px solid #dadce0;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;background:#fff;color:#3c4043;display:flex;align-items:center;gap:6px;font-family:inherit;">
+                      <span id="sd-qresp-process-label">All Processes</span>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div id="sd-qresp-process-dd" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.14);min-width:180px;z-index:40;padding:4px;"></div>
+                  </div>
                   <!-- Filter icon on far right -->
                   <div style="margin-left:auto;">
                     <button onclick="sdRespToggleFilter()" title="Filter" style="background:none;border:1px solid #dadce0;border-radius:4px;cursor:pointer;padding:4px 8px;color:#666;display:flex;align-items:center;gap:4px;font-size:11px;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
@@ -9226,7 +9234,9 @@ function sdGroupRows(groups, label, filterKey){
     groups.map(function(g){
       var b=dsBand(g.norm);
       return '<tr class="sdr-row" style="cursor:pointer;" onclick="sdApplyChartFilter(\''+label+': '+g.label+'\', function(r){return r[\''+filterKey+'\']===\''+g.label+'\';})">'+
-        '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+g.label+'</td>'+
+        '<td class="sdr-td" style="text-align:left;">'+(filterKey==='process'
+          ? '<span class="cv-proc-link" onclick="event.stopPropagation();sdGoToQuestions(\''+g.label+'\')">'+g.label+'</span>'
+          : '<span style="font-weight:600;color:#1F2733;">'+g.label+'</span>')+'</td>'+
         '<td class="sdr-td">'+g.n+'</td>'+
         '<td class="sdr-td">'+(g.pending? '<span style="color:#B8791A;font-weight:600;">'+g.pending+'</span>' : '<span style="color:#C3C7D2;">&#8212;</span>')+'</td>'+
         '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+g.happy+'</td>'+
@@ -10119,6 +10129,15 @@ var sdQRespPersonDetails = {
   'Karthik':{email:'karthik@testmail.com', leadSource:'Webinar', mobile:'+91 10987 65432', industry:'Technology', status:'New'}
 };
 var sdQRespModuleFilter = 'All Modules';
+var sdQRespProcessFilter = 'All Processes';
+function sdProcessOf(name){
+  var r=sdRespData.filter(function(x){ return x.name===name; })[0];
+  return r? r.process : null;
+}
+function sdAllProcesses(){
+  var out=[]; sdRespData.forEach(function(r){ if(r.process && out.indexOf(r.process)<0) out.push(r.process); });
+  return out.sort();
+}
 
 function sdQRespGetItems() {
   var items = [];
@@ -10129,6 +10148,8 @@ function sdQRespGetItems() {
 
 function sdQRespGetFilteredResponses(q) {
   var base = sdQRespModuleFilter === 'All Modules' ? q.responses : q.responses.filter(function(r){ return r.module === sdQRespModuleFilter; });
+  if (sdQRespProcessFilter !== 'All Processes')
+    base = base.filter(function(r){ return sdProcessOf(r.name) === sdQRespProcessFilter; });
   return base.filter(function(r){ return sdQRespMatchesRespFilter(r.name); });
 }
 
@@ -10551,6 +10572,31 @@ function sdQRespMatchesRespFilter(respName) {
   return true;
 }
 
+function sdQRespToggleProcessDD() {
+  var dd=document.getElementById('sd-qresp-process-dd');
+  var open=dd.style.display==='none'||!dd.style.display;
+  if(open){
+    dd.innerHTML=['All Processes'].concat(sdAllProcesses()).map(function(p){
+      var sel=(p===sdQRespProcessFilter);
+      return '<div class="sd-inv-dd-item" onclick="sdQRespSetProcess(\''+p+'\')"'+
+        (sel?' style="font-weight:600;color:#1a73e8;"':'')+'>'+p+'</div>'; }).join('');
+  }
+  dd.style.display = open? 'block':'none';
+}
+function sdQRespSetProcess(proc) {
+  sdQRespProcessFilter = proc;
+  sdQRespExpandedIds = {}; sdQRespExpandedResp = {}; sdQRespPages = {}; sdQRespTblModFilter = {};
+  var l=document.getElementById('sd-qresp-process-label'); if(l) l.textContent = proc;
+  var dd=document.getElementById('sd-qresp-process-dd'); if(dd) dd.style.display='none';
+  sdQRespRender();
+}
+// From Responses by Process: jump to the question breakdown, pre-filtered to that process.
+function sdGoToQuestions(proc){
+  if(sdOpen['sd-qresp-section']===false) sdToggleSec('sd-qresp-section');
+  sdQRespSetProcess(proc);
+  var sec=document.getElementById('sd-qresp-section');
+  if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function sdQRespToggleModuleDD() {
   var dd = document.getElementById('sd-qresp-module-dd');
   dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
