@@ -3898,7 +3898,7 @@ tbody tr:hover{background:#f5f7ff;}
           <div id="sd-responses-body" style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;">
 
             <!-- 1. Response Statistics -->
-            <div style="padding-bottom:8px;">
+            <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
               <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
               <div style="background:#fff;padding:18px 12px;text-align:center;">
@@ -5767,6 +5767,7 @@ function sdSetData(hasData) {
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
+  if(typeof sdInitSections==='function') sdInitSections();
   show('sd-empty-note',!hasData);
   // Invited / Send-Survey related list is empty until the survey is sent
   if (!hasData) { sdInvPeople = []; sdInvSelectedIds = []; if (typeof sdInvRender==='function') sdInvRender(); }
@@ -9187,11 +9188,28 @@ function sdGroup(rows, key){
   }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
 }
 
+var sdOpen={}; // section id -> open? (remembered across re-renders)
+function sdToggleSec(id){
+  sdOpen[id]=!(sdOpen[id]!==false);
+  var b=document.getElementById(id+'-body'), c=document.getElementById(id+'-chev');
+  if(b) b.style.display = sdOpen[id]? '' : 'none';
+  if(c) c.style.transform = sdOpen[id]? '' : 'rotate(-90deg)';
+}
+function sdChev(id){
+  var open=sdOpen[id]!==false;
+  return '<svg id="'+id+'-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5B6473" '+
+    'stroke-width="2.6" style="flex:none;transition:transform .18s;'+(open?'':'transform:rotate(-90deg);')+'">'+
+    '<polyline points="6 9 12 15 18 9"/></svg>';
+}
 function sdCard(title, body, sub){
-  return '<div style="background:#fff;border:1px solid #e8e8e8;border-radius:6px;padding:16px 20px;margin:0 24px 16px;">'+
-    '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">'+
+  var id='sdc-'+title.toLowerCase().replace(/[^a-z]+/g,'-');
+  var open=sdOpen[id]!==false;
+  return '<div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px;margin:0 24px 14px;overflow:hidden;">'+
+    '<div onclick="sdToggleSec(\''+id+'\')" style="display:flex;align-items:center;gap:10px;padding:15px 20px;cursor:pointer;'+(open?'border-bottom:1px solid #F0F0F4;':'')+'">'+
+      sdChev(id)+
       '<span style="font-size:14px;font-weight:700;color:#1B1A2E;">'+title+'</span>'+
-      (sub? '<span style="font-size:11.5px;color:#8C91AB;">'+sub+'</span>':'')+'</div>'+ body+'</div>';
+      (sub? '<span style="font-size:11.5px;color:#8C91AB;">'+sub+'</span>':'')+'</div>'+
+    '<div id="'+id+'-body" style="padding:16px 20px 18px;'+(open?'':'display:none;')+'">'+body+'</div></div>';
 }
 function sdCell(v, outOf, fmt){
   if(v===null||v===undefined) return '<span style="color:#C3C7D2;">&#8212;</span>';
@@ -9218,6 +9236,40 @@ function sdGroupRows(groups, label, filterKey){
         '<td class="sdr-td">'+sdCell(g.rating,5,function(v){return v.toFixed(1);})+'</td>'+
         '<td class="sdr-td">'+sdCell(g.score,100,function(v){return Math.round(v)+'%';})+'</td>'+
       '</tr>'; }).join('')+'</tbody></table></div>';
+}
+
+// Turn the page's static sections into the same collapsible shape as the results cards.
+var SD_SECTIONS=[
+  ['sd-sec-stats',           true ],
+  ['sd-reports-section',     true ],
+  ['sd-respondents-section', true ],
+  ['sd-qresp-section',       false]  // question-level detail — collapsed until asked for
+];
+function sdInitSections(){
+  SD_SECTIONS.forEach(function(pair){
+    var id=pair[0], el=document.getElementById(id); if(!el || el.dataset.sdReady) return;
+    el.dataset.sdReady='1';
+    if(sdOpen[id]===undefined) sdOpen[id]=pair[1];
+    el.style.borderTop='none';
+    el.style.margin='0 24px 14px';
+    el.style.background='#fff';
+    el.style.border='1px solid #e8e8e8';
+    el.style.borderRadius='8px';
+    el.style.overflow='hidden';
+    el.style.paddingBottom='0';
+    var head=el.children[0];
+    head.style.cursor='pointer';
+    head.style.padding='15px 20px';
+    head.style.margin='0';
+    head.setAttribute('onclick',"sdToggleSec('"+id+"')");
+    head.insertAdjacentHTML('afterbegin', sdChev(id));
+    var body=document.createElement('div');
+    body.id=id+'-body';
+    body.style.padding='4px 0 14px';
+    while(el.children.length>1) body.appendChild(el.children[1]);
+    el.appendChild(body);
+    if(!sdOpen[id]) body.style.display='none'; else head.style.borderBottom='1px solid #F0F0F4';
+  });
 }
 
 function sdRenderResults(){
