@@ -15590,7 +15590,7 @@ var cvUsers={
 var cvF={ band:{period:'This month'},
           proc:{period:'This month',survey:'All',module:'All'},
           surv:{period:'This month',survey:'All'},
-          user:{period:'This month',scope:'All processes'} };
+          user:{period:'This month',process:'All',user:'All'} };
 var cvMenu=null;
 // Volume multiplier + score adjustment per period. 'Last month' uses each
 // process's own Δ inverted, so the filter agrees with the Δ column.
@@ -15878,142 +15878,41 @@ function cvOpenSurvey(name){
 }
 
 // ═══ REPORT 2 : Feedback by User ═══
-// ── Who reports to whom. A person has one manager, so a user who works several
-//    processes (A. Rahman sells cars and owns the 6-month pulse) never fragments
-//    across teams the way they do across processes.
-var CV_TEAM={
-  'Ravi Shankar (Service Manager)':  ['M. Iqbal','G. Ravi','N. Latha','D. Suresh','J. Prakash','T. Farhan','V. Anand','R. Balaji','S. Kumar'],
-  'Anand Prakash (Sales Manager)':   ['A. Rahman','S. Meera','H. Nagraj','L. Fatima','D. Anbu','B. Karthik','P. Nithya','Jay Suriya','Morrison Troy','Priya Venkat'],
-  'Deepa Nair (Delivery Manager)':   ['K. Vasanth','A. Deepak','S. Ilango','M. Vinoth','R. Menon'],
-  'Kavitha R (Renewals Lead)':       ['P. Devi','K. Suresh','A. Bhavani'],
-  'Meena S (Tele-sales Lead)':       ['R. Anand','K. Divya','S. Mano']
-};
-function cvManagerOf(name){
-  var out=null;
-  Object.keys(CV_TEAM).forEach(function(m){ if(CV_TEAM[m].indexOf(name)>=0) out=m; });
-  return out;
-}
-// every (user, process) pairing, scaled to the chosen period
-function cvUserRows(period){
-  var out=[];
-  cvProc.forEach(function(p0){
-    (cvUsers[p0.key]||[]).forEach(function(u0){
-      out.push({ u:u0.u, proc:cvScaleProc(p0,period), procKey:p0.key,
-                 m:cvScaleUser(u0,p0,period), team:cvManagerOf(u0.u) });
-    });
-  });
-  return out;
-}
-var cvPersonOpen={};
-function cvTogglePerson(name){ cvPersonOpen[name]=!cvPersonOpen[name]; renderAnalytics(); }
-
 function cvUserReport(){
-  var f=cvF.user;
-  var rows=cvUserRows(f.period);
-  var procNames=cvProc.map(function(p){ return p.name; });
-  var teams=Object.keys(CV_TEAM);
-  var scope=f.scope||'All processes';
-  var body='', cols=8, note='';
-
-  var userCell=function(name, sub){
-    return cvTd('<span class="cv-proc-link" onclick="cvTogglePerson(\''+name.replace(/'/g,"\\'")+'\')">'+name+'</span>'+
-      (sub? '<div style="font-size:11px;color:#8C91AB;margin-top:2px;">'+sub+'</div>':''),'left');
-  };
-  var metricCells=function(m,prim){
-    return cvTd(m.sent.toLocaleString())+
-      cvTd(m.resp+' <span style="color:#8C91AB;">('+cvPct(m.resp,m.sent)+')</span>')+
-      cvTd(cvMood(m.happy,m.resp,'#1F8A54'))+
-      cvTd(cvMood(m.unhappy,m.resp,'#C8324A'))+
-      cvTd(cvCsat(m.csat,prim==='csat'))+
-      cvTd(cvNps(m.nps,prim==='nps'))+
-      cvTd(cvRate(m.rating));
-  };
-  // a person's own breakdown, revealed under their row — where a multi-process user
-  // stops being several rows and becomes one person
-  var personRows=function(name){
-    var mine=rows.filter(function(r){ return r.u===name; });
-    return '<tr><td colspan="'+cols+'" style="background:#FAFBFE;border-bottom:1px solid #F0F0F4;padding:10px 14px 12px 26px;">'+
-      '<div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">'+
-        name+' &middot; '+mine.length+' process'+(mine.length>1?'es':'')+
-        (mine[0]&&mine[0].team? ' &middot; reports to '+mine[0].team : '')+'</div>'+
-      mine.map(function(r){
-        var prim=(r.proc.dUnit==='nps')?'nps':'csat';
-        var mine_v=r.m[prim], base=r.proc[prim];
-        var d=(mine_v===null||base===null)? null : +(mine_v-base).toFixed(2);
-        return '<div style="display:flex;align-items:center;gap:12px;font-size:12.5px;padding:5px 0;">'+
-          '<span style="min-width:150px;font-weight:600;color:#1F2733;">'+r.proc.name+'</span>'+
-          '<span style="min-width:120px;color:#616E88;">'+r.m.resp+' of '+r.m.sent+' responded</span>'+
-          '<span style="min-width:120px;">'+(prim==='nps'? 'NPS '+cvNps(r.m.nps) : 'CSAT '+cvCsat(r.m.csat))+'</span>'+
-          '<span style="color:#8C91AB;">vs '+(prim==='nps'? cvNps(base) : cvCsat(base))+' for the process'+
-            (d===null?'':' <b style="color:'+(d>=0?'#1F8A54':'#C8324A')+';">('+(d>0?'+':'')+d.toFixed(2)+')</b>')+'</span>'+
-        '</div>'; }).join('')+'</td></tr>';
-  };
-
-  if(scope==='All processes'){
-    // person-first: one row per person. Deliberately NOT ranked — a delivery exec and a
-    // service advisor sit on different baselines, so the only comparable figure is each
-    // person's gap to their own process.
-    note='one row per person &middot; not ranked &mdash; each process has its own baseline';
-    var names=cvUniq(rows.map(function(r){ return r.u; })).sort();
-    body=names.map(function(n){
-      var mine=rows.filter(function(r){ return r.u===n; });
-      var tot={sent:0,resp:0,happy:0,unhappy:0};
-      mine.forEach(function(r){ tot.sent+=r.m.sent; tot.resp+=r.m.resp;
-        tot.happy+=(r.m.happy||0); tot.unhappy+=(r.m.unhappy||0); });
-      var chips=mine.map(function(r){
-        var prim=(r.proc.dUnit==='nps')?'nps':'csat';
-        var d=(r.m[prim]===null||r.proc[prim]===null)? null : +(r.m[prim]-r.proc[prim]).toFixed(2);
-        var col=d===null?'#8C91AB':(d>=0?'#1F8A54':'#C8324A');
-        return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#F4F5F9;border:1px solid #E1E3EA;border-radius:20px;padding:2px 9px;margin:2px 4px 2px 0;">'+
-          r.proc.name+(d===null?'':' <b style="color:'+col+';">'+(d>0?'+':'')+d.toFixed(2)+'</b>')+'</span>'; }).join('');
-      return '<tr>'+
-        userCell(n, mine[0].team||'') +
-        cvTd(chips,'left','white-space:normal;')+
-        cvTd(tot.sent.toLocaleString())+
-        cvTd(tot.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(tot.resp,tot.sent)+')</span>')+
-        cvTd(cvMood(tot.happy,tot.resp,'#1F8A54'))+
-        cvTd(cvMood(tot.unhappy,tot.resp,'#C8324A'))+
-      '</tr>' + (cvPersonOpen[n]? personRows(n):''); }).join('');
-    cols=6;
-    return anCard('Feedback by User',
-      cvChipRow([cvChip('user','period','Period',CV_PERIOD_LIST),
-                 cvChip('user','scope','Scope',['All processes'].concat(procNames).concat(teams))])+
-      cvTable(cvTh(['User','Processes &middot; vs their own baseline','Sent','Responded','Positives','Negatives'],2)+body)+
-      '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">'+note+'</div>',
-      '', true);
-  }
-
-  // A single process, or one manager's team: everyone here shares a baseline, so rank them.
-  var isTeam=teams.indexOf(scope)>=0;
-  var scoped=isTeam? rows.filter(function(r){ return r.team===scope; })
-                   : rows.filter(function(r){ return r.proc.name===scope; });
-  var groups=cvUniq(scoped.map(function(r){ return r.proc.name; }));
-  var drawn={};   // a person's panel appears once per scope, not once per group they sit in
-  groups.forEach(function(pn){
-    var list=scoped.filter(function(r){ return r.proc.name===pn; });
-    var p=list[0].proc, prim=(p.dUnit==='nps')?'nps':'csat';
-    list.sort(function(a,b){ var x=a.m[prim], y=b.m[prim];
-      return (y===null?-1e9:y)-(x===null?-1e9:x); });
-    var head=[];
-    if(p.csat!==null) head.push('CSAT '+p.csat.toFixed(2));
-    if(p.nps!==null)  head.push('NPS '+cvNps(p.nps));
+  var f=cvF.user, body='', shown=0;
+  cvProc.forEach(function(p0){
+    if(f.process!=='All' && p0.name!==f.process) return;
+    var raw=(cvUsers[p0.key]||[]).filter(function(u){ return f.user==='All'||u.u===f.user; });
+    if(!raw.length) return;
+    var p=cvScaleProc(p0,f.period);
+    var list=raw.map(function(u){ return cvScaleUser(u,p0,f.period); });
+    var prim=(p.dUnit==='nps')?'nps':'csat', head=[];
+    if(p.csat!==null) head.push('CSAT '+p.csat.toFixed(1));
+    if(p.nps!==null)  head.push('NPS '+p.nps);
     head.push(list.length+' '+p.role.toLowerCase()+(list.length>1?'s':''));
-    body+='<tr><td colspan="'+cols+'" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
-      '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+pn+'</span>'+
-      '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process baseline &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
-    list.forEach(function(r){
-      body+='<tr>'+ userCell(r.u, isTeam? '' : (r.team||'')) + metricCells(r.m,prim) + '</tr>'
-        + ((cvPersonOpen[r.u] && !drawn[r.u])? (drawn[r.u]=1, personRows(r.u)) : '');
-    });
+    shown+=list.length;
+    body+='<tr><td colspan="9" style="background:#F2F4FF;border-top:1px solid #E6E6EC;border-bottom:1px solid #E6E6EC;padding:9px 12px;">'+
+      '<span style="font-size:13px;font-weight:700;color:#1F2733;">'+p.name+'</span>'+
+      '<span style="font-size:11.5px;color:#616E88;margin-left:10px;">'+((p.csat!==null||p.nps!==null)?'process avg &middot; ':'')+head.join(' &middot; ')+'</span></td></tr>';
+    list.forEach(function(u){
+      body+='<tr>'+
+        cvTd('<span style="font-weight:600;color:#1F2733;">'+u.u+'</span>','left')+
+        cvTd(u.sent.toLocaleString())+
+        cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>')+
+        cvTd(cvMood(u.happy,u.resp,'#1F8A54'))+
+        cvTd(cvMood(u.unhappy,u.resp,'#C8324A'))+
+        cvTd(cvCsat(u.csat,prim==='csat'))+
+        cvTd(cvNps(u.nps,prim==='nps'))+
+        cvTd(cvRate(u.rating))+
+      '</tr>'; });
   });
-  if(!body) body=cvEmpty(cols,'Nobody matches this scope.');
-  note = isTeam? 'ranked within each process this team works &mdash; the baseline differs per process'
-               : 'ranked against this process&rsquo;s own baseline';
+  if(!shown) body=cvEmpty(9,'No user matches these filters.');
+  var allUsers=[]; Object.keys(cvUsers).forEach(function(k){ cvUsers[k].forEach(function(u){ allUsers.push(u.u); }); });
   return anCard('Feedback by User',
     cvChipRow([cvChip('user','period','Period',CV_PERIOD_LIST),
-               cvChip('user','scope','Scope',['All processes'].concat(procNames).concat(teams))])+
-    cvTable(cvTh(['User','Sent','Responded','Positives','Negatives','CSAT','NPS','Avg Rating'])+body)+
-    '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">'+note+'</div>',
+               cvChip('user','process','Process',['All'].concat(cvProc.map(function(p){return p.name;}))),
+               cvChip('user','user','Filter by User',['All'].concat(cvUniq(allUsers).sort()))])+
+    cvTable(cvTh(['User','Sent','Responded','Positives','Negatives','CSAT','NPS','Avg Rating'])+body),
     '', true);
 }
 
