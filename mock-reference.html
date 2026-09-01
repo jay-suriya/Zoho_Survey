@@ -9270,8 +9270,7 @@ function sdRenderResults(){
 
   // ── 2. Responses by process ──
   var byProc=sdCard('Responses by Process',
-    sdGroupRows(sdGroup(rows,'process'),'Process','process'),
-    'worst first · click a row to filter the responses below');
+    sdGroupRows(sdGroup(rows,'process'),'Process','process'));
 
   // ── 3. What people said ──
   var qs=sdQuestionScores(rows), worst=qs[0], wb=dsBand(worst.norm);
