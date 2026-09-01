@@ -12478,13 +12478,13 @@ function closeDealDetailPage() {
 var dealSurveysData = [
   { id:'sv1', name:'Test-Drive Experience', trigger:'Field: Test Drive logged', wf:'WF-1',
     sent:'13 Aug', responded:'13 Aug', status:'responded', norm:0.90,
-    metrics:[{label:'NPS',value:'9 / 10',norm:0.90},{label:'CSAT',value:'4.6 / 5',norm:0.92},{label:'Rating',value:'4.5 / 5',norm:0.90}] },
+    metrics:[{label:'NPS',value:'9 / 10',norm:0.90},{label:'CSAT',value:'100.00',norm:1.00},{label:'Rating',value:'9.00 / 10',norm:0.90}] },
   { id:'sv2', name:'Proposal Fit Score', trigger:'Stage → Value Proposition', wf:'WF-2',
     sent:'18 Aug', responded:'18 Aug', status:'responded', norm:0.58,
     metrics:[{label:'Score',value:'58%',norm:0.58}] },
   { id:'sv3', name:'Post-Delivery CSAT', trigger:'Stage → Closed Won (Delivered)', wf:'WF-3',
     sent:'22 Aug', responded:'22 Aug', status:'responded', norm:0.62,
-    metrics:[{label:'CSAT',value:'3.1 / 5',norm:0.62},{label:'Rating',value:'3.0 / 5',norm:0.60}] }
+    metrics:[{label:'CSAT',value:'33.33',norm:0.33},{label:'Rating',value:'6.00 / 10',norm:0.60}] }
 ];
 function dsBand(n){ if(n==null) return {c:'#8C91AB',l:'—'}; if(n<=0.4) return {c:'#C8324A',l:'At Risk'}; if(n<=0.6) return {c:'#DB842F',l:'Weak'}; if(n<0.75) return {c:'#B8791A',l:'Neutral'}; return {c:'#1F8A54',l:'Positive'}; }
 // Shared per-transition-attributed survey signals — used by Deal and Contact detail.
@@ -12496,15 +12496,15 @@ function dsBand(n){ if(n==null) return {c:'#8C91AB',l:'—'}; if(n<=0.4) return 
 // Verdict precedence matches the rest of the product: CSAT -> NPS -> Avg rating.
 function svVerdict(o){
   var v,band;
-  if(o.csat!==null&&o.csat!==undefined) v=o.csat, band=(v>=4?'happy':(v<=2?'unhappy':'neutral'));
+  if(o.csat!==null&&o.csat!==undefined) v=o.csat, band=(v>=75?'happy':(v<=40?'unhappy':'neutral'));
   else if(o.nps!==null&&o.nps!==undefined) v=o.nps, band=(v>=9?'happy':(v<=6?'unhappy':'neutral'));
-  else if(o.rating!==null&&o.rating!==undefined) v=o.rating, band=(v>=4?'happy':(v<=2?'unhappy':'neutral'));
+  else if(o.rating!==null&&o.rating!==undefined) v=o.rating, band=(v>=8?'happy':(v<=4?'unhappy':'neutral'));
   else return null;
   return band;
 }
-var SV_VERDICT={happy:{t:'Happy',c:'#10975E',bg:'#E9FBF4',b:'#19B171'},
+var SV_VERDICT={happy:{t:'Positive',c:'#10975E',bg:'#E9FBF4',b:'#19B171'},
                 neutral:{t:'Neutral',c:'#616E88',bg:'#F4F5F9',b:'#C0C8E2'},
-                unhappy:{t:'Unhappy',c:'#C8324A',bg:'#FFF2F3',b:'#FF4D5B'}};
+                unhappy:{t:'Negative',c:'#C8324A',bg:'#FFF2F3',b:'#FF4D5B'}};
 // norm 0-1 -> dsBand colour + label, the same banding the old signal cards used
 function svTile(label,value,sub,norm){
   var b=(norm===null||norm===undefined)? {c:'#1F2733',l:''} : dsBand(norm);
@@ -12523,9 +12523,9 @@ function svOverallSignal(id,o){
   var t=[];
   var from=function(k){ var n=o.counts?o.counts[k]:0; return n>1? 'average of '+n+' surveys' : 'from 1 survey'; };
   var u=function(x){ return '<span style="font-size:12px;color:#9AA0B1;font-weight:600;"> / '+x+'</span>'; };
-  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(1)+u(5),from('CSAT'),o.csat/5));
+  if(o.csat!==null&&o.csat!==undefined)   t.push(svTile('CSAT',o.csat.toFixed(2),from('CSAT'),o.csat/100));
   if(o.nps!==null&&o.nps!==undefined)     t.push(svTile('NPS',o.nps+u(10),from('NPS'),o.nps/10));
-  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(1)+u(5),from('Rating'),o.rating/5));
+  if(o.rating!==null&&o.rating!==undefined) t.push(svTile('Avg Rating',o.rating.toFixed(2)+u(10),from('Rating'),o.rating/10));
   t.push(svTile('Last response','<span style="font-size:17px;">'+o.last+'</span>',o.lastFrom||'',null));
   var v=svVerdict(o), k=v?SV_VERDICT[v]:null;
   t.push('<div style="flex:1;min-width:150px;border:1px solid '+(k?k.b+'55':'#EDEEF3')+';border-radius:10px;padding:12px 14px;background:'+(k?k.bg:'#fff')+';">'+
@@ -12552,7 +12552,7 @@ function svAvgFrom(data, last, lastFrom){
 }
 var leadSurveysData=[
   {name:'Product Feedback', trigger:'Lead Status \u2192 Contacted', status:'responded',
-   metrics:[{label:'CSAT',value:'3.8 / 5'},{label:'NPS',value:'7 / 10'},{label:'Rating',value:'4.0 / 5'}]},
+   metrics:[{label:'CSAT',value:'66.67'},{label:'NPS',value:'7 / 10'},{label:'Rating',value:'8.00 / 10'}]},
   {name:'Onboarding Check-in', trigger:'Lead Status \u2192 Qualified', status:'pending', metrics:[]}
 ];
 
@@ -12579,7 +12579,7 @@ function closeLeadDetailPage() {
 var ldSentSurveys = [
   {title:'Product Feedback', sentDate:'08-19-26 10:12', respondedDate:'08-19-26 10:31',
    sentBy:'ssunderjan@gmail.com', source:'Send Email Option (Individual)',
-   nps:'7 / 10', csat:'3.8 / 5', totalRating:'4.0 / 5'},
+   nps:'7 / 10', csat:'66.67', totalRating:'8.00 / 10'},
   {title:'Onboarding Check-in', sentDate:'08-27-26 09:40', respondedDate:'',
    sentBy:'ssunderjan@gmail.com', source:'Send Email Option (Individual)',
    nps:'\u2014', csat:'\u2014', totalRating:'\u2014'}
@@ -15351,8 +15351,8 @@ var ctlData=[
 ];
 // Per-transition survey signals for a contact (its own Blueprint: onboarding → active → renewal + service)
 var contactSurveysData=[
-  {name:'Welcome / Onboarding CSAT', trigger:'Stage → Onboarded', status:'responded', metrics:[{label:'CSAT',value:'4.4 / 5',norm:0.88}]},
-  {name:'Post-Service CSAT', trigger:'Service ticket closed', status:'responded', metrics:[{label:'CSAT',value:'3.2 / 5',norm:0.64},{label:'Rating',value:'3.0 / 5',norm:0.60}]},
+  {name:'Welcome / Onboarding CSAT', trigger:'Stage → Onboarded', status:'responded', metrics:[{label:'CSAT',value:'100.00',norm:1.00}]},
+  {name:'Post-Service CSAT', trigger:'Service ticket closed', status:'responded', metrics:[{label:'CSAT',value:'33.33',norm:0.33},{label:'Rating',value:'6.00 / 10',norm:0.60}]},
   {name:'Relationship NPS', trigger:'Stage → Active (90-day)', status:'responded', metrics:[{label:'NPS',value:'7 / 10',norm:0.70}]},
   {name:'Renewal Pulse', trigger:'Stage → Renewal Due', status:'pending', metrics:[]}
 ];
@@ -15383,8 +15383,8 @@ function openContactDetailPage(i){
 }
 // Zoho Survey related list on a contact — one row per survey sent to this record
 var ctdSurveyRows=[
-  {title:'Welcome / Onboarding CSAT', sent:'12 Jun 2026', resp:'13 Jun 2026', csat:'4.4', nps:'—',  rating:'—'},
-  {title:'Post-Service CSAT',        sent:'02 Aug 2026', resp:'02 Aug 2026', csat:'3.2', nps:'—',  rating:'3.0'},
+  {title:'Welcome / Onboarding CSAT', sent:'12 Jun 2026', resp:'13 Jun 2026', csat:'100.00', nps:'—',  rating:'—'},
+  {title:'Post-Service CSAT',        sent:'02 Aug 2026', resp:'02 Aug 2026', csat:'33.33', nps:'—',  rating:'6.00'},
   {title:'Relationship NPS',         sent:'26 Aug 2026', resp:'26 Aug 2026', csat:'—',   nps:'7',  rating:'—'},
   {title:'Renewal Pulse',            sent:'29 Aug 2026', resp:'',            csat:'—',   nps:'—',  rating:'—'}
 ];
@@ -15674,10 +15674,10 @@ function anLeadsCards(){
 // by its own CRM workflow. Metrics are show-if-present: a process only displays
 // the metrics its survey actually collects.
 var cvProc=[
- {key:'service',  survey:'Experience CSAT', name:'Service job',        module:'Service Requests', role:'Service Advisor',   done:1240, wf:10, sent:1118, resp:508, happy:190, unhappy:158, csat:3.1, nps:12,   rating:3.3, score:62, d:-0.5, dUnit:'csat'},
- {key:'renewal',  survey:'Experience CSAT', name:'Insurance renewal',  module:'Renewals',         role:'Renewal Owner',     done:214, wf:11, sent:214,  resp:71, happy:38, unhappy:14,  csat:3.9, nps:null, rating:3.8, score:74, d:0.1,  dUnit:'csat'},
- {key:'delivery', survey:'Experience CSAT', name:'Delivery',           module:'Deliveries',       role:'Delivery Executive',done:186, wf:12, sent:186,  resp:108, happy:82, unhappy:11, csat:4.4, nps:null, rating:4.3, score:81, d:0,    dUnit:'csat'},
- {key:'purchase', survey:'Experience CSAT', name:'Vehicle purchase',   module:'Potentials',       role:'Sales Consultant',  done:186, wf:13, sent:186,  resp:119, happy:104, unhappy:6, csat:4.7, nps:null, rating:4.6, score:88, d:0.2,  dUnit:'csat'},
+ {key:'service',  survey:'Experience CSAT', name:'Service job',        module:'Service Requests', role:'Service Advisor',   done:1240, wf:10, sent:1118, resp:508, happy:190, unhappy:158, csat:31.1, nps:-18,   rating:6.6, score:62, d:-9.0, dUnit:'csat'},
+ {key:'renewal',  survey:'Experience CSAT', name:'Insurance renewal',  module:'Renewals',         role:'Renewal Owner',     done:214, wf:11, sent:214,  resp:71, happy:38, unhappy:14,  csat:53.5, nps:null, rating:7.6, score:74, d:2.0,  dUnit:'csat'},
+ {key:'delivery', survey:'Experience CSAT', name:'Delivery',           module:'Deliveries',       role:'Delivery Executive',done:186, wf:12, sent:186,  resp:108, happy:82, unhappy:11, csat:76.0, nps:null, rating:8.6, score:81, d:0.0,    dUnit:'csat'},
+ {key:'purchase', survey:'Experience CSAT', name:'Vehicle purchase',   module:'Potentials',       role:'Sales Consultant',  done:186, wf:13, sent:186,  resp:119, happy:104, unhappy:6, csat:87.4, nps:null, rating:9.2, score:88, d:4.0,  dUnit:'csat'},
  {key:'pulse',    survey:'Relationship NPS', name:'Ownership pulse',    module:'Vehicles',         role:'Sales Consultant',  done:165, wf:14, sent:165,  resp:46, happy:24, unhappy:9,  csat:null,nps:34,   rating:null,score:null,d:-6,  dUnit:'nps'},
  {key:'lost',     survey:'Loss Reason', name:'Lost sale',          module:'Potentials',       role:'Deal Owner',        done:175, wf:15, sent:175,  resp:39, happy:null, unhappy:null,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''},
  {key:'enquiry',  survey:'Loss Reason', name:'Enquiry handling',   module:'Leads',            role:'Lead Owner',        done:420, wf:16, sent:420,  resp:50, happy:null, unhappy:null,  csat:null,nps:null, rating:null,score:null,d:null,dUnit:''}
@@ -15686,33 +15686,33 @@ var cvProc=[
 // Responsible user per process (snapshotted on the response at send time).
 var cvUsers={
  service:[
-  {u:'M. Iqbal',   sent:118,resp:54, happy:38, unhappy:5,csat:4.5,nps:55, rating:4.4,score:87},
-  {u:'G. Ravi',    sent:131,resp:59, happy:30, unhappy:10,csat:3.7,nps:30, rating:3.8,score:74},
-  {u:'N. Latha',   sent:124,resp:52, happy:23, unhappy:12,csat:3.4,nps:22, rating:3.5,score:69},
-  {u:'D. Suresh',  sent:76, resp:39, happy:16, unhappy:10,csat:3.3,nps:18, rating:3.2,score:66},
-  {u:'J. Prakash', sent:138,resp:66, happy:24, unhappy:21,csat:3.0,nps:10, rating:3.1,score:61},
-  {u:'T. Farhan',  sent:119,resp:48, happy:16, unhappy:17,csat:2.9,nps:8,  rating:3.0,score:58},
-  {u:'V. Anand',   sent:122,resp:55, happy:17, unhappy:21,csat:2.8,nps:0,  rating:2.9,score:56},
-  {u:'R. Balaji',  sent:149,resp:74, happy:18, unhappy:28,csat:2.7,nps:-5, rating:2.8,score:54},
-  {u:'S. Kumar',   sent:141,resp:61, happy:8, unhappy:34,csat:2.4,nps:-12,rating:2.5,score:48}],
+  {u:'M. Iqbal',   sent:118,resp:54, happy:38, unhappy:5,csat:90.0,nps:55, rating:8.8,score:87},
+  {u:'G. Ravi',    sent:131,resp:59, happy:30, unhappy:10,csat:74.0,nps:30, rating:7.6,score:74},
+  {u:'N. Latha',   sent:124,resp:52, happy:23, unhappy:12,csat:68.0,nps:22, rating:7.0,score:69},
+  {u:'D. Suresh',  sent:76, resp:39, happy:16, unhappy:10,csat:66.0,nps:18, rating:6.4,score:66},
+  {u:'J. Prakash', sent:138,resp:66, happy:24, unhappy:21,csat:60.0,nps:10, rating:6.2,score:61},
+  {u:'T. Farhan',  sent:119,resp:48, happy:16, unhappy:17,csat:58.0,nps:8,  rating:6.0,score:58},
+  {u:'V. Anand',   sent:122,resp:55, happy:17, unhappy:21,csat:56.0,nps:0,  rating:5.8,score:56},
+  {u:'R. Balaji',  sent:149,resp:74, happy:18, unhappy:28,csat:54.0,nps:-5, rating:5.6,score:54},
+  {u:'S. Kumar',   sent:141,resp:61, happy:8, unhappy:34,csat:48.0,nps:-12,rating:5.0,score:48}],
  renewal:[
-  {u:'P. Devi',    sent:84, resp:28, happy:19, unhappy:3,csat:4.3,nps:null,rating:4.2,score:82},
-  {u:'K. Suresh',  sent:71, resp:24, happy:12, unhappy:5,csat:3.8,nps:null,rating:3.7,score:73},
-  {u:'A. Bhavani', sent:59, resp:19, happy:7, unhappy:6,csat:3.4,nps:null,rating:3.3,score:66}],
+  {u:'P. Devi',    sent:84, resp:28, happy:19, unhappy:3,csat:86.0,nps:null,rating:8.4,score:82},
+  {u:'K. Suresh',  sent:71, resp:24, happy:12, unhappy:5,csat:76.0,nps:null,rating:7.4,score:73},
+  {u:'A. Bhavani', sent:59, resp:19, happy:7, unhappy:6,csat:68.0,nps:null,rating:6.6,score:66}],
  delivery:[
-  {u:'K. Vasanth', sent:41, resp:24, happy:21, unhappy:1,csat:4.8,nps:null,rating:4.7,score:90},
-  {u:'A. Deepak',  sent:38, resp:22, happy:19, unhappy:1,csat:4.7,nps:null,rating:4.6,score:89},
-  {u:'S. Ilango',  sent:33, resp:19, happy:16, unhappy:1,csat:4.6,nps:null,rating:4.5,score:86},
-  {u:'M. Vinoth',  sent:22, resp:13, happy:11, unhappy:1,csat:4.5,nps:null,rating:4.4,score:85},
-  {u:'R. Menon',   sent:52, resp:30, happy:15, unhappy:7,csat:3.2,nps:null,rating:3.3,score:64}],
+  {u:'K. Vasanth', sent:41, resp:24, happy:21, unhappy:1,csat:96.0,nps:null,rating:9.4,score:90},
+  {u:'A. Deepak',  sent:38, resp:22, happy:19, unhappy:1,csat:94.0,nps:null,rating:9.2,score:89},
+  {u:'S. Ilango',  sent:33, resp:19, happy:16, unhappy:1,csat:92.0,nps:null,rating:9.0,score:86},
+  {u:'M. Vinoth',  sent:22, resp:13, happy:11, unhappy:1,csat:90.0,nps:null,rating:8.8,score:85},
+  {u:'R. Menon',   sent:52, resp:30, happy:15, unhappy:7,csat:64.0,nps:null,rating:6.6,score:64}],
  purchase:[
-  {u:'A. Rahman',  sent:34, resp:22, happy:21, unhappy:0,csat:4.9,nps:null,rating:4.9,score:94},
-  {u:'S. Meera',   sent:29, resp:19, happy:18, unhappy:0,csat:4.8,nps:null,rating:4.7,score:91},
-  {u:'H. Nagraj',  sent:33, resp:21, happy:19, unhappy:1,csat:4.8,nps:null,rating:4.7,score:90},
-  {u:'L. Fatima',  sent:31, resp:20, happy:18, unhappy:1,csat:4.7,nps:null,rating:4.6,score:88},
-  {u:'D. Anbu',    sent:29, resp:20, happy:17, unhappy:1,csat:4.6,nps:null,rating:4.5,score:86},
-  {u:'B. Karthik', sent:21, resp:13, happy:8, unhappy:2,csat:4.3,nps:null,rating:4.2,score:79},
-  {u:'P. Nithya',  sent:9,  resp:4, happy:3, unhappy:1, csat:4.0,nps:null,rating:4.1,score:76}],
+  {u:'A. Rahman',  sent:34, resp:22, happy:21, unhappy:0,csat:98.0,nps:null,rating:9.8,score:94},
+  {u:'S. Meera',   sent:29, resp:19, happy:18, unhappy:0,csat:96.0,nps:null,rating:9.4,score:91},
+  {u:'H. Nagraj',  sent:33, resp:21, happy:19, unhappy:1,csat:96.0,nps:null,rating:9.4,score:90},
+  {u:'L. Fatima',  sent:31, resp:20, happy:18, unhappy:1,csat:94.0,nps:null,rating:9.2,score:88},
+  {u:'D. Anbu',    sent:29, resp:20, happy:17, unhappy:1,csat:92.0,nps:null,rating:9.0,score:86},
+  {u:'B. Karthik', sent:21, resp:13, happy:8, unhappy:2,csat:86.0,nps:null,rating:8.4,score:79},
+  {u:'P. Nithya',  sent:9,  resp:4, happy:3, unhappy:1, csat:80.0,nps:null,rating:8.2,score:76}],
  pulse:[
   {u:'A. Rahman',  sent:58, resp:17, happy:10, unhappy:2,csat:null,nps:48,rating:null,score:null},
   {u:'H. Nagraj',  sent:54, resp:16, happy:8, unhappy:3,csat:null,nps:33,rating:null,score:null},
@@ -15750,6 +15750,12 @@ var CV_SURVEYS={
  'Relationship NPS':{q:2, partial:0.05, mins:0.8}};
 
 function cvDash(){ return '<span style="color:#C3C7D2;">&#8212;</span>'; }
+// CSAT is 0-100, NPS is -100..+100, average rating is out of 10
+function cvCsat(v,strong){ if(v===null||v===undefined) return cvDash();
+  return strong? '<b style="color:#1F2733;">'+v.toFixed(2)+'</b>' : v.toFixed(2); }
+function cvNps(v,strong){ if(v===null||v===undefined) return cvDash();
+  var t=(v>0?'+':'')+v.toFixed(2); return strong? '<b style="color:#1F2733;">'+t+'</b>' : t; }
+function cvRate(v){ return (v===null||v===undefined)? cvDash() : v.toFixed(2); }
 function cvNum(v,dec,strong){ if(v===null||v===undefined) return cvDash();
   var t=(dec===0)? String(v) : v.toFixed(dec);
   return strong? '<b style="color:#1F2733;">'+t+'</b>' : t; }
@@ -15795,16 +15801,16 @@ function cvClamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
 function cvAdj(p,period){
   var cfg=CV_PERIODS[period]||CV_PERIODS['This month'];
   var a=cfg.a;
-  if(a===null) a = (p.d===null)? 0 : (p.dUnit==='nps'? -p.d/10 : -p.d); // last month = undo this period's move
+  if(a===null) a = (p.d===null)? 0 : (p.dUnit==='nps'? -p.d/10 : -p.d/20); // last month = undo this period's move
   return {m:cfg.m, a:a, dm:cfg.dm};
 }
 function cvScaleProc(p,period){
   var k=cvAdj(p,period), o={}, key;
   for(key in p) o[key]=p[key];
   o.sent=Math.round(p.sent*k.m); o.resp=Math.round(p.resp*k.m); o.done=Math.round(p.done*k.m);
-  if(p.csat!==null)   o.csat  =cvClamp(p.csat+k.a,1,5);
-  if(p.rating!==null) o.rating=cvClamp(p.rating+k.a,1,5);
-  if(p.nps!==null)    o.nps   =Math.round(cvClamp(p.nps+k.a*10,-100,100));
+  if(p.csat!==null)   o.csat  =cvClamp(p.csat+k.a*20,0,100);   // CSAT is 0-100
+  if(p.rating!==null) o.rating=cvClamp(p.rating+k.a*2,0,10);   // avg rating out of 10
+  if(p.nps!==null)    o.nps   =+cvClamp(p.nps+k.a*10,-100,100).toFixed(2);
   if(p.score!==null)  o.score =Math.round(cvClamp(p.score+k.a*7,0,100));
   if(p.happy!==null){
     o.happy  =Math.round(cvClamp(p.happy/p.resp   + k.a*0.09, 0, .97)*o.resp);
@@ -15818,9 +15824,9 @@ function cvScaleUser(u,p,period){
   var k=cvAdj(p,period), o={}, key;
   for(key in u) o[key]=u[key];
   o.sent=Math.round(u.sent*k.m); o.resp=Math.max(1,Math.round(u.resp*k.m));
-  if(u.csat!==null)   o.csat  =cvClamp(u.csat+k.a,1,5);
-  if(u.rating!==null) o.rating=cvClamp(u.rating+k.a,1,5);
-  if(u.nps!==null)    o.nps   =Math.round(cvClamp(u.nps+k.a*10,-100,100));
+  if(u.csat!==null)   o.csat  =cvClamp(u.csat+k.a*20,0,100);   // CSAT is 0-100
+  if(u.rating!==null) o.rating=cvClamp(u.rating+k.a*2,0,10);   // avg rating out of 10
+  if(u.nps!==null)    o.nps   =+cvClamp(u.nps+k.a*10,-100,100).toFixed(2);
   if(u.score!==null)  o.score =Math.round(cvClamp(u.score+k.a*7,0,100));
   if(u.happy!==null){
     o.happy  =Math.round(cvClamp(u.happy/u.resp   + k.a*0.09, 0, .97)*o.resp);
@@ -15903,7 +15909,7 @@ function cvBand(){
     cvChipRow([cvChip('band','period','Time Range',CV_PERIOD_LIST)])+
     bar+
     '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:38px;">'+
-      cvBandLeg('#11985E','Happy',h,pc(h))+cvBandLeg('#D3D8E4','Neutral',n,pc(n))+cvBandLeg('#E23041','Unhappy',u,pc(u))+
+      cvBandLeg('#11985E','Positive',h,pc(h))+cvBandLeg('#D3D8E4','Neutral',n,pc(n))+cvBandLeg('#E23041','Negative',u,pc(u))+
     '</div>'+
     '<div style="height:1px;background:#EDEEF3;margin:20px 0 18px;"></div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:14px;">'+
@@ -15912,13 +15918,13 @@ function cvBand(){
       cvBandTile('#E28C27','Processes declining', declining.length+' of '+scored.length,
         declining.map(function(p){ return p.name; }).join(', ')||'None')+
       cvBandTile('#FF4657','Needs attention', worst.name,
-        pM(worst)+(worst.d<0?' &#9660; '+Math.abs(worst.d):'')+' &middot; '+worst.unhappy+' unhappy ('+Math.round(worst.unhappy/worst.resp*100)+'%)')+
+        pM(worst)+(worst.d<0?' &#9660; '+Math.abs(worst.d):'')+' &middot; '+worst.unhappy+' negative ('+Math.round(worst.unhappy/worst.resp*100)+'%)')+
       cvBandTile('#11B670','Doing well', best.name,
-        pM(best)+' &middot; '+Math.round(best.happy/best.resp*100)+'% happy')+
+        pM(best)+' &middot; '+Math.round(best.happy/best.resp*100)+'% positive')+
       (lowP? cvBandTile('#FF4657','Lowest rated user', lowP.u.u,
-        lowP.p.name+' &middot; '+Math.round(lowP.x*100)+'% unhappy, vs '+pShare(lowP,'unhappy')+'% for the process'):'')+
+        lowP.p.name+' &middot; '+Math.round(lowP.x*100)+'% negative, vs '+pShare(lowP,'unhappy')+'% for the process'):'')+
       (topP? cvBandTile('#11B670','Highest rated user', topP.u.u,
-        topP.p.name+' &middot; '+Math.round(topP.h*100)+'% happy, vs '+pShare(topP,'happy')+'% for the process'):'')+
+        topP.p.name+' &middot; '+Math.round(topP.h*100)+'% positive, vs '+pShare(topP,'happy')+'% for the process'):'')+
     '</div></div>';
 }
 
@@ -15938,10 +15944,9 @@ function cvProcessReport(){
       cvTd(p.resp.toLocaleString()+' <span style="color:#8C91AB;">('+cvPct(p.resp,p.sent)+')</span>')+
       cvTd(cvMood(p.happy,p.resp,'#1F8A54'))+
       cvTd(cvMood(p.unhappy,p.resp,'#C8324A'))+
-      cvTd(cvNum(p.csat,1,prim==='csat'))+
-      cvTd(cvNum(p.nps,0,prim==='nps'))+
-      cvTd(cvNum(p.rating,1))+
-      cvTd(p.score===null?cvDash():p.score+'%')+
+      cvTd(cvCsat(p.csat,prim==='csat'))+
+      cvTd(cvNps(p.nps,prim==='nps'))+
+      cvTd(cvRate(p.rating))+
       cvTd(cvDelta(p.d, p.dUnit==='nps'?0:1))+
     '</tr>'; }).join('');
   var tot='';
@@ -15955,17 +15960,16 @@ function cvProcessReport(){
       cvTd('<b>'+t.resp.toLocaleString()+'</b> <span style="color:#8C91AB;">('+cvPct(t.resp,t.sent)+')</span>','right',bt)+
       cvTd(cvMood(t.happy,t.resp,'#1F8A54'),'right',bt)+
       cvTd(cvMood(t.unhappy,t.resp,'#C8324A'),'right',bt)+
-      cvTd(t.csat===null?cvDash():'<b>'+t.csat.toFixed(1)+'</b>','right',bt)+
-      cvTd(t.nps===null?cvDash():'<b>'+t.nps+'</b>','right',bt)+
-      cvTd(t.rating===null?cvDash():'<b>'+t.rating.toFixed(1)+'</b>','right',bt)+
-      cvTd(t.score===null?cvDash():'<b>'+t.score+'%</b>','right',bt)+
+      cvTd(cvCsat(t.csat,true),'right',bt)+
+      cvTd(cvNps(t.nps,true),'right',bt)+
+      cvTd(cvRate(t.rating),'right',bt)+
       cvTd(cvDelta(t.d,1),'right',bt)+'</tr>';
   } else rows=cvEmpty(12,'No process matches these filters.');
   return anCard('Feedback by Process',
     cvChipRow([cvChip('proc','period','Period',CV_PERIOD_LIST),
                cvChip('proc','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;})))),
                cvChip('proc','module','Module',['All'].concat(cvUniq(cvProc.map(function(p){return p.module;}))))])+
-    cvTable(cvTh(['Process','Modules','Survey Name','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score','&#916; vs last period'],3)+rows+tot),
+    cvTable(cvTh(['Process','Modules','Survey Name','Sent','Responded','Positives','Negatives','CSAT','NPS','Avg Rating','&#916; vs last period'],3)+rows+tot),
     '', true);
 }
 
@@ -15992,19 +15996,18 @@ function cvSurveyReport(){
       cvTd(cvMood(t.happy,t.resp,'#1F8A54'))+
       cvTd(cvMood(t.unhappy,t.resp,'#C8324A'))+
       cvTd(t.csat===null?cvDash():(star('csat')
-            ? '<span title="blended across '+t.n.csat+' processes" style="color:#8C91AB;">'+t.csat.toFixed(1)+'*</span>'
-            : '<b style="color:#1F2733;">'+t.csat.toFixed(1)+'</b>'))+
+            ? '<span title="blended across '+t.n.csat+' processes" style="color:#8C91AB;">'+t.csat.toFixed(2)+'*</span>'
+            : cvCsat(t.csat,true)))+
       cvTd(t.nps===null?cvDash():(star('nps')
-            ? '<span title="blended across '+t.n.nps+' processes" style="color:#8C91AB;">'+t.nps+'*</span>'
-            : '<b style="color:#1F2733;">'+t.nps+'</b>'))+
-      cvTd(t.rating===null?cvDash():t.rating.toFixed(1))+
-      cvTd(t.score===null?cvDash():t.score+'%')+
+            ? '<span title="blended across '+t.n.nps+' processes" style="color:#8C91AB;">'+cvNps(t.nps)+'*</span>'
+            : cvNps(t.nps,true)))+
+      cvTd(cvRate(t.rating))+
     '</tr>'; }).join('');
   if(!names.length) rows=cvEmpty(12,'No survey matches these filters.');
   return anCard('Feedback by Survey',
     cvChipRow([cvChip('surv','period','Period',CV_PERIOD_LIST),
                cvChip('surv','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;}))))])+
-    cvTable(cvTh(['Survey','Used by','Sent','Responded','Partial','Avg time','Happy','Unhappy','CSAT','NPS','Rating','Score'],2)+rows)+
+    cvTable(cvTh(['Survey','Used by','Sent','Responded','Partial','Avg time','Positives','Negatives','CSAT','NPS','Avg Rating'],2)+rows)+
     '<div style="font-size:11.5px;color:#8C91AB;margin-top:10px;">* Blended across more than one process &mdash; read the per-process rows above for a score you can act on.</div>',
     '', true);
 }
@@ -16039,10 +16042,9 @@ function cvUserReport(){
         cvTd(u.resp+' <span style="color:#8C91AB;">('+cvPct(u.resp,u.sent)+')</span>')+
         cvTd(cvMood(u.happy,u.resp,'#1F8A54'))+
         cvTd(cvMood(u.unhappy,u.resp,'#C8324A'))+
-        cvTd(cvNum(u.csat,1,prim==='csat'))+
-        cvTd(cvNum(u.nps,0,prim==='nps'))+
-        cvTd(cvNum(u.rating,1))+
-        cvTd(u.score===null?cvDash():u.score+'%')+
+        cvTd(cvCsat(u.csat,prim==='csat'))+
+        cvTd(cvNps(u.nps,prim==='nps'))+
+        cvTd(cvRate(u.rating))+
       '</tr>'; });
   });
   if(!shown) body=cvEmpty(9,'No user matches these filters.');
@@ -16051,7 +16053,7 @@ function cvUserReport(){
     cvChipRow([cvChip('user','period','Period',CV_PERIOD_LIST),
                cvChip('user','process','Process',['All'].concat(cvProc.map(function(p){return p.name;}))),
                cvChip('user','user','Filter by User',['All'].concat(cvUniq(allUsers).sort()))])+
-    cvTable(cvTh(['User','Sent','Responded','Happy','Unhappy','CSAT','NPS','Rating','Score'])+body),
+    cvTable(cvTh(['User','Sent','Responded','Positives','Negatives','CSAT','NPS','Avg Rating'])+body),
     '', true);
 }
 
