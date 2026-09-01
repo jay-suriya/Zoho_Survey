@@ -3900,14 +3900,10 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
               <div style="background:#fff;padding:18px 12px;text-align:center;">
                 <div id="sd-stat-sent" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey's Sent</div>
-              </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-visits" style="font-size:26px;font-weight:700;color:#1a73e8;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey Visits</div>
               </div>
               <div style="background:#fff;padding:18px 12px;text-align:center;">
                 <div id="sd-stat-responses" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
@@ -3927,56 +3923,8 @@ tbody tr:hover{background:#f5f7ff;}
             <div id="sd-empty-note" style="display:none;margin:0 24px 16px;padding:22px;text-align:center;background:#F7F8FA;border:1px dashed #D6D6E3;border-radius:8px;color:#8C91AB;font-size:13.5px;">No responses yet — send the survey to your CRM records to start collecting insights.</div>
             </div><!-- /Response Statistics -->
 
-            <!-- 2. Survey Quota (shown only when quota enabled) -->
-            <div id="sd-quota-strip" style="display:none;border-bottom:1px solid #e8e8e8;">
-              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                  <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Quota</span>
-                  <div style="position:relative;display:inline-block;">
-                    <span onclick="sdToggleQuotaConditionsView(event)" id="sd-quota-view-cond-btn" style="font-size:11px;color:#5464F2;cursor:pointer;font-weight:600;border:1px solid #C7CDFB;border-radius:6px;padding:4px 10px;background:#F0F1FF;display:inline-flex;align-items:center;gap:5px;">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                      View Conditions
-                    </span>
-                    <!-- Read-only condition popover -->
-                    <div id="sd-quota-cond-popover" style="display:none;position:absolute;top:calc(100% + 6px);left:0;width:320px;background:#fff;border:1px solid #D6D6E3;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.18);z-index:800;padding:14px 16px;">
-                      <div style="font-size:12px;font-weight:700;color:#202123;margin-bottom:8px;">Quota Condition</div>
-                      <div id="sd-quota-cond-body" style="display:flex;flex-direction:column;gap:6px;"></div>
-                      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #EDF0F4;display:flex;justify-content:flex-end;gap:8px;">
-                        <button onclick="sdToggleQuotaConditionsView(event)" style="height:28px;padding:0 12px;border:1px solid #D5D8E9;background:linear-gradient(#FFFFFF,#F1F0F7);border-radius:6px;font-size:12px;font-weight:500;color:#313949;cursor:pointer;">Close</button>
-                        <button onclick="openQuotaConditionPanel()" style="height:28px;padding:0 12px;border:none;background:linear-gradient(#5767F6,#124DC3);color:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;">Edit</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div style="padding:16px 20px 18px;">
-              <!-- Row 2: label + progress bar + fraction -->
-              <div style="margin-bottom:10px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                  <span style="font-size:12px;color:#555;">Responses collected</span>
-                  <span style="font-size:12px;font-weight:700;color:#1B1A2E;"><span id="sd-quota-collected">—</span> / <span id="sd-quota-limit-disp">—</span></span>
-                </div>
-                <div style="background:#ebebeb;border-radius:100px;height:7px;overflow:hidden;">
-                  <div id="sd-quota-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,#7B1857,#C2185B);transition:width .4s;width:0%;"></div>
-                </div>
-              </div>
-              <!-- Row 3: meta labels -->
-              <div style="display:flex;gap:28px;margin-top:10px;">
-                <div>
-                  <div style="font-size:11px;color:#888;">Limit</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-limit-meta">—</div>
-                </div>
-                <div>
-                  <div style="font-size:11px;color:#888;">When Reached</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-when-meta">—</div>
-                </div>
-                <div>
-                  <div style="font-size:11px;color:#888;">Remaining</div>
-                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-remaining">—</div>
-                </div>
-              </div>
-            </div><!-- /inner padding -->
-            </div><!-- /Survey Quota -->
+            <!-- Results (process / questions / verbatims / trend / owner / pending) -->
+            <div id="sd-results"></div>
 
             <!-- 3. Survey Reports -->
             <div id="sd-reports-section" style="border-top:2px solid #e8e8e8;margin-top:8px;">
@@ -4643,6 +4591,57 @@ tbody tr:hover{background:#f5f7ff;}
           </div>
         </div>
         <div id="sd-hide-details-body" style="background:#fff;border-radius:0 0 6px 6px;margin-bottom:16px;padding:24px 28px;border:1px solid #e0e0e0;border-top:none;">
+
+            <!-- 2. Survey Quota (shown only when quota enabled) -->
+            <div id="sd-quota-strip" style="display:none;border-bottom:1px solid #e8e8e8;">
+              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Quota</span>
+                  <div style="position:relative;display:inline-block;">
+                    <span onclick="sdToggleQuotaConditionsView(event)" id="sd-quota-view-cond-btn" style="font-size:11px;color:#5464F2;cursor:pointer;font-weight:600;border:1px solid #C7CDFB;border-radius:6px;padding:4px 10px;background:#F0F1FF;display:inline-flex;align-items:center;gap:5px;">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                      View Conditions
+                    </span>
+                    <!-- Read-only condition popover -->
+                    <div id="sd-quota-cond-popover" style="display:none;position:absolute;top:calc(100% + 6px);left:0;width:320px;background:#fff;border:1px solid #D6D6E3;border-radius:10px;box-shadow:0 8px 28px rgba(49,57,73,0.18);z-index:800;padding:14px 16px;">
+                      <div style="font-size:12px;font-weight:700;color:#202123;margin-bottom:8px;">Quota Condition</div>
+                      <div id="sd-quota-cond-body" style="display:flex;flex-direction:column;gap:6px;"></div>
+                      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #EDF0F4;display:flex;justify-content:flex-end;gap:8px;">
+                        <button onclick="sdToggleQuotaConditionsView(event)" style="height:28px;padding:0 12px;border:1px solid #D5D8E9;background:linear-gradient(#FFFFFF,#F1F0F7);border-radius:6px;font-size:12px;font-weight:500;color:#313949;cursor:pointer;">Close</button>
+                        <button onclick="openQuotaConditionPanel()" style="height:28px;padding:0 12px;border:none;background:linear-gradient(#5767F6,#124DC3);color:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;">Edit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:16px 20px 18px;">
+              <!-- Row 2: label + progress bar + fraction -->
+              <div style="margin-bottom:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:12px;color:#555;">Responses collected</span>
+                  <span style="font-size:12px;font-weight:700;color:#1B1A2E;"><span id="sd-quota-collected">—</span> / <span id="sd-quota-limit-disp">—</span></span>
+                </div>
+                <div style="background:#ebebeb;border-radius:100px;height:7px;overflow:hidden;">
+                  <div id="sd-quota-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,#7B1857,#C2185B);transition:width .4s;width:0%;"></div>
+                </div>
+              </div>
+              <!-- Row 3: meta labels -->
+              <div style="display:flex;gap:28px;margin-top:10px;">
+                <div>
+                  <div style="font-size:11px;color:#888;">Limit</div>
+                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-limit-meta">—</div>
+                </div>
+                <div>
+                  <div style="font-size:11px;color:#888;">When Reached</div>
+                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-when-meta">—</div>
+                </div>
+                <div>
+                  <div style="font-size:11px;color:#888;">Remaining</div>
+                  <div style="font-size:13px;font-weight:700;color:#1B1A2E;margin-top:2px;" id="sd-quota-remaining">—</div>
+                </div>
+              </div>
+            </div><!-- /inner padding -->
+            </div><!-- /Survey Quota -->
 
           <!-- Survey Details sub-section -->
           <div style="font-size:14px;font-weight:700;color:#1B1A2E;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">Survey Details</div>
@@ -5796,16 +5795,19 @@ function sdPreviewSurvey() {
 }
 // Toggle the detail page between "no responses yet" (empty) and "has data"
 function sdSetData(hasData) {
+  // reconciled with the actual rows: sent = responded + still pending
+  var nResp=sdRespData.length, nPend=(typeof sdPending!=='undefined')? sdPending.length : 0;
   var stats = hasData
-    ? {sent:'37', visits:'37', responses:'13'}
-    : {sent:'0', visits:'0', responses:'0'};
+    ? {sent:String(nResp+nPend), responses:String(nResp)}
+    : {sent:'0', responses:'0'};
   var set = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; };
-  set('sd-stat-sent',stats.sent); set('sd-stat-visits',stats.visits); set('sd-stat-responses',stats.responses);
+  set('sd-stat-sent',stats.sent); set('sd-stat-responses',stats.responses);
   // counted from the actual responses, so the tile always matches what the drill-down shows
   set('sd-stat-happy',   hasData? String(sdRespData.filter(sdIsHappy).length)   : '0');
   set('sd-stat-unhappy', hasData? String(sdRespData.filter(sdIsUnhappy).length) : '0');
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
+  show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
   show('sd-empty-note',!hasData);
   // Invited / Send-Survey related list is empty until the survey is sent
   if (!hasData) { sdInvPeople = []; sdInvSelectedIds = []; if (typeof sdInvRender==='function') sdInvRender(); }
@@ -9122,12 +9124,12 @@ var sdRespFixedCols = ['name','email','module'];
 var sdRespColTemp = {};
 
 var sdRespData = [
-  {name:'Priya', email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Age 20–30', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
-  {name:'Raj', email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Age 20–30', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
-  {name:'Malar', email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Age 35–40', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
-  {name:'Nisha', email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Age 60', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
-  {name:'Divya', email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Default', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
-  {name:'Clara', email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Age 35–40', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
+  {name:'Priya', process:'Service job', owner:'S. Kumar', verbatim:"Vehicle came back with the same noise. Third visit for one problem.", email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Age 20–30', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
+  {name:'Raj', process:'Delivery', owner:'R. Menon', verbatim:"Handover took nearly three hours. The car itself was spotless.", email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Age 20–30', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
+  {name:'Malar', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Best buying experience I have had. No pressure at all.", email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Age 35–40', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
+  {name:'Nisha', process:'Service job', owner:'S. Kumar', verbatim:"Estimate changed twice after I approved it. Nobody called to explain.", email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Age 60', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
+  {name:'Divya', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Clear pricing, quick paperwork, and they explained every feature.", email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Default', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
+  {name:'Clara', process:'Delivery', owner:'K. Vasanth', verbatim:"Smooth handover. Would have liked the accessories fitted beforehand.", email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Age 35–40', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
 ];
 var sdRespModuleFilter = 'All Modules';
 var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){...}}
@@ -9149,6 +9151,7 @@ function sdFrac(v){ // '7/10' | '3.0/10' | '4' -> {n:num, d:denominator}
   var d=p.length>1? parseFloat(p[1]) : NaN;
   return {n:n, d:isNaN(d)?null:d};
 }
+function sdCsat(r){ var f=sdFrac(r.csatScore); return f? f.n : null; }
 function sdSentiment(r){
   var c=sdFrac(r.csatScore);
   if(c) return c.n>=4? 'happy' : (c.n<=2? 'unhappy' : 'neutral');
@@ -9163,6 +9166,175 @@ function sdIsUnhappy(r){ return sdSentiment(r)==='unhappy'; }
 function sdFilterSentiment(kind){
   if(kind==='happy') sdApplyChartFilter('Happy responses', sdIsHappy);
   else               sdApplyChartFilter('Unhappy responses', sdIsUnhappy);
+}
+
+// ═══════════ SURVEY RESULTS BLOCK ═══════════
+// Everything here is computed from sdRespData — the same rows All Respondents shows —
+// so the summary and the table can never disagree.
+
+// People invited who have not answered yet (Survey knows its invitee list).
+var sdPending=[
+  {name:'Arun Mehta',   email:'arun.m@testmail.com',   process:'Service job',      owner:'S. Kumar',   sent:'Apr 3, 2026'},
+  {name:'Kavya Iyer',   email:'kavya.i@testmail.com',  process:'Vehicle purchase', owner:'A. Rahman',  sent:'Apr 4, 2026'},
+  {name:'Suresh Nair',  email:'suresh.n@testmail.com', process:'Delivery',         owner:'R. Menon',   sent:'Apr 5, 2026'},
+  {name:'Fatima Ali',   email:'fatima.a@testmail.com', process:'Service job',      owner:'S. Kumar',   sent:'Apr 6, 2026'}
+];
+// The workflows that send this survey — one per process it serves.
+var sdUsedBy=[
+  {process:'Vehicle purchase', rule:'Post-Purchase Feedback', wf:13, module:'Potentials',       trigger:'Stage → Closed Won'},
+  {process:'Delivery',         rule:'Post-Delivery Feedback', wf:12, module:'Deliveries',       trigger:'Delivery Status → Delivered'},
+  {process:'Service job',      rule:'Post-Service Feedback',  wf:10, module:'Service Requests', trigger:'Job Status → Closed'}
+];
+// Question set, with how each one is scored out of its own scale.
+var sdQuestionDefs=[
+  {q:'How satisfied are you with the product overall?', kind:'csat'},
+  {q:'How likely are you to recommend us?',             kind:'nps'},
+  {q:'How would you rate us overall?',                  kind:'rate'},
+  {q:'Is the product meeting your current business needs?', kind:'yes', field:'qMeeting', good:'Yes'},
+  {q:'Any renewal-blocking limitations?',               kind:'yes', field:'qLimitations', good:'No'}
+];
+
+function sdNum(v){ var m=String(v==null?'':v).match(/-?\d+(\.\d+)?/); return m? parseFloat(m[0]) : null; }
+function sdAvg(a){ return a.length? a.reduce(function(x,y){return x+y;},0)/a.length : null; }
+
+function sdQuestionScores(rows){
+  return sdQuestionDefs.map(function(d){
+    var norm=null, disp='—';
+    if(d.kind==='csat'){ var v=sdAvg(rows.map(function(r){return sdNum(r.csatScore);}).filter(function(x){return x!==null;}));
+      if(v!==null){ norm=v/5; disp=v.toFixed(1)+' / 5'; } }
+    else if(d.kind==='nps'){ var v=sdAvg(rows.map(function(r){return sdNum(r.npsScore);}).filter(function(x){return x!==null;}));
+      if(v!==null){ norm=v/10; disp=v.toFixed(1)+' / 10'; } }
+    else if(d.kind==='rate'){ var v=sdAvg(rows.map(function(r){return sdNum(r.qRate);}).filter(function(x){return x!==null;}));
+      if(v!==null){ norm=v/5; disp=v.toFixed(1)+' / 5'; } }
+    else { var ok=rows.filter(function(r){ return r[d.field]===d.good; }).length;
+      norm=rows.length? ok/rows.length : null; disp=Math.round(norm*100)+'% '+(d.good==='Yes'?'yes':'no'); }
+    return {q:d.q, norm:norm, disp:disp};
+  }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
+}
+
+function sdGroup(rows, key){
+  var m={};
+  rows.forEach(function(r){ var k=r[key]||'Unassigned'; (m[k]=m[k]||[]).push(r); });
+  return Object.keys(m).map(function(k){
+    var g=m[k];
+    var csat=sdAvg(g.map(function(r){return sdNum(r.csatScore);}).filter(function(x){return x!==null;}));
+    return {label:k, n:g.length,
+      happy:g.filter(sdIsHappy).length, unhappy:g.filter(sdIsUnhappy).length,
+      csat:csat, norm:csat===null?null:csat/5};
+  }).sort(function(a,b){ return (a.norm===null?9:a.norm)-(b.norm===null?9:b.norm); });
+}
+
+function sdCard(title, body, sub){
+  return '<div style="background:#fff;border:1px solid #e8e8e8;border-radius:6px;padding:16px 20px;margin:0 24px 16px;">'+
+    '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">'+
+      '<span style="font-size:14px;font-weight:700;color:#1B1A2E;">'+title+'</span>'+
+      (sub? '<span style="font-size:11.5px;color:#8C91AB;">'+sub+'</span>':'')+'</div>'+ body+'</div>';
+}
+function sdSplitBar(happy,unhappy,total,w){
+  var h=total?Math.round(happy/total*100):0, u=total?Math.round(unhappy/total*100):0, n=Math.max(0,100-h-u);
+  return '<div title="'+h+'% happy · '+n+'% neutral · '+u+'% unhappy" style="display:inline-flex;width:'+(w||90)+'px;height:7px;border-radius:4px;overflow:hidden;background:#F0F1F5;vertical-align:middle;">'+
+    '<div style="width:'+h+'%;background:#19B171;"></div><div style="width:'+n+'%;background:#D3D8E4;"></div><div style="width:'+u+'%;background:#FF4D5B;"></div></div>';
+}
+function sdGroupRows(groups, label, filterKey){
+  return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+    '<thead><tr style="background:#F7F8FA;">'+
+      ['<th class="sdr-th" style="text-align:left;">'+label+'</th>','<th class="sdr-th">Responses</th>',
+       '<th class="sdr-th">Happy</th>','<th class="sdr-th">Unhappy</th>',
+       '<th class="sdr-th" style="text-align:left;">Sentiment</th>','<th class="sdr-th">CSAT</th>'].join('')+'</tr></thead><tbody>'+
+    groups.map(function(g){
+      var b=dsBand(g.norm);
+      return '<tr class="sdr-row" style="cursor:pointer;" onclick="sdApplyChartFilter(\''+label+': '+g.label+'\', function(r){return r[\''+filterKey+'\']===\''+g.label+'\';})">'+
+        '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+g.label+'</td>'+
+        '<td class="sdr-td">'+g.n+'</td>'+
+        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+g.happy+'</td>'+
+        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+g.unhappy+'</td>'+
+        '<td class="sdr-td" style="text-align:left;">'+sdSplitBar(g.happy,g.unhappy,g.n)+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+b.c+';">'+(g.csat===null?'—':g.csat.toFixed(1))+'</td>'+
+      '</tr>'; }).join('')+'</tbody></table></div>';
+}
+
+function sdRenderResults(){
+  var host=document.getElementById('sd-results'); if(!host) return;
+  var rows=sdRespData;
+
+  // ── 1. Where it's used ──
+  var used=sdCard('Where this survey is used',
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;">'+
+      sdUsedBy.map(function(u){
+        return '<div style="flex:1;min-width:230px;border:1px solid #EDEEF3;border-radius:9px;padding:12px 14px;">'+
+          '<div style="font-size:13px;font-weight:700;color:#1F2733;">'+u.process+'</div>'+
+          '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+u.module+' · '+u.trigger+'</div>'+
+          '<div style="margin-top:8px;"><span onclick="sdGoWorkflow('+u.wf+')" style="font-size:12px;color:#5464F2;font-weight:600;cursor:pointer;">'+u.rule+' →</span></div>'+
+        '</div>'; }).join('')+'</div>',
+    sdUsedBy.length+' workflows send this survey');
+
+  // ── 2. Responses by process ──
+  var byProc=sdCard('Responses by Process',
+    sdGroupRows(sdGroup(rows,'process'),'Process','process'),
+    'worst first · click a row to filter the responses below');
+
+  // ── 3. What people said ──
+  var qs=sdQuestionScores(rows), worst=qs[0], wb=dsBand(worst.norm);
+  var quotes=rows.slice().sort(function(a,b){ return (sdCsat(a)||0)-(sdCsat(b)||0); }).slice(0,4);
+  var said=sdCard('What people said',
+    '<div style="border:1px solid '+wb.c+'44;background:'+wb.c+'0D;border-radius:9px;padding:12px 14px;margin-bottom:14px;">'+
+      '<div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.05em;">Lowest scoring question</div>'+
+      '<div style="font-size:14px;font-weight:700;color:#1F2733;margin-top:5px;">'+worst.q+'</div>'+
+      '<div style="font-size:13px;font-weight:700;color:'+wb.c+';margin-top:4px;">'+worst.disp+' · '+wb.l+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 44px;row-gap:9px;align-items:center;font-size:12.5px;margin-bottom:16px;">'+
+      qs.map(function(q){ var b=dsBand(q.norm);
+        return '<div style="color:#434D5E;">'+q.q+'<div style="height:5px;border-radius:3px;background:#EDEEF3;margin-top:5px;max-width:340px;overflow:hidden;"><div style="width:'+Math.round((q.norm||0)*100)+'%;height:100%;background:'+b.c+';border-radius:3px;"></div></div></div>'+
+               '<div style="text-align:right;font-weight:700;color:'+b.c+';white-space:nowrap;">'+q.disp+'</div>'; }).join('')+'</div>'+
+    '<div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">In their words</div>'+
+    quotes.map(function(r){ var b=dsBand((sdCsat(r)||0)/5);
+      return '<div style="border-left:3px solid '+b.c+';padding:6px 0 6px 12px;margin-bottom:10px;">'+
+        '<div style="font-size:13px;color:#313949;font-style:italic;">“'+r.verbatim+'”</div>'+
+        '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+r.name+' · '+r.process+' · '+r.owner+' · CSAT '+r.csatScore+'</div></div>'; }).join(''),
+    'the questions, ranked worst first');
+
+  // ── 4. Sentiment over time ──
+  var days=['Apr 1','Apr 2','Apr 3','Apr 4','Apr 5','Apr 6'];
+  var series=days.map(function(d,i){ var r=rows[i]; return r? (sdCsat(r)||0) : 0; });
+  var W=560,H=150,PL=30,PB=26;
+  var pts=series.map(function(v,i){
+    var x=PL+i*((W-PL-10)/(series.length-1)), y=(H-PB)-(v/5)*(H-PB-14); return [x,y]; });
+  var line='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">'+
+    [0,1,2,3,4,5].map(function(t){ var y=(H-PB)-(t/5)*(H-PB-14);
+      return '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-10)+'" y2="'+y+'" stroke="#F0F1F5"/>'+
+             '<text x="'+(PL-6)+'" y="'+(y+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t+'</text>'; }).join('')+
+    '<polyline fill="none" stroke="#5464F2" stroke-width="2" points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'"/>'+
+    pts.map(function(p,i){ var b=dsBand(series[i]/5);
+      return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#fff" stroke="'+b.c+'" stroke-width="2"/>'+
+             '<text x="'+p[0]+'" y="'+(H-8)+'" font-size="9" fill="#9AA0B1" text-anchor="middle">'+days[i]+'</text>'; }).join('')+
+    '</svg>';
+  var trend=sdCard('Sentiment over time', line, 'average CSAT per day — not response volume');
+
+  // ── 5. By owner ──
+  var byOwner=sdCard('Responses by Owner',
+    sdGroupRows(sdGroup(rows,'owner'),'Owner','owner'),
+    'the CRM user who owned the record when the survey was sent');
+
+  // ── 6. Not responded ──
+  var pend=sdCard('Yet to respond',
+    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+    '<thead><tr style="background:#F7F8FA;">'+['Name','Email','Process','Owner','Sent'].map(function(h){
+      return '<th class="sdr-th" style="text-align:left;">'+h+'</th>'; }).join('')+'<th class="sdr-th"></th></tr></thead><tbody>'+
+    sdPending.map(function(p){
+      return '<tr><td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+p.name+'</td>'+
+        '<td class="sdr-td" style="text-align:left;color:#616E88;">'+p.email+'</td>'+
+        '<td class="sdr-td" style="text-align:left;">'+p.process+'</td>'+
+        '<td class="sdr-td" style="text-align:left;">'+p.owner+'</td>'+
+        '<td class="sdr-td" style="text-align:left;color:#8C91AB;">'+p.sent+'</td>'+
+        '<td class="sdr-td" style="text-align:right;"><span style="color:#5464F2;font-weight:600;cursor:pointer;">Remind</span></td></tr>'; }).join('')+
+    '</tbody></table></div>',
+    sdPending.length+' invited, no response yet');
+
+  host.innerHTML = used + byProc + said + trend + byOwner + pend;
+}
+function sdGoWorkflow(id){
+  document.getElementById('survey-detail-page').style.display='none';
+  document.getElementById('workflow-rules-list-page').style.display='block';
+  openWorkflowRuleSetupPage(id);
 }
 
 function sdApplyChartFilter(label, testFn) {
@@ -15231,6 +15403,9 @@ function bpAfterTplChanged(){
 .sd-stat-click:hover{background:#F7F8FA !important;}
 .sd-stat-click:hover div:first-child{text-decoration:underline;}
 .cv-proc-link{color:#5464F2;font-weight:600;cursor:pointer;text-decoration:none;}
+.sdr-th{text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;white-space:nowrap;}
+.sdr-td{text-align:right;padding:11px 12px;font-size:13px;color:#434D5E;border-bottom:1px solid #F0F0F4;white-space:nowrap;}
+.sdr-row:hover{background:#F4F6FB;}
 .dd-nav{padding:9px 16px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
 .dd-nav:hover{background:#6E2A47;}
 .dd-mod{padding:9px 16px 9px 34px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
