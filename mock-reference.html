@@ -3933,55 +3933,14 @@ tbody tr:hover{background:#f5f7ff;}
               <!-- Scroll wrapper -->
               <div id="sd-charts-scroll" style="display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;padding:0 16px 16px;">
 
-                <!-- ── CARD 1: Responses by Module ── -->
-                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
+                <!-- ── CARD 1: Sentiment Over Time ── -->
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
                   <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
-                    <div style="display:flex;align-items:center;gap:6px;">
-                      <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Responses by Module</span>
-                      <div style="position:relative;display:inline-block;" id="sd-chart1-type-wrap">
-                        <span onclick="event.stopPropagation();sdToggleChartTypeDD('sd-chart1-type-dd')" style="color:#1a73e8;font-size:10px;cursor:pointer;border:1px solid #dadce0;border-radius:3px;padding:1px 6px;background:#f8f9fa;">Pie ▾</span>
-                        <div id="sd-chart1-type-dd" style="display:none;position:absolute;top:calc(100% + 2px);left:0;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:600;min-width:100px;">
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart1','pie')">Pie</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart1','bar')">Bar</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart1','donut')">Donut</div>
-                          <div class="sd-inv-dd-item" onclick="sdSwitchChart('chart1','line')">Line</div>
-                        </div>
-                      </div>
-                    </div>
-
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Sentiment Over Time</span>
+                    <span style="font-size:10px;color:#8C91AB;">avg CSAT / day</span>
                   </div>
-                  <div id="sd-chart1-container" style="padding:12px 14px;display:flex;align-items:center;gap:16px;min-height:120px;flex:1;">
-                    <div id="sd-chart1-visual">
-                      <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#4285f4" stroke-width="20" stroke-dasharray="125.6 125.6" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#34a853" stroke-width="20" stroke-dasharray="83.7 167.5" stroke-dashoffset="-125.6" transform="rotate(-90 50 50)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#fbbc04" stroke-width="20" stroke-dasharray="41.9 209.3" stroke-dashoffset="-209.3" transform="rotate(-90 50 50)"/>
-                      </svg>
-                    </div>
-                    <div style="font-size:11px;color:#555;line-height:2;">
-                      <div onclick="sdApplyChartFilter('Module: Leads', function(r){return r.module==='Leads';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#4285f4;flex-shrink:0;"></span> Lead (3)</div>
-                      <div onclick="sdApplyChartFilter('Module: Contacts', function(r){return r.module==='Contacts';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#34a853;flex-shrink:0;"></span> Contact (2)</div>
-                      <div onclick="sdApplyChartFilter('Module: Custom Module', function(r){return r.module==='Custom Module';})" style="display:flex;align-items:center;gap:5px;cursor:pointer;" title="Filter respondents by this module"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#fbbc04;flex-shrink:0;"></span> Vendor (1)</div>
-                    </div>
-                  </div>
-                  <!-- Expandable table -->
-                  <div id="chart-tbl-1" style="display:none;border-top:1px solid #f0f0f0;background:#fafbff;">
-                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                      <thead><tr style="background:#f0f4ff;">
-                        <th style="padding:8px 14px;text-align:left;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Module</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Responses</th>
-                        <th style="padding:8px 14px;text-align:center;font-weight:600;color:#444;border-bottom:1px solid #e8ecf8;">Share</th>
-                      </tr></thead>
-                      <tbody>
-                        <tr onclick="sdApplyChartFilter('Module: Leads', function(r){return r.module==='Leads';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#4285f4;display:inline-block;"></span>Lead</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">3</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">50%</td></tr>
-                        <tr onclick="sdApplyChartFilter('Module: Contacts', function(r){return r.module==='Contacts';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;border-bottom:1px solid #f0f0f0;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#34a853;display:inline-block;"></span>Contact</span></td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:#333;">2</td><td style="padding:8px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a73e8;font-weight:600;">33%</td></tr>
-                        <tr onclick="sdApplyChartFilter('Module: Custom Module', function(r){return r.module==='Custom Module';})" style="cursor:pointer;" title="Filter respondents by this module"><td style="padding:8px 14px;"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:#fbbc04;display:inline-block;"></span>Vendor</span></td><td style="padding:8px 14px;text-align:center;font-weight:600;color:#333;">1</td><td style="padding:8px 14px;text-align:center;color:#1a73e8;font-weight:600;">17%</td></tr>
-                      </tbody>
-                      <tfoot><tr style="background:#f5f5f5;"><td style="padding:8px 14px;font-weight:700;color:#333;font-size:11px;">Total</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">6</td><td style="padding:8px 14px;text-align:center;font-weight:700;color:#333;">100%</td></tr></tfoot>
-                    </table>
-                  </div>
+                  <div id="sd-sentiment-chart" style="padding:14px 12px 10px;"></div>
                 </div>
-
                 <!-- ── CARD 2: Responses by Collector ── -->
                 <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
                   <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
@@ -9303,7 +9262,7 @@ function sdRenderResults(){
       return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#fff" stroke="'+b.c+'" stroke-width="2"/>'+
              '<text x="'+p[0]+'" y="'+(H-8)+'" font-size="9" fill="#9AA0B1" text-anchor="middle">'+days[i]+'</text>'; }).join('')+
     '</svg>';
-  var trend=sdCard('Sentiment over time', line, 'average CSAT per day — not response volume');
+  var el=document.getElementById('sd-sentiment-chart'); if(el) el.innerHTML=line;
 
   // ── 5. By owner ──
   var byOwner=sdCard('Responses by Owner',
@@ -9325,7 +9284,7 @@ function sdRenderResults(){
     '</tbody></table></div>',
     sdPending.length+' invited, no response yet');
 
-  host.innerHTML = byProc + said + trend + byOwner + pend;
+  host.innerHTML = byProc + said + byOwner + pend;
 }
 
 function sdApplyChartFilter(label, testFn) {
