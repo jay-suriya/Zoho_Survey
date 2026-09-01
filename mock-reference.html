@@ -3900,7 +3900,7 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
               <div style="background:#fff;padding:18px 12px;text-align:center;">
                 <div id="sd-stat-sent" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey's Sent</div>
@@ -3913,6 +3913,11 @@ tbody tr:hover{background:#f5f7ff;}
                 <div id="sd-stat-happy" style="font-size:26px;font-weight:700;color:#1F8A54;">0</div>
                 <div style="font-size:11px;color:#5f6368;margin-top:2px;">Positives</div>
                 <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">responses, more positive than negative</div>
+              </div>
+              <div style="background:#fff;padding:18px 12px;text-align:center;">
+                <div id="sd-stat-verdict" style="font-size:26px;font-weight:700;color:#5f6368;">&#8212;</div>
+                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Overall</div>
+                <div id="sd-stat-verdict-sub" style="font-size:10px;color:#9AA0B1;margin-top:3px;"></div>
               </div>
               <div class="sd-stat-click" onclick="sdFilterSentiment('unhappy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
                 <div id="sd-stat-unhappy" style="font-size:26px;font-weight:700;color:#C8324A;">0</div>
@@ -5773,6 +5778,12 @@ function sdSetData(hasData) {
   var rc = (typeof sdRespCounts==='function')? sdRespCounts(sdRespData) : {pos:0,neg:0};
   set('sd-stat-happy',   hasData? String(rc.pos) : '0');
   set('sd-stat-unhappy', hasData? String(rc.neg) : '0');
+  var sv = (hasData && typeof sdUnitVerdict==='function')? sdUnitVerdict(sdRespData) : null;
+  var ve=document.getElementById('sd-stat-verdict'), vs=document.getElementById('sd-stat-verdict-sub');
+  if(ve){ ve.textContent = sv? SD_VERDICT[sv.band].t : '\u2014';
+          ve.style.color  = sv? SD_VERDICT[sv.band].c : '#5f6368'; }
+  if(vs){ vs.innerHTML = sv? sv.parts.map(function(p){
+            return ({csat:'CSAT',nps:'NPS',rating:'Rating'})[p.kind]+' '+p.value.toFixed(2); }).join(' &middot; ') : ''; }
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
@@ -9194,24 +9205,42 @@ function sdMetrics(rows){
     n: rows.length
   };
 }
-// ── Verdict for ONE response: compare its own positive and negative answers.
-// Every CSAT-eligible answer counts (satisfaction, NPS, rating); scoring never does,
-// because it measures what was answered, not how the respondent felt.
-function sdRespVerdict(r){
-  var pos=0,neg=0,neu=0;
-  SD_Q.forEach(function(q){
-    if(!q.csat) return;
-    var b=sdBandOf(q, sdAnswer(r,q)); if(!b) return;
-    if(b==='pos') pos++; else if(b==='neg') neg++; else neu++;
-  });
-  return {pos:pos, neg:neg, neu:neu,
-          band: pos>neg? 'pos' : (neg>pos? 'neg' : 'neu')};
+// ── Verdict for any unit — one response, a process, or the whole survey.
+// Built from the three headline metrics the product's own report shows
+// (Overall CSAT Score, Overall NPS, Overall average rating), each banded on its
+// own scale, majority wins, a tie is Neutral. Scoring is excluded: it measures
+// what was answered, not how the respondent felt.
+// CSAT on its own is harsh for one person — neutral answers score zero — which is
+// why all three are combined rather than letting CSAT decide alone.
+var SD_BANDS={ csat:{pos:60, neg:30}, nps:{pos:0.001, neg:-0.001}, rating:{pos:7, neg:4} };
+function sdBandVal(kind,v){
+  if(v===null||v===undefined) return null;
+  var b=SD_BANDS[kind];
+  if(v>=b.pos) return 'pos';
+  if(v<=b.neg) return 'neg';
+  return 'neu';
 }
+function sdUnitVerdict(rows){
+  var mx=sdMetrics(rows);
+  var parts=[['csat',mx.csat],['nps',mx.nps],['rating',mx.rating]]
+    .map(function(x){ return {kind:x[0], value:x[1], band:sdBandVal(x[0],x[1])}; })
+    .filter(function(x){ return x.band!==null; });
+  var c={pos:0,neu:0,neg:0}; parts.forEach(function(x){ c[x.band]++; });
+  var band = c.pos>c.neg? 'pos' : (c.neg>c.pos? 'neg' : 'neu');
+  // Guard: CSAT counts only top-band answers, so an all-neutral respondent scores 0
+  // and would read Negative. Nothing can be Negative without a single negative answer,
+  // or Positive without a single positive one.
+  if(band==='neg' && mx.neg===0) band='neu';
+  if(band==='pos' && mx.pos===0) band='neu';
+  return {band:band, parts:parts, metrics:mx};
+}
+function sdRespVerdict(r){ return sdUnitVerdict([r]); }
 function sdRespCounts(rows){
   var c={pos:0,neu:0,neg:0};
   rows.forEach(function(r){ c[sdRespVerdict(r).band]++; });
   return c;
 }
+var SD_VERDICT={pos:{t:'Positive',c:'#10975E'},neu:{t:'Neutral',c:'#616E88'},neg:{t:'Negative',c:'#C8324A'}};
 function sdFmtCsat(v){ return v===null||v===undefined? '—' : v.toFixed(2); }
 function sdFmtNps(v){  return v===null||v===undefined? '—' : (v>0?'+':'')+v.toFixed(2); }
 function sdFmtRate(v){ return v===null||v===undefined? '—' : v.toFixed(2)+' / 10'; }
