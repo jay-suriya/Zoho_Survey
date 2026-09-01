@@ -9179,12 +9179,6 @@ var sdPending=[
   {name:'Suresh Nair',  email:'suresh.n@testmail.com', process:'Delivery',         owner:'R. Menon',   sent:'Apr 5, 2026'},
   {name:'Fatima Ali',   email:'fatima.a@testmail.com', process:'Service job',      owner:'S. Kumar',   sent:'Apr 6, 2026'}
 ];
-// The workflows that send this survey — one per process it serves.
-var sdUsedBy=[
-  {process:'Vehicle purchase', rule:'Post-Purchase Feedback', wf:13, module:'Potentials',       trigger:'Stage → Closed Won'},
-  {process:'Delivery',         rule:'Post-Delivery Feedback', wf:12, module:'Deliveries',       trigger:'Delivery Status → Delivered'},
-  {process:'Service job',      rule:'Post-Service Feedback',  wf:10, module:'Service Requests', trigger:'Job Status → Closed'}
-];
 // Question set, with how each one is scored out of its own scale.
 var sdQuestionDefs=[
   {q:'How satisfied are you with the product overall?', kind:'csat'},
@@ -9257,17 +9251,6 @@ function sdRenderResults(){
   var host=document.getElementById('sd-results'); if(!host) return;
   var rows=sdRespData;
 
-  // ── 1. Where it's used ──
-  var used=sdCard('Where this survey is used',
-    '<div style="display:flex;flex-wrap:wrap;gap:10px;">'+
-      sdUsedBy.map(function(u){
-        return '<div style="flex:1;min-width:230px;border:1px solid #EDEEF3;border-radius:9px;padding:12px 14px;">'+
-          '<div style="font-size:13px;font-weight:700;color:#1F2733;">'+u.process+'</div>'+
-          '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+u.module+' · '+u.trigger+'</div>'+
-          '<div style="margin-top:8px;"><span onclick="sdGoWorkflow('+u.wf+')" style="font-size:12px;color:#5464F2;font-weight:600;cursor:pointer;">'+u.rule+' →</span></div>'+
-        '</div>'; }).join('')+'</div>',
-    sdUsedBy.length+' workflows send this survey');
-
   // ── 2. Responses by process ──
   var byProc=sdCard('Responses by Process',
     sdGroupRows(sdGroup(rows,'process'),'Process','process'),
@@ -9329,12 +9312,7 @@ function sdRenderResults(){
     '</tbody></table></div>',
     sdPending.length+' invited, no response yet');
 
-  host.innerHTML = used + byProc + said + trend + byOwner + pend;
-}
-function sdGoWorkflow(id){
-  document.getElementById('survey-detail-page').style.display='none';
-  document.getElementById('workflow-rules-list-page').style.display='block';
-  openWorkflowRuleSetupPage(id);
+  host.innerHTML = byProc + said + trend + byOwner + pend;
 }
 
 function sdApplyChartFilter(label, testFn) {
