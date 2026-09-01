@@ -3946,7 +3946,16 @@ tbody tr:hover{background:#f5f7ff;}
                   </div>
                   <div id="sd-sentiment-chart" style="padding:14px 12px 10px;"></div>
                 </div>
-                <!-- ── CARD 2: Responses by Collector ── -->
+                <!-- ── CARD 2: Overall NPS gauge ── -->
+                <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;background:#fff;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
+                  <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
+                    <span style="font-size:12px;font-weight:600;color:#1B1A2E;">Overall NPS</span>
+                    <span style="font-size:10px;color:#8C91AB;">-100 to +100</span>
+                  </div>
+                  <div id="sd-nps-gauge" style="padding:10px 12px 6px;"></div>
+                </div>
+
+                <!-- ── CARD 3: Responses by Collector ── -->
                 <div class="sd-chart-card" style="min-width:calc(33.333% - 12px);max-width:calc(33.333% - 12px);flex-shrink:0;scroll-snap-align:start;border:1px solid #e8e8e8;border-radius:10px;background:#fff;margin-right:16px;overflow:hidden;display:flex;flex-direction:column;">
                   <div style="padding:12px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;">
                     <div style="display:flex;align-items:center;gap:6px;">
@@ -9387,6 +9396,66 @@ function sdInitSections(){
   });
 }
 
+// ── Survey Reports charts: CSAT per day, and the NPS gauge the product shows ──
+function sdDayOf(r){ return String(r.startTime||'').split(',')[0]; }   // 'Apr 1'
+function sdRenderCharts(){
+  var rows=sdRespData;
+  // CSAT over time — one point per day, using the real formula on that day's responses
+  var days=[]; rows.forEach(function(r){ var d=sdDayOf(r); if(days.indexOf(d)<0) days.push(d); });
+  var pts=days.map(function(d){
+    var m=sdMetrics(rows.filter(function(r){ return sdDayOf(r)===d; }));
+    return {day:d, v:(m.csat===null?0:m.csat)};
+  });
+  var el=document.getElementById('sd-sentiment-chart');
+  if(el){
+    var W=420,H=170,PL=34,PB=26,PT=12;
+    var x=function(i){ return PL + (pts.length<2?0:i*((W-PL-14)/(pts.length-1))); };
+    var y=function(v){ return (H-PB) - (v/100)*(H-PB-PT); };
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
+    [0,25,50,75,100].forEach(function(t){
+      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
+           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t+'</text>';
+    });
+    svg+='<polyline fill="none" stroke="#5464F2" stroke-width="2" points="'+
+      pts.map(function(p,i){ return x(i)+','+y(p.v); }).join(' ')+'"/>';
+    pts.forEach(function(p,i){
+      var b=dsBand(p.v/100);
+      svg+='<circle cx="'+x(i)+'" cy="'+y(p.v)+'" r="4" fill="#fff" stroke="'+b.c+'" stroke-width="2"><title>'+p.day+': CSAT '+p.v.toFixed(2)+'</title></circle>'+
+           '<text x="'+x(i)+'" y="'+(H-8)+'" font-size="9" fill="#9AA0B1" text-anchor="middle">'+p.day+'</text>';
+    });
+    el.innerHTML=svg+'</svg>';
+  }
+  // NPS gauge
+  var g=document.getElementById('sd-nps-gauge');
+  if(g){
+    var nps=sdMetrics(rows).nps;
+    g.innerHTML = sdNpsGauge(nps===null?0:nps);
+  }
+}
+// Semicircular gauge, -100 (left) to +100 (right), red / amber / green like the product's
+function sdNpsGauge(v){
+  var W=260,H=152,cx=130,cy=116,R=86,r=66;
+  var ang=function(val){ return Math.PI*(1-(val+100)/200); };          // radians
+  var pt=function(val,rad){ var a=ang(val); return [cx+rad*Math.cos(a), cy-rad*Math.sin(a)]; };
+  var arc=function(a,b,rad,col,w){
+    var p1=pt(a,rad), p2=pt(b,rad);
+    return '<path d="M'+p1[0].toFixed(1)+','+p1[1].toFixed(1)+' A'+rad+','+rad+' 0 0 1 '+p2[0].toFixed(1)+','+p2[1].toFixed(1)+
+      '" fill="none" stroke="'+col+'" stroke-width="'+w+'"/>';
+  };
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
+  s+=arc(-100,0,R,'#E12D39',14)+arc(0,50,R,'#F0B429',14)+arc(50,100,R,'#57AE5B',14);
+  for(var t=-100;t<=100;t+=20){
+    var a=pt(t,R-10), b=pt(t,R-18), l=pt(t,R-30);
+    s+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="#B9BECD" stroke-width="1.4"/>'+
+       '<text x="'+l[0].toFixed(1)+'" y="'+(l[1]+3).toFixed(1)+'" font-size="9" fill="#8C91AB" text-anchor="middle">'+t+'</text>';
+  }
+  var n=pt(v,r);
+  s+='<path d="M'+(cx-6)+','+cy+' L'+n[0].toFixed(1)+','+n[1].toFixed(1)+' L'+(cx+6)+','+cy+' Z" fill="#4A4F5E"/>'+
+     '<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#4A4F5E"/>'+
+     '<text x="'+cx+'" y="'+(cy+30)+'" font-size="18" font-weight="700" fill="'+dsBand((v+100)/200).c+'" text-anchor="middle">'+
+       ((v>0?'+':'')+v.toFixed(2))+'</text></svg>';
+  return s;
+}
 function sdRenderResults(){
   var host=document.getElementById('sd-results'); if(!host) return;
   var rows=sdRespData;
@@ -9484,6 +9553,7 @@ function sdRenderResults(){
     sdPending.length+' invited, no response yet');
 
   host.innerHTML = byProc + said + byOwner + pend;
+  sdRenderCharts();
 }
 
 function sdApplyChartFilter(label, testFn) {
