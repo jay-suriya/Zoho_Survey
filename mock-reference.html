@@ -3900,21 +3900,33 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin:0 24px;background:#EDEEF2;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px;background:#EDEEF2;">
                 <div style="background:#fff;padding:21px 14px;text-align:center;">
                   <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
                   <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Sent</div>
                 </div>
-                <div style="grid-column:span 2;background:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:center;gap:14px;">
+                <div style="background:#fff;padding:16px 12px;display:flex;align-items:center;justify-content:center;gap:11px;">
                   <div id="sd-quota-ring" style="flex:none;"></div>
                   <div style="text-align:left;">
                     <div style="display:flex;align-items:baseline;gap:4px;">
                       <span id="sd-stat-responses" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</span>
                       <span id="sd-stat-quota-limit" style="font-size:14px;font-weight:500;color:#9AA0B1;">/ 200</span>
                     </div>
-                    <div style="font-size:11.5px;color:#5B6473;margin-top:6px;font-weight:500;">Response Received</div>
-                    <div id="sd-stat-quota-left" style="font-size:11px;font-weight:600;color:#12A150;margin-top:3px;">&nbsp;</div>
-                    <div id="sd-stat-quota-meta" style="font-size:10.5px;color:#9AA0B1;margin-top:5px;line-height:1.6;"></div>
+                    <div style="display:flex;align-items:center;gap:5px;margin-top:6px;position:relative;">
+                      <span style="font-size:11.5px;color:#5B6473;font-weight:500;">Response Received</span>
+                      <span onclick="sdToggleQuotaInfo(event)" id="sd-quota-info-btn" title="Quota details"
+                            style="display:inline-flex;align-items:center;color:#8C91AB;cursor:pointer;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r=".6" fill="currentColor"/>
+                        </svg>
+                      </span>
+                      <div id="sd-quota-info" style="display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:60;
+                           min-width:250px;background:#fff;border:1px solid #D6D6E3;border-radius:8px;
+                           box-shadow:0 8px 22px rgba(49,57,73,.16);padding:13px 15px;text-align:left;">
+                        <div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Quota</div>
+                        <div id="sd-quota-info-body" style="font-size:12px;color:#434D5E;line-height:1.9;"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
@@ -5519,19 +5531,19 @@ function sdSetData(hasData) {
   var ring=document.getElementById('sd-quota-ring');
   if(ring) ring.innerHTML=sdQuotaRing(got, lim);
   set('sd-stat-quota-limit','/ '+lim);
-  var left=document.getElementById('sd-stat-quota-left');
-  if(left) left.textContent=Math.max(0, lim-got).toLocaleString()+' more can be received';
-  // the quota's own settings, read from the survey rather than restated elsewhere
-  var meta=document.getElementById('sd-stat-quota-meta');
-  if(meta){
+  // limit / when reached / remaining / condition live behind the info icon
+  var info=document.getElementById('sd-quota-info-body');
+  if(info){
     var when=(document.getElementById('sd-quota-when-meta')||{}).textContent||'Close the survey';
     var conds=(typeof currentQuotaConditions!=='undefined' && currentQuotaConditions.length)
-      ? currentQuotaConditions.map(function(c){ return c.question+' '+c.operator.toLowerCase()+' '+c.value; }).join(' and ')
+      ? currentQuotaConditions.map(function(c){ return c.question+' '+c.operator.toLowerCase()+' '+c.value; }).join('<br>and ')
       : 'No condition set';
-    meta.innerHTML = hasData
-      ? 'Limit <b style="color:#5B6473;">'+lim+'</b> &middot; when reached <b style="color:#5B6473;">'+when+'</b>'+
-        '<br>Condition: <b style="color:#5B6473;">'+conds+'</b>'
-      : '';
+    var row=function(k,v){ return '<div style="display:flex;gap:12px;"><span style="min-width:96px;color:#8C91AB;">'+k+'</span>'+
+      '<span style="font-weight:600;color:#1F2733;">'+v+'</span></div>'; };
+    info.innerHTML = row('Limit', lim.toLocaleString()) +
+                     row('When reached', when) +
+                     row('Remaining', Math.max(0, lim-got).toLocaleString()) +
+                     row('Condition', conds);
   }
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
@@ -9182,6 +9194,15 @@ function sdNpsGauge(v){
        ((v>0?'+':'')+v.toFixed(2))+'</text></svg>';
   return s;
 }
+function sdToggleQuotaInfo(e){
+  if(e) e.stopPropagation();
+  var el=document.getElementById('sd-quota-info'); if(!el) return;
+  el.style.display = (el.style.display==='none'||!el.style.display)? 'block':'none';
+}
+document.addEventListener('click', function(e){
+  var el=document.getElementById('sd-quota-info');
+  if(el && el.style.display==='block' && !el.parentElement.contains(e.target)) el.style.display='none';
+});
 function sdToggleDetails(id){
   var b=document.getElementById(id+'-body'), l=document.getElementById(id+'-link');
   if(!b) return;
