@@ -15587,8 +15587,8 @@ var cvUsers={
 };
 
 // ═══ filter state ═══
-var cvF={ band:{period:'This month'},
-          proc:{period:'This month',survey:'All',module:'All'},
+var cvF={ band:{period:'This month',process:'All'},
+          proc:{period:'This month',process:'All',survey:'All',module:'All'},
           surv:{period:'This month',survey:'All'},
           user:{period:'This month',process:'All',user:'All'} };
 var cvMenu=null;
@@ -15727,8 +15727,9 @@ function cvBandLeg(color,label,n,pct){
     '<div style="font-size:11.5px;color:#616E88;margin-top:4px;">'+label+'</div></div></div>';
 }
 function cvBand(){
-  var per=cvF.band.period;
-  var list=cvProc.map(function(p){ return cvScaleProc(p,per); });
+  var per=cvF.band.period, fp=cvF.band.process;
+  var list=cvProc.filter(function(p){ return fp==='All'||p.name===fp; })
+                 .map(function(p){ return cvScaleProc(p,per); });
   var t=cvTotals(list);
   var r=t.resp, h=t.happy, u=t.unhappy, n=r-h-u;
   var pc=function(x){ return Math.round(x/r*100); };
@@ -15761,11 +15762,13 @@ function cvBand(){
   return '<div class="an-card" style="grid-column:1/-1;padding:22px 24px;">'+
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:16px;">'+
       '<div><div style="font-size:15px;font-weight:700;color:#33475B;">Overall Feedback</div>'+
-      '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">Across '+list.length+' processes</div></div>'+
+      '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+
+        (fp==='All'? 'Across '+list.length+' processes' : fp)+'</div></div>'+
       '<div style="text-align:right;"><div style="font-size:15px;font-weight:700;color:#1F2733;">'+r.toLocaleString()+' responses</div>'+
       '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+cvPct(r,t.sent)+' response rate &middot; '+t.sent.toLocaleString()+' sent</div></div>'+
     '</div>'+
-    cvChipRow([cvChip('band','period','Time Range',CV_PERIOD_LIST)])+
+    cvChipRow([cvChip('band','period','Time Range',CV_PERIOD_LIST),
+               cvChip('band','process','Process',['All'].concat(cvProc.map(function(p){return p.name;})))])+
     bar+
     '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:38px;">'+
       cvBandLeg('#11985E','Positive',h,pc(h))+cvBandLeg('#D3D8E4','Neutral',n,pc(n))+cvBandLeg('#E23041','Negative',u,pc(u))+
@@ -15791,7 +15794,8 @@ function cvBand(){
 function cvProcessReport(){
   var f=cvF.proc;
   var list=cvProc.filter(function(p){
-      return (f.survey==='All'||p.survey===f.survey) && (f.module==='All'||p.module===f.module); })
+      return (f.process==='All'||p.name===f.process) &&
+             (f.survey==='All'||p.survey===f.survey) && (f.module==='All'||p.module===f.module); })
     .map(function(p){ return cvScaleProc(p,f.period); });
   var rows=list.map(function(p){
     var prim=(p.dUnit==='nps')?'nps':'csat';
@@ -15826,6 +15830,7 @@ function cvProcessReport(){
   } else rows=cvEmpty(12,'No process matches these filters.');
   return anCard('Feedback by Process',
     cvChipRow([cvChip('proc','period','Period',CV_PERIOD_LIST),
+               cvChip('proc','process','Process',['All'].concat(cvProc.map(function(p){return p.name;}))),
                cvChip('proc','survey','Survey',['All'].concat(cvUniq(cvProc.map(function(p){return p.survey;})))),
                cvChip('proc','module','Module',['All'].concat(cvUniq(cvProc.map(function(p){return p.module;}))))])+
     cvTable(cvTh(['Process','Modules','Survey Name','Sent','Responded','Positives','Negatives','CSAT','NPS','Avg Rating','&#916; vs last period'],3)+rows+tot),
