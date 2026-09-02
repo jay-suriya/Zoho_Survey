@@ -3900,31 +3900,32 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:0 24px 16px;background:#e8e8e8;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;">
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-sent" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Survey's Sent</div>
+              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px 18px;background:#E8E8EC;border:1px solid #E8E8EC;border-radius:8px;overflow:hidden;">
+                <div style="background:#fff;padding:21px 14px;text-align:center;">
+                  <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Sent</div>
+                </div>
+                <div style="background:#fff;padding:21px 14px;text-align:center;">
+                  <div id="sd-stat-responses" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Received</div>
+                </div>
+                <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
+                  <div id="sd-stat-happy" style="font-size:27px;font-weight:700;color:#10975E;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Happy</div>
+                </div>
+                <div class="sd-stat-click" onclick="sdFilterSentiment('unhappy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
+                  <div id="sd-stat-unhappy" style="font-size:27px;font-weight:700;color:#C8324A;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Unhappy</div>
+                </div>
+                <div class="sd-stat-click" onclick="sdFilterSentiment('neutral')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
+                  <div id="sd-stat-neutral" style="font-size:27px;font-weight:700;color:#616E88;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Neutral</div>
+                </div>
+                <div style="background:#fff;padding:21px 14px;text-align:center;">
+                  <div id="sd-stat-pending" style="font-size:27px;font-weight:700;color:#B8791A;letter-spacing:-.6px;line-height:1;">0</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Yet to respond</div>
+                </div>
               </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-responses" style="font-size:26px;font-weight:700;color:#e53935;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Total Responses</div>
-              </div>
-              <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
-                <div id="sd-stat-happy" style="font-size:26px;font-weight:700;color:#1F8A54;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Positives</div>
-                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">responses, more positive than negative</div>
-              </div>
-              <div style="background:#fff;padding:18px 12px;text-align:center;">
-                <div id="sd-stat-verdict" style="font-size:26px;font-weight:700;color:#5f6368;">&#8212;</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Overall</div>
-                <div id="sd-stat-verdict-sub" style="font-size:10px;color:#9AA0B1;margin-top:3px;"></div>
-              </div>
-              <div class="sd-stat-click" onclick="sdFilterSentiment('unhappy')" title="Click to view these responses" style="background:#fff;padding:18px 12px;text-align:center;cursor:pointer;">
-                <div id="sd-stat-unhappy" style="font-size:26px;font-weight:700;color:#C8324A;">0</div>
-                <div style="font-size:11px;color:#5f6368;margin-top:2px;">Negatives</div>
-                <div style="font-size:10px;color:#9AA0B1;margin-top:3px;">responses, more negative than positive</div>
-              </div>
-            </div>
             <div id="sd-empty-note" style="display:none;margin:0 24px 16px;padding:22px;text-align:center;background:#F7F8FA;border:1px dashed #D6D6E3;border-radius:8px;color:#8C91AB;font-size:13.5px;">No responses yet — send the survey to your CRM records to start collecting insights.</div>
             </div><!-- /Response Statistics -->
 
@@ -5500,15 +5501,11 @@ function sdSetData(hasData) {
   var set = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; };
   set('sd-stat-sent',stats.sent); set('sd-stat-responses',stats.responses);
   // counted from the actual responses, so the tile always matches what the drill-down shows
-  var rc = (typeof sdRespCounts==='function')? sdRespCounts(sdRespData) : {pos:0,neg:0};
+  var rc = (typeof sdRespCounts==='function')? sdRespCounts(sdRespData) : {pos:0,neu:0,neg:0};
   set('sd-stat-happy',   hasData? String(rc.pos) : '0');
   set('sd-stat-unhappy', hasData? String(rc.neg) : '0');
-  var sv = (hasData && typeof sdUnitVerdict==='function')? sdUnitVerdict(sdRespData) : null;
-  var ve=document.getElementById('sd-stat-verdict'), vs=document.getElementById('sd-stat-verdict-sub');
-  if(ve){ ve.textContent = sv? SD_VERDICT[sv.band].t : '\u2014';
-          ve.style.color  = sv? SD_VERDICT[sv.band].c : '#5f6368'; }
-  if(vs){ vs.innerHTML = sv? sv.parts.map(function(p){
-            return ({csat:'CSAT',nps:'NPS',rating:'Rating'})[p.kind]+' '+p.value.toFixed(2); }).join(' &middot; ') : ''; }
+  set('sd-stat-neutral', hasData? String(rc.neu) : '0');
+  set('sd-stat-pending', hasData? String(nPend)  : '0');
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
@@ -8829,12 +8826,12 @@ var sdRespFixedCols = ['name','email','module'];
 var sdRespColTemp = {};
 
 var sdRespData = [
-  {name:'Priya', qTeam:'0/2', process:'Service job', owner:'S. Kumar', verbatim:"Vehicle came back with the same noise. Third visit for one problem.", email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Age 20–30', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
-  {name:'Raj', qTeam:'1/2', process:'Delivery', owner:'R. Menon', verbatim:"Handover took nearly three hours. The car itself was spotless.", email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Age 20–30', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
-  {name:'Malar', qTeam:'0/2', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Best buying experience I have had. No pressure at all.", email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Age 35–40', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
-  {name:'Nisha', qTeam:'0/2', process:'Service job', owner:'S. Kumar', verbatim:"Estimate changed twice after I approved it. Nobody called to explain.", email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Age 60', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
-  {name:'Divya', qTeam:'1/2', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Clear pricing, quick paperwork, and they explained every feature.", email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Default', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
-  {name:'Clara', qTeam:'0/2', process:'Delivery', owner:'K. Vasanth', verbatim:"Smooth handover. Would have liked the accessories fitted beforehand.", email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Age 35–40', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
+  {name:'Priya', qDelay:'2/10', qTeam:'0/2', process:'Service job', owner:'S. Kumar', verbatim:"Vehicle came back with the same noise. Third visit for one problem.", email:'priya@testmail.com', module:'Leads', responseId:'n1jYTjWd', responseStatus:'Completed', ipAddress:'223.178.80.34', startTime:'Apr 1, 2026 10:00:10', completionTime:'Apr 1, 2026 10:00:32', timeTaken:'22 secs', collector:'Age 20–30', totalRating:'5/100', npsScore:'0/10', csatScore:'0', avgRating:'0.5/10', score:'3/6 (50%)', tags:'CSAT', tes:'A1', country:'India', location:'Chennai', emailAddr:'priya@testmail.com', rvEmail:'priya@testmail.com', phone:'9876543210', customercode:'C001', accounttype:'Premium', individualRecords:'Yes', qEnterEmail:'priya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Integration issues', qFollowup:'Yes', qRate:'4/5', qTest:'OK', test1:'A', test2:'B', test3:'C', notes:'Follow up scheduled'},
+  {name:'Raj', qDelay:'6/10', qTeam:'1/2', process:'Delivery', owner:'R. Menon', verbatim:"Handover took nearly three hours. The car itself was spotless.", email:'raj@testmail.com', module:'Leads', responseId:'m2kZUkXe', responseStatus:'Completed', ipAddress:'103.21.58.12', startTime:'Apr 2, 2026 11:30:05', completionTime:'Apr 2, 2026 11:30:44', timeTaken:'39 secs', collector:'Age 20–30', totalRating:'12/100', npsScore:'7/10', csatScore:'3', avgRating:'3.0/10', score:'4/6 (67%)', tags:'NPS', tes:'B2', country:'India', location:'Mumbai', emailAddr:'raj@testmail.com', rvEmail:'raj@testmail.com', phone:'9876543211', customercode:'C002', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'raj@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Performance', qFollowup:'No', qRate:'3/5', qTest:'Good', test1:'D', test2:'E', test3:'F', notes:''},
+  {name:'Malar', qDelay:'9/10', qTeam:'0/2', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Best buying experience I have had. No pressure at all.", email:'malar@testmail.com', module:'Contacts', responseId:'p3lAVlYf', responseStatus:'Partial', ipAddress:'74.125.224.72', startTime:'Apr 3, 2026 09:15:20', completionTime:'Apr 3, 2026 09:15:55', timeTaken:'35 secs', collector:'Age 35–40', totalRating:'20/100', npsScore:'9/10', csatScore:'5', avgRating:'5.0/10', score:'6/6 (100%)', tags:'CSAT', tes:'C3', country:'USA', location:'New York', emailAddr:'malar@testmail.com', rvEmail:'malar@testmail.com', phone:'1234567890', customercode:'C003', accounttype:'Premium', individualRecords:'No', qEnterEmail:'malar@testmail.com', qSatisfied:'Yes', qMeeting:'No', qLimitations:'No', qChallenge:'Pricing', qFollowup:'Yes', qRate:'5/5', qTest:'Great', test1:'G', test2:'H', test3:'I', notes:'VIP customer'},
+  {name:'Nisha', qDelay:'1/10', qTeam:'0/2', process:'Service job', owner:'S. Kumar', verbatim:"Estimate changed twice after I approved it. Nobody called to explain.", email:'nisha@testmail.com', module:'Custom Module', responseId:'q4mBWmZg', responseStatus:'Completed', ipAddress:'185.60.216.35', startTime:'Apr 4, 2026 14:20:00', completionTime:'Apr 4, 2026 14:20:28', timeTaken:'28 secs', collector:'Age 60', totalRating:'8/100', npsScore:'3/10', csatScore:'1', avgRating:'1.5/10', score:'2/6 (33%)', tags:'Feedback', tes:'D4', country:'UK', location:'London', emailAddr:'nisha@testmail.com', rvEmail:'nisha@testmail.com', phone:'4412345678', customercode:'C004', accounttype:'Enterprise', individualRecords:'Yes', qEnterEmail:'nisha@testmail.com', qSatisfied:'No', qMeeting:'Yes', qLimitations:'Yes', qChallenge:'Missing features', qFollowup:'Yes', qRate:'2/5', qTest:'Fair', test1:'J', test2:'K', test3:'L', notes:'Needs escalation'},
+  {name:'Divya', qDelay:'9/10', qTeam:'1/2', process:'Vehicle purchase', owner:'A. Rahman', verbatim:"Clear pricing, quick paperwork, and they explained every feature.", email:'divya@testmail.com', module:'Leads', responseId:'r5nCXnAh', responseStatus:'Completed', ipAddress:'49.206.10.92', startTime:'Apr 5, 2026 16:45:00', completionTime:'Apr 5, 2026 16:45:19', timeTaken:'19 secs', collector:'Default', totalRating:'18/100', npsScore:'9/10', csatScore:'5', avgRating:'4.5/10', score:'5/6 (83%)', tags:'NPS', tes:'E5', country:'India', location:'Bangalore', emailAddr:'divya@testmail.com', rvEmail:'divya@testmail.com', phone:'9876543212', customercode:'C005', accounttype:'Standard', individualRecords:'Yes', qEnterEmail:'divya@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'None', qFollowup:'No', qRate:'5/5', qTest:'Excellent', test1:'M', test2:'N', test3:'O', notes:''},
+  {name:'Clara', qDelay:'5/10', qTeam:'0/2', process:'Delivery', owner:'K. Vasanth', verbatim:"Smooth handover. Would have liked the accessories fitted beforehand.", email:'clara@testmail.com', module:'Contacts', responseId:'s6oDYoBi', responseStatus:'Completed', ipAddress:'217.149.177.81', startTime:'Apr 6, 2026 08:30:00', completionTime:'Apr 6, 2026 08:30:45', timeTaken:'45 secs', collector:'Age 35–40', totalRating:'15/100', npsScore:'7/10', csatScore:'4', avgRating:'3.8/10', score:'4/6 (67%)', tags:'CSAT', tes:'F6', country:'Germany', location:'Berlin', emailAddr:'clara@testmail.com', rvEmail:'clara@testmail.com', phone:'4912345678', customercode:'C006', accounttype:'Premium', individualRecords:'No', qEnterEmail:'clara@testmail.com', qSatisfied:'Yes', qMeeting:'Yes', qLimitations:'No', qChallenge:'Documentation', qFollowup:'Yes', qRate:'4/5', qTest:'Good', test1:'P', test2:'Q', test3:'R', notes:'Happy customer'}
 ];
 var sdRespModuleFilter = 'All Modules';
 var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){...}}
@@ -8868,9 +8865,11 @@ function sdSentiment(r){
 }
 function sdIsHappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='pos' : sdSentiment(r)==='happy'; }
 function sdIsUnhappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='neg' : sdSentiment(r)==='unhappy'; }
+function sdIsNeutral(r){ return sdRespVerdict(r).band==='neu'; }
 function sdFilterSentiment(kind){
-  if(kind==='happy') sdApplyChartFilter('Positive responses', sdIsHappy);
-  else               sdApplyChartFilter('Negative responses', sdIsUnhappy);
+  if(kind==='happy')        sdApplyChartFilter('Positive responses', sdIsHappy);
+  else if(kind==='neutral') sdApplyChartFilter('Neutral responses',  sdIsNeutral);
+  else                      sdApplyChartFilter('Negative responses', sdIsUnhappy);
 }
 
 // ═══════════ Zoho Survey metric engine ═══════════
@@ -8891,7 +8890,15 @@ var SD_Q=[
   // question appears only under Average Ratings. It is the survey's worst question and CSAT
   // alone would never show it.
   {id:'qteam', text:'How knowledgeable and helpful was our team?',     type:'rating', outOf:2,
-   field:'qTeam',     csat:false, rated:true,  neg:[0,0], neu:[1,1], pos:[2,2]}
+   field:'qTeam',     csat:false, rated:true,  neg:[0,0], neu:[1,1], pos:[2,2]},
+  // Author-configured question scoring — points per answer, not sentiment.
+  {id:'qdelay',text:'Which best describes the wait you experienced?',   type:'choice', outOf:10,
+   field:'qDelay',    csat:false, rated:false, scored:true, neg:[0,4], neu:[5,7], pos:[8,10]}
+];
+// Free-text questions — no score, but this is the customer in their own words.
+var SD_TEXT=[
+  {q:'What is the biggest challenge you face with the product today?', field:'qChallenge'},
+  {q:'Any other comments?', field:'verbatim'}
 ];
 function sdAnswer(r,q){ var f=sdFrac(r[q.field]); return f? f.n : null; }
 function sdBandOf(q,v){
@@ -9081,9 +9088,11 @@ function sdGroupRows(groups, label, filterKey){
 // Turn the page's static sections into the same collapsible shape as the results cards.
 var SD_SECTIONS=[
   ['sd-sec-stats',           true ],
-  ['sd-reports-section',     true ],
   ['sd-respondents-section', true ],
-  ['sd-qresp-section',       false]  // question-level detail — collapsed until asked for
+  ['sd-owner-section',       true ],
+  ['sd-qresp-section',       false],  // question-level detail — collapsed until asked for
+  ['sd-reports-section',     true ],
+  ['sd-quota-section',       false]   // setup, not results
 ];
 function sdInitSections(){
   SD_SECTIONS.forEach(function(pair){
@@ -9145,6 +9154,129 @@ function sdToggleDetails(id){
   b.style.display = open? 'block':'none';
   if(l) l.innerHTML = open? 'Hide details &#9652;' : 'Details &#9662;';
 }
+// ── Section placement done at runtime, so nothing has to be cut out of the HTML.
+// Spec order: tiles -> what the customer says + by process -> All Respondents ->
+// Responses by Owner -> Responses based on Questions -> Survey Reports -> Survey Quota.
+function sdMakeSection(id, title){
+  var el=document.getElementById(id);
+  if(el) return el;
+  el=document.createElement('div');
+  el.id=id;
+  el.innerHTML='<div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;">'+
+    '<span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">'+title+'</span></div>'+
+    '<div id="'+id+'-host" style="padding:0 0 10px;"></div>';
+  return el;
+}
+function sdPlaceSections(ownerHtml, pendingHtml){
+  var results=document.getElementById('sd-results');
+  if(!results) return;
+  var parent=results.parentElement;
+  var owner=sdMakeSection('sd-owner-section','Responses by Owner');
+  var quota=sdMakeSection('sd-quota-section','Survey Quota');
+  // move the quota block out of the collapsed setup section, once
+  var qsrc=document.getElementById('sd-quota-block');
+  if(!qsrc){
+    var body=document.getElementById('sd-hide-details-body');
+    if(body){
+      var found=null;
+      [].forEach.call(body.children, function(c){ if(!found && /Survey Quota/.test(c.textContent||'')) found=c; });
+      if(found){ found.id='sd-quota-block'; qsrc=found; }
+    }
+  }
+  var order=['sd-sec-stats','sd-results','sd-respondents-section','sd-owner-section',
+             'sd-qresp-section','sd-reports-section','sd-quota-section'];
+  order.forEach(function(id){
+    var el = (id==='sd-owner-section')? owner : (id==='sd-quota-section')? quota : document.getElementById(id);
+    if(el) parent.appendChild(el);              // appendChild moves an existing node
+  });
+  var oh=document.getElementById('sd-owner-section-host');
+  if(oh) oh.innerHTML=ownerHtml;
+  var qh=document.getElementById('sd-quota-section-host');
+  if(qh && qsrc && qsrc.parentElement!==qh) qh.appendChild(qsrc);
+  // the pending list is a tile now; keep the names available under All Respondents
+  var pw=document.getElementById('sd-pending-host');
+  if(!pw){
+    var rs=document.getElementById('sd-respondents-section');
+    if(rs){ pw=document.createElement('div'); pw.id='sd-pending-host'; rs.appendChild(pw); }
+  }
+  if(pw) pw.innerHTML=pendingHtml||'';
+}
+function sdRenderReportCards(rows){
+  var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
+  var qs=SD_Q.map(function(q,i){ return {q:q, st:sdQStats(q,rows), color:QCOL[i%QCOL.length]}; });
+  var agg=sdMetrics(rows);
+  var th=function(t,l){ return '<th class="sdr-th"'+(l?' style="text-align:left;"':'')+'>'+t+'</th>'; };
+  var legend=function(items){
+    return '<div style="display:flex;flex-direction:column;gap:7px;margin-top:13px;">'+
+      items.map(function(x){
+        return '<div style="display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:#434D5E;line-height:1.4;">'+
+          '<span style="width:8px;height:8px;border-radius:50%;background:'+x.color+';flex:none;margin-top:3px;"></span>'+
+          '<span>'+x.q.text+'</span></div>'; }).join('')+'</div>';
+  };
+  var block=function(id,chart,head,body,foot,items){
+    return chart + legend(items) +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:13px;padding-top:11px;border-top:1px solid #F0F0F4;">'+
+        '<span onclick="sdToggleDetails(\''+id+'\')" id="'+id+'-link" style="font-size:12px;font-weight:600;color:#5464F2;cursor:pointer;white-space:nowrap;">Details &#9662;</span>'+
+        '<span style="flex:1;"></span>'+
+        '<span style="font-size:11.5px;font-weight:700;color:#1F2733;text-align:right;">'+foot+'</span></div>'+
+      '<div id="'+id+'-body" style="display:none;margin-top:11px;overflow-x:auto;">'+
+        '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
+  };
+  var put=function(id,html){ var e=document.getElementById(id); if(e) e.innerHTML=html; };
+  var bars=function(items, valOf, max, fmt, stacked){
+    var W=560,H=210,PL=34,PB=16,PT=14;
+    var gap=(W-PL-14)/items.length, bw=Math.min(58,gap*0.5);
+    var y=function(v){ return (H-PB)-(v/max)*(H-PB-PT); };
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
+    for(var t=0;t<=max;t+=max/(max<=10?5:4)){
+      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
+           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t.toFixed(0)+'</text>';
+    }
+    items.forEach(function(x,i){
+      var v=valOf(x), cx=PL+gap*i+gap/2, h=(H-PB)-y(v);
+      if(stacked) svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.q.outOf)+'" width="'+bw+'" height="'+((H-PB)-y(x.q.outOf))+'" fill="#E9EAEF" rx="2"/>';
+      svg+='<rect x="'+(cx-bw/2)+'" y="'+y(v)+'" width="'+bw+'" height="'+h+'" fill="'+x.color+'" rx="2"><title>'+x.q.text+'</title></rect>'+
+        (h>20? '<text x="'+cx+'" y="'+(y(v)+15)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+fmt(v)+'</text>'
+             : '<text x="'+cx+'" y="'+(y(v)-5)+'" font-size="10" fill="#434D5E" text-anchor="middle" font-weight="700">'+fmt(v)+'</text>');
+    });
+    return svg+'</svg>';
+  };
+  var csatQ=qs.filter(function(x){ return x.q.csat && x.st.n; });
+  if(csatQ.length) put('sd-chart-csat', block('sdd-csat',
+    bars(csatQ, function(x){return x.st.csat;},
+      Math.max(20, Math.ceil(Math.max.apply(null,csatQ.map(function(x){return x.st.csat;}))/20)*20),
+      function(v){ return v.toFixed(2); }, false),
+    th('Questions',1)+th('Negatives')+th('Neutrals')+th('Positives')+th('CSAT Score'),
+    csatQ.slice().sort(function(a,b){ return a.st.csat-b.st.csat || b.st.neg-a.st.neg; }).map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
+        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.csat/100).c+';">'+sdFmtCsat(x.st.csat)+'</td></tr>'; }).join(''),
+    'Overall CSAT Score: '+sdFmtCsat(agg.csat), csatQ));
+  var npsQ=qs.filter(function(x){ return x.q.type==='nps' && x.st.n; });
+  if(npsQ.length) put('sd-chart-nps', block('sdd-nps',
+    '<div style="max-width:230px;margin:0 auto;">'+sdNpsGauge(agg.nps===null?0:agg.nps)+'</div>',
+    th('Questions',1)+th('Detractors (0-6)')+th('Passives (7-8)')+th('Promoters (9-10)')+th('Net Promoter Score'),
+    npsQ.map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
+        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand((x.st.nps+100)/200).c+';">'+sdFmtNps(x.st.nps)+'</td></tr>'; }).join(''),
+    'Overall NPS: '+sdFmtNps(agg.nps), npsQ));
+  var rateQ=qs.filter(function(x){ return x.q.rated && x.st.n; });
+  if(rateQ.length) put('sd-chart-rate', block('sdd-rate',
+    bars(rateQ, function(x){return x.st.avg;},
+      Math.max.apply(null,rateQ.map(function(x){return x.q.outOf;}))||1,
+      function(v){ return v.toFixed(2); }, true),
+    th('Questions',1)+th('Average Ratings')+th('Out of'),
+    rateQ.slice().sort(function(a,b){ return (a.st.avg/a.q.outOf)-(b.st.avg/b.q.outOf); }).map(function(x){
+      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
+        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.avg/x.q.outOf).c+';">'+x.st.avg.toFixed(2)+'</td>'+
+        '<td class="sdr-td" style="color:#8C91AB;">'+x.q.outOf+'</td></tr>'; }).join(''),
+    'Overall average survey rating: '+sdFmtRate(agg.rating), rateQ));
+}
 function sdRenderResults(){
   var host=document.getElementById('sd-results'); if(!host) return;
   var rows=sdRespData;
@@ -9153,128 +9285,64 @@ function sdRenderResults(){
   var byProc=sdCard('Responses by Process',
     sdGroupRows(sdGroup(rows,'process'),'Process','process'));
 
-  // ── 2. What people said : the product's own three reports, chart first ──
+  // ── What the customer says ──
+  // One block per metric the survey actually collects, each showing only its WEAKEST
+  // question — several CSAT or NPS questions collapse to the lowest — then the free-text
+  // answers, which are the only place the customer speaks for themselves.
   var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
-  var qs=SD_Q.map(function(q,i){ var st=sdQStats(q,rows); return {q:q,st:st,color:QCOL[i%QCOL.length]}; });
+  var qs=SD_Q.map(function(q,i){ return {q:q, st:sdQStats(q,rows), color:QCOL[i%QCOL.length]}; });
   var agg=sdMetrics(rows);
-
-  var legend=function(items){
-    return '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">'+
-      items.map(function(x){
-        return '<div style="display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:#434D5E;line-height:1.35;">'+
-          '<span style="width:8px;height:8px;border-radius:50%;background:'+x.color+';flex:none;margin-top:3px;"></span>'+
-          '<span>'+x.q.text+'</span></div>'; }).join('')+'</div>';
+  var least=function(pick, val){
+    var pool=qs.filter(pick).filter(function(x){ return x.st.n>0 && val(x)!==null; });
+    return pool.length? pool.sort(function(a,b){ return val(a)-val(b); })[0] : null;
   };
-  var th=function(t,l){ return '<th class="sdr-th"'+(l?' style="text-align:left;"':'')+'>'+t+'</th>'; };
-  // chart on top, table behind a Details toggle, overall figure always visible
-  // one report card: chart, question legend, then Details revealing the table
-  var block=function(id,chart,head,body,foot,items){
-    return chart + legend(items) +
-      '<div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #F0F0F4;">'+
-        '<span onclick="sdToggleDetails(\''+id+'\')" id="'+id+'-link" style="font-size:12px;font-weight:600;color:#5464F2;cursor:pointer;white-space:nowrap;">Details &#9662;</span>'+
-        '<span style="flex:1;"></span>'+
-        '<span style="font-size:11.5px;font-weight:700;color:#1F2733;text-align:right;">'+foot+'</span></div>'+
-      '<div id="'+id+'-body" style="display:none;margin-top:10px;overflow-x:auto;">'+
-        '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#F7F8FA;">'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
+  var leastCsat  = least(function(x){ return x.q.csat; },         function(x){ return x.st.csat; });
+  var leastNps   = least(function(x){ return x.q.type==='nps'; }, function(x){ return x.st.nps; });
+  var leastScore = least(function(x){ return x.q.scored; },       function(x){ return x.st.avg/x.q.outOf; });
+
+  var worstBlock=function(title, x, norm, value, counts){
+    var b=dsBand(norm);
+    return '<div style="flex:1;min-width:255px;border:1px solid #EDEEF3;border-top:3px solid '+b.c+';border-radius:10px;padding:17px 19px;background:#fff;">'+
+      '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.07em;">'+title+'</div>'+
+      '<div style="font-size:14.5px;font-weight:600;color:#1F2733;margin-top:10px;line-height:1.45;">'+x.q.text+'</div>'+
+      '<div style="font-size:24px;font-weight:800;color:'+b.c+';margin-top:14px;line-height:1;letter-spacing:-.5px;">'+value+'</div>'+
+      '<div style="font-size:11.5px;color:#8C91AB;margin-top:9px;line-height:1.5;">'+counts+'</div></div>';
   };
+  var blocks=[];
+  if(leastCsat) blocks.push(worstBlock('Lowest CSAT question', leastCsat, leastCsat.st.csat/100,
+    sdFmtCsat(leastCsat.st.csat),
+    leastCsat.st.pos+' positive &middot; '+leastCsat.st.neu+' neutral &middot; '+leastCsat.st.neg+' negative<br>of '+leastCsat.st.n+' answers'));
+  if(leastNps) blocks.push(worstBlock('Lowest NPS question', leastNps, (leastNps.st.nps+100)/200,
+    sdFmtNps(leastNps.st.nps),
+    leastNps.st.pos+' promoters &middot; '+leastNps.st.neu+' passives &middot; '+leastNps.st.neg+' detractors<br>of '+leastNps.st.n+' answers'));
+  if(leastScore) blocks.push(worstBlock('Lowest scoring question', leastScore, leastScore.st.avg/leastScore.q.outOf,
+    leastScore.st.avg.toFixed(2)+'<span style="font-size:13px;color:#9AA0B1;font-weight:600;"> / '+leastScore.q.outOf+'</span>',
+    'average points across '+leastScore.st.n+' answers'));
 
-  // ── CSAT : bar per question ──
-  var csatQ=qs.filter(function(x){ return x.q.csat; });
-  var csatChart=(function(){
-    var W=560,H=210,PL=34,PB=16,PT=14, max=Math.max.apply(null,csatQ.map(function(x){return x.st.csat;}))||1;
-    max=Math.max(20, Math.ceil(max/20)*20);          // round axis: 20 / 40 / 60 ...
-    var bw=Math.min(58,(W-PL-14)/csatQ.length*0.5), gap=(W-PL-14)/csatQ.length;
-    var y=function(v){ return (H-PB)-(v/max)*(H-PB-PT); };
-    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
-    for(var t=0;t<=max;t+=max/4){
-      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
-           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t.toFixed(0)+'</text>';
-    }
-    csatQ.forEach(function(x,i){
-      var cx=PL+gap*i+gap/2, h=(H-PB)-y(x.st.csat);
-      svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.st.csat)+'" width="'+bw+'" height="'+h+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
-           ((h > 20)
-             ? '<text x="'+cx+'" y="'+(y(x.st.csat)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.csat.toFixed(2)+'</text>'
-             : '<text x="'+cx+'" y="'+(y(x.st.csat)-5)+'" font-size="10" fill="#434D5E" text-anchor="middle" font-weight="700">'+x.st.csat.toFixed(2)+'</text>');
-    });
-    return svg+'</svg>';
-  })();
-  var csatBlock=block('sdd-csat', csatChart,
-    th('Questions',1)+th('Negatives')+th('Neutrals')+th('Positives')+th('CSAT Score'),
-    csatQ.slice().sort(function(a,b){ return a.st.csat-b.st.csat || b.st.neg-a.st.neg; }).map(function(x){
-      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
-        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
-        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
-        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.csat/100).c+';">'+sdFmtCsat(x.st.csat)+'</td></tr>'; }).join(''),
-    'Overall CSAT Score: '+sdFmtCsat(agg.csat), csatQ);
+  var order={neg:0,neu:1,pos:2};
+  var byWorst=rows.slice().sort(function(a,b){ return order[sdRespVerdict(a).band]-order[sdRespVerdict(b).band]; });
+  var textBlocks=SD_TEXT.map(function(t){
+    var answers=byWorst.filter(function(r){ return r[t.field]; });
+    if(!answers.length) return '';
+    return '<div style="margin-top:26px;">'+
+      '<div style="font-size:13.5px;font-weight:600;color:#1F2733;margin-bottom:14px;">'+t.q+
+        '<span style="font-size:11.5px;font-weight:400;color:#9AA0B1;margin-left:9px;">'+answers.length+' answered</span></div>'+
+      answers.map(function(r){
+        var v=sdRespVerdict(r).band, c=SD_VERDICT[v].c;
+        return '<div style="border-left:3px solid '+c+';padding:8px 0 8px 15px;margin-bottom:13px;">'+
+          '<div style="font-size:13.5px;color:#313949;line-height:1.55;">&ldquo;'+r[t.field]+'&rdquo;</div>'+
+          '<div style="font-size:11.5px;color:#9AA0B1;margin-top:6px;">'+r.name+' &middot; '+r.process+' &middot; '+r.owner+
+            ' &middot; <span style="color:'+c+';font-weight:600;">'+SD_VERDICT[v].t+'</span></div></div>'; }).join('')+'</div>';
+  }).join('');
 
-  // ── NPS : the product's gauge ──
-  var npsQ=qs.filter(function(x){ return x.q.type==='nps'; });
-  var npsBlock=block('sdd-nps', '<div style="max-width:230px;margin:0 auto;">'+sdNpsGauge(agg.nps===null?0:agg.nps)+'</div>',
-    th('Questions',1)+th('Detractors (0-6)')+th('Passives (7-8)')+th('Promoters (9-10)')+th('Net Promoter Score'),
-    npsQ.map(function(x){
-      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-        '<td class="sdr-td" style="color:#C8324A;font-weight:600;">'+x.st.neg+'</td>'+
-        '<td class="sdr-td" style="color:#8C91AB;">'+x.st.neu+'</td>'+
-        '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+x.st.pos+'</td>'+
-        '<td class="sdr-td" style="font-weight:700;color:'+dsBand((x.st.nps+100)/200).c+';">'+sdFmtNps(x.st.nps)+'</td></tr>'; }).join(''),
-    'Overall NPS: '+sdFmtNps(agg.nps), npsQ);
-
-  // ── Average Ratings : filled bar against the question's own scale ──
-  var rateQ=qs.filter(function(x){ return x.q.rated; });
-  var rateChart=(function(){
-    var W=560,H=210,PL=34,PB=16,PT=14, max=Math.max.apply(null,rateQ.map(function(x){return x.q.outOf;}))||1;
-    var gap=(W-PL-14)/rateQ.length, bw=Math.min(58,gap*0.5);
-    var y=function(v){ return (H-PB)-(v/max)*(H-PB-PT); };
-    var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;">';
-    for(var t=0;t<=max;t+=max/5){
-      svg+='<line x1="'+PL+'" y1="'+y(t)+'" x2="'+(W-14)+'" y2="'+y(t)+'" stroke="#F0F1F5"/>'+
-           '<text x="'+(PL-6)+'" y="'+(y(t)+3)+'" font-size="9" fill="#9AA0B1" text-anchor="end">'+t.toFixed(0)+'</text>';
-    }
-    rateQ.forEach(function(x,i){
-      var cx=PL+gap*i+gap/2;
-      svg+='<rect x="'+(cx-bw/2)+'" y="'+y(x.q.outOf)+'" width="'+bw+'" height="'+((H-PB)-y(x.q.outOf))+'" fill="#E6E7EC"><title>out of '+x.q.outOf+'</title></rect>'+
-           '<rect x="'+(cx-bw/2)+'" y="'+y(x.st.avg)+'" width="'+bw+'" height="'+((H-PB)-y(x.st.avg))+'" fill="'+x.color+'"><title>'+x.q.text+'</title></rect>'+
-           (((H-PB)-y(x.st.avg)) > 20
-             ? '<text x="'+cx+'" y="'+(y(x.st.avg)+14)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">'+x.st.avg.toFixed(2)+'</text>'
-             : '<text x="'+cx+'" y="'+(y(x.st.avg)-5)+'" font-size="10" fill="#434D5E" text-anchor="middle" font-weight="700">'+x.st.avg.toFixed(2)+'</text>');
-    });
-    return svg+'</svg>';
-  })();
-  var rateBlock=block('sdd-rate', rateChart,
-    th('Questions',1)+th('Average Ratings')+th('Out of'),
-    rateQ.slice().sort(function(a,b){ return (a.st.avg/a.q.outOf)-(b.st.avg/b.q.outOf); }).map(function(x){
-      return '<tr><td class="sdr-td" style="text-align:left;color:#313949;">'+x.q.text+'</td>'+
-        '<td class="sdr-td" style="font-weight:700;color:'+dsBand(x.st.avg/x.q.outOf).c+';">'+x.st.avg.toFixed(2)+'</td>'+
-        '<td class="sdr-td" style="color:#8C91AB;">'+x.q.outOf+'</td></tr>'; }).join(''),
-    'Overall average survey rating: '+sdFmtRate(agg.rating), rateQ);
-
-  // Weakest question — ranked on % of its own scale, so every question can be compared
-  var weakest=qs.slice().sort(function(a,b){ return a.st.pctOfScale-b.st.pctOfScale; })[0];
-  var wb=dsBand(weakest.st.pctOfScale/100);
-  var wVal=weakest.q.type==='nps'? 'NPS '+sdFmtNps(weakest.st.nps)
-        : weakest.st.avg.toFixed(2)+' out of '+weakest.q.outOf;
-  var subhead=function(t,note){ return '<div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px;">'+t+
-      (note?'<span style="text-transform:none;letter-spacing:0;font-weight:400;color:#9AA0B1;margin-left:8px;">'+note+'</span>':'')+'</div>'; };
-
-  var quotes=rows.slice().sort(function(a,b){ return (sdCsat(a)||0)-(sdCsat(b)||0); }).slice(0,4);
-  var said=sdCard('What people said',
-    '<div style="border:1px solid '+wb.c+'44;background:'+wb.c+'0D;border-radius:9px;padding:12px 14px;">'+
-      '<div style="font-size:11px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.05em;">Weakest question</div>'+
-      '<div style="font-size:14px;font-weight:700;color:#1F2733;margin-top:5px;">'+weakest.q.text+'</div>'+
-      '<div style="font-size:13px;font-weight:700;color:'+wb.c+';margin-top:4px;">'+wVal+' &middot; '+Math.round(weakest.st.pctOfScale)+'% of scale'+
-        (weakest.q.csat?'':' <span style="font-weight:400;color:#8C91AB;">&middot; not counted in CSAT</span>')+'</div></div>'+
-    subhead('In their words')+
-    quotes.map(function(r){ var b=dsBand((sdCsat(r)||0)/5);
-      return '<div style="border-left:3px solid '+b.c+';padding:6px 0 6px 12px;margin-bottom:10px;">'+
-        '<div style="font-size:13px;color:#313949;font-style:italic;">“'+r.verbatim+'”</div>'+
-        '<div style="font-size:11.5px;color:#8C91AB;margin-top:4px;">'+r.name+' · '+r.process+' · '+r.owner+'</div></div>'; }).join(''));
+  var said=sdCard('What the customer says',
+    '<div style="display:flex;gap:15px;flex-wrap:wrap;">'+blocks.join('')+'</div>'+ textBlocks,
+    'the weakest question per metric, and their own words');
 
   // ── 5. By owner ──
-  var byOwner=sdCard('Responses by Owner',
-    sdGroupRows(sdGroup(rows,'owner'),'Owner','owner'),
-    'the CRM user who owned the record when the survey was sent');
+  // rendered into its own section, so no card wrapper (the section supplies the heading)
+  var byOwner='<div style="padding:0 24px 6px;font-size:11.5px;color:#8C91AB;">the CRM user who owned the record when the survey was sent</div>'+
+    sdGroupRows(sdGroup(rows,'owner'),'Owner','owner');
 
   // ── 6. Not responded ──
   var pend=sdCard('Yet to respond',
@@ -9291,11 +9359,9 @@ function sdRenderResults(){
     '</tbody></table></div>',
     sdPending.length+' invited, no response yet');
 
-  host.innerHTML = byProc + said + byOwner + pend;
-  var put=function(id,html){ var e=document.getElementById(id); if(e) e.innerHTML=html; };
-  put('sd-chart-csat', csatBlock);
-  put('sd-chart-nps',  npsBlock);
-  put('sd-chart-rate', rateBlock);
+  host.innerHTML = said + byProc;
+  sdPlaceSections(byOwner, pend);
+  sdRenderReportCards(rows);
 }
 
 function sdApplyChartFilter(label, testFn) {
