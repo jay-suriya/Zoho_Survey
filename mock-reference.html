@@ -9393,33 +9393,53 @@ function sdRenderResults(){
 
   var order={neg:0,neu:1,pos:2};
   var byWorst=rows.slice().sort(function(a,b){ return order[sdRespVerdict(a).band]-order[sdRespVerdict(b).band]; });
-  // free-text answers as a table — respondent, process, owner and sentiment are
-  // columns rather than a run-on caption under each quote
-  var textBlocks=SD_TEXT.map(function(t){
-    var answers=byWorst.filter(function(r){ return r[t.field]; });
-    if(!answers.length) return '';
-    var th=function(w,txt){ return '<th class="sdr-th" style="text-align:left;'+(w?'width:'+w+';':'')+'">'+txt+'</th>'; };
-    return '<div style="margin-top:26px;">'+
-      '<div style="font-size:13.5px;font-weight:600;color:#1F2733;margin-bottom:12px;">'+t.q+
-        '<span style="font-size:11.5px;font-weight:400;color:#9AA0B1;margin-left:9px;">'+answers.length+' answered</span></div>'+
-      '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
-      '<thead><tr style="background:#F7F8FA;">'+
-        th('130px','Respondent')+th('130px','Process')+th('120px','Owner')+th('90px','Sentiment')+th('','Answer')+
-      '</tr></thead><tbody>'+
-      answers.map(function(r){
-        var v=sdRespVerdict(r).band, c=SD_VERDICT[v].c;
-        return '<tr>'+
-          '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;border-left:3px solid '+c+';">'+r.name+'</td>'+
-          '<td class="sdr-td" style="text-align:left;">'+r.process+'</td>'+
-          '<td class="sdr-td" style="text-align:left;">'+r.owner+'</td>'+
-          '<td class="sdr-td" style="text-align:left;color:'+c+';font-weight:600;">'+SD_VERDICT[v].t+'</td>'+
-          '<td class="sdr-td" style="text-align:left;white-space:normal;color:#313949;line-height:1.55;">'+r[t.field]+'</td>'+
-        '</tr>'; }).join('')+'</tbody></table></div></div>';
+  // Free-text answers, filtered to one sentiment at a time (Negative by default —
+  // that's what a manager came for). Each text question is its own expandable table.
+  var sent=(typeof sdTextSent!=='undefined')? sdTextSent : 'neg';
+  var textBlocks=SD_TEXT.map(function(t,ti){
+    var answers=rows.filter(function(r){ return r[t.field] && sdRespVerdict(r).band===sent; });
+    var open=(sdTextOpen[t.field]!==undefined)? sdTextOpen[t.field] : (ti===0);
+    var head='<div onclick="sdToggleText(\''+t.field+'\')" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:12px 0;">'+
+      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#5B6473" stroke-width="2.6" '+
+        'style="flex:none;transition:transform .18s;'+(open?'':'transform:rotate(-90deg);')+'"><polyline points="6 9 12 15 18 9"/></svg>'+
+      '<span style="font-size:13.5px;font-weight:600;color:#1F2733;">'+t.q+'</span>'+
+      '<span style="font-size:11.5px;color:#9AA0B1;">'+answers.length+' '+SD_VERDICT[sent].t.toLowerCase()+'</span></div>';
+    var body='';
+    if(open){
+      body = answers.length
+        ? '<div style="overflow-x:auto;margin:0 0 6px;"><table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #E6E6EC;">'+
+            '<thead><tr style="background:#F7F8FA;">'+
+              ['Respondent','Process','Owner','Answer'].map(function(h,i){
+                return '<th class="sdr-th" style="text-align:left;'+(i<3?'width:150px;':'')+'">'+h+'</th>'; }).join('')+
+            '</tr></thead><tbody>'+
+            answers.map(function(r){
+              return '<tr>'+
+                '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+r.name+'</td>'+
+                '<td class="sdr-td" style="text-align:left;">'+r.process+'</td>'+
+                '<td class="sdr-td" style="text-align:left;">'+r.owner+'</td>'+
+                '<td class="sdr-td" style="text-align:left;white-space:normal;color:#313949;line-height:1.55;">'+r[t.field]+'</td>'+
+              '</tr>'; }).join('')+'</tbody></table></div>'
+        : '<div style="padding:6px 0 14px;font-size:12.5px;color:#9AA0B1;">No '+SD_VERDICT[sent].t.toLowerCase()+' answers to this question.</div>';
+    }
+    return '<div style="border-top:1px solid #F0F0F4;">'+head+body+'</div>';
   }).join('');
 
+  var chip='<span onclick="event.stopPropagation();sdToggleTextDD();" style="position:relative;display:inline-flex;'+
+      'align-items:center;gap:6px;font-size:12px;color:#434D5E;background:#F4F5F9;border:1px solid #E1E3EA;'+
+      'border-radius:20px;padding:3px 11px;cursor:pointer;margin-left:2px;">'+
+      'Showing: <b style="font-weight:700;color:'+SD_VERDICT[sent].c+';">'+SD_VERDICT[sent].t+'</b>'+
+      '<span style="color:#8C91AB;">&#9662;</span>'+
+      '<div id="sd-text-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:150px;'+
+        'background:#fff;border:1px solid #D6D6E3;border-radius:8px;box-shadow:0 6px 18px rgba(49,57,73,.18);padding:5px;">'+
+        ['neg','pos','neu'].map(function(k){
+          var selk=(k===sent);
+          return '<div onclick="event.stopPropagation();sdSetTextSent(\''+k+'\')" style="padding:7px 10px;border-radius:6px;'+
+            'font-size:12.5px;cursor:pointer;'+(selk?'background:#EBEDFF;font-weight:700;color:#3752CA;':'color:#434D5E;')+'">'+
+            SD_VERDICT[k].t+'</div>'; }).join('')+
+      '</div></span>';
   var said=sdCard('What the customer says',
-    '<div style="display:flex;gap:15px;flex-wrap:wrap;">'+blocks.join('')+'</div>'+ textBlocks,
-    'the weakest question per metric, and their own words');
+    '<div style="display:flex;gap:15px;flex-wrap:wrap;margin-bottom:6px;">'+blocks.join('')+'</div>'+ textBlocks,
+    chip);
 
   // ── 5. By owner ──
   // rendered into its own section, so no card wrapper (the section supplies the heading)
@@ -15766,6 +15786,22 @@ var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
 var SD_QUOTA={limit:200};   // response quota for this survey
 // Page-level process filter — every figure on the page reads through this.
 var sdProcFilter='All';
+var sdTextSent='neg';        // What the customer says opens on the negatives
+var sdTextOpen={};           // per text question: expanded?
+function sdToggleText(field){
+  var cur=(sdTextOpen[field]!==undefined)? sdTextOpen[field] : (SD_TEXT[0] && SD_TEXT[0].field===field);
+  sdTextOpen[field]=!cur;
+  sdRenderResults();
+}
+function sdToggleTextDD(){
+  var dd=document.getElementById('sd-text-dd'); if(!dd) return;
+  dd.style.display=(dd.style.display==='none'||!dd.style.display)?'block':'none';
+}
+function sdSetTextSent(k){ sdTextSent=k; sdRenderResults(); }
+document.addEventListener('click', function(){
+  var dd=document.getElementById('sd-text-dd');
+  if(dd && dd.style.display==='block') dd.style.display='none';
+});
 function sdRows(){
   return sdProcFilter==='All'? sdRespData
     : sdRespData.filter(function(r){ return r.process===sdProcFilter; });
