@@ -3889,7 +3889,10 @@ tbody tr:hover{background:#f5f7ff;}
 
         <!-- Survey Responses Summary section (collapsible) -->
         <div id="sd-responses-section" style="margin-bottom:16px;">
-          <div onclick="toggleResponsesSection()" style="background:#dde5f7;border-radius:6px 6px 0 0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;">
+          <!-- sticky: the Process and Trend filters stay reachable anywhere inside the
+               summary. Sticky is scoped to #sd-responses-section, which holds the header
+               AND the body, so it releases on its own once the section scrolls past. -->
+          <div id="sd-responses-head" onclick="toggleResponsesSection()" style="background:#dde5f7;border-radius:6px 6px 0 0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;position:sticky;top:0;z-index:20;transition:box-shadow .15s;">
             <div style="display:flex;align-items:center;gap:12px;">
               <svg id="sd-responses-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" style="transition:transform .2s;flex-shrink:0;"><polyline points="6 9 12 15 18 9"/></svg>
               <span style="font-size:13px;font-weight:700;color:#1B1A2E;">Survey Responses Summary</span>
@@ -5498,6 +5501,7 @@ function openSurveyDetail(survey) {
   // Render responses table
   sdRespModuleFilter = 'All Modules';
   if (typeof sdRespRender === 'function') sdRespRender();
+  if (typeof sdInitStickyHead === 'function') sdInitStickyHead();
   // Render question responses
   sdQRespFilter = 'All';
   sdQRespModuleFilter = 'All Modules';
@@ -9237,6 +9241,28 @@ function sdCell(v, outOf, fmt){
 // against THAT process's average — never the survey's.
 var SD_MINRESP_OWNER = 4;   // below this a share is noise; shown but not ranked
 var SD_FLAG_GAP = 5;        // CSAT points a person must clear their process average by
+// Toggle the pinned shadow by comparing the header against the top of its scroll
+// port. A 1px sentinel + IntersectionObserver was tried first and never fired
+// against this scroll container, so this watches the scroll directly.
+function sdInitStickyHead(){
+  var head=document.getElementById('sd-responses-head');
+  if(!head || head.dataset.sdSticky) return;
+  var port=head.parentElement && head.parentElement.parentElement;
+  if(!port) return;
+  head.dataset.sdSticky='1';
+  var sync=function(){
+    var h=head.getBoundingClientRect(), p=port.getBoundingClientRect();
+    var pad=parseFloat(getComputedStyle(port).paddingTop||0);
+    var d=h.top-p.top;
+    // Pinned only while it is sitting exactly at the pin offset. Below that offset it
+    // has not reached the top yet; above it (negative) the section has scrolled past
+    // and sticky has released the header — neither should carry the pinned shadow.
+    head.classList.toggle('sd-stuck', Math.abs(d-pad)<1.5);
+  };
+  port.addEventListener('scroll', sync, {passive:true});
+  requestAnimationFrame(sync);   // first paint: rects are not settled during open
+}
+
 function sdOwnerReport(rows){
   var pend=(typeof sdPendingRows==='function')? sdPendingRows() : [];
   // process -> owners
@@ -16014,6 +16040,8 @@ function bpAfterTplChanged(){
 .sdr-th{text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;white-space:nowrap;}
 .sdr-td{text-align:right;padding:11px 12px;font-size:13px;color:#434D5E;border-bottom:1px solid #F0F0F4;white-space:nowrap;}
 .sdr-row:hover{background:#F4F6FB;}
+/* only while actually pinned — a permanent shadow would read as a raised block */
+#sd-responses-head.sd-stuck{box-shadow:0 3px 10px rgba(49,57,73,.13);border-radius:0;}
 /* the row-click filter was undiscoverable — surface it on hover */
 .sd-own-row:hover .sd-own-go{opacity:1;}
 /* Quota is a status line, not a section — one slim row above everything else. */
