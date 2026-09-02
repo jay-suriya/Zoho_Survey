@@ -9364,13 +9364,26 @@ function sdRenderResults(){
   var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
   var qs=SD_Q.map(function(q,i){ return {q:q, st:sdQStats(q,rows), color:QCOL[i%QCOL.length]}; });
   var agg=sdMetrics(rows);
-  var least=function(pick, val){
-    var pool=qs.filter(pick).filter(function(x){ return x.st.n>0 && val(x)!==null; });
-    return pool.length? pool.sort(function(a,b){ return val(a)-val(b); })[0] : null;
+  var sentEarly=(typeof sdTextSent!=='undefined')? sdTextSent : 'neg';
+  // Negative -> the weakest question; Positive -> the strongest; Neutral -> the most
+  // neutral answers, which is the only "extreme" that means anything for the middle band.
+  var pickBy=function(filter, val, rank){
+    var pool=qs.filter(filter).filter(function(x){ return x.st.n>0 && val(x)!==null; });
+    if(!pool.length) return null;
+    return pool.sort(function(a,b){ return rank(a)-rank(b); })[0];
   };
-  var leastCsat  = least(function(x){ return x.q.csat; },         function(x){ return x.st.csat; });
-  var leastNps   = least(function(x){ return x.q.type==='nps'; }, function(x){ return x.st.nps; });
-  var leastScore = least(function(x){ return x.q.scored; },       function(x){ return x.st.avg/x.q.outOf; });
+  var rankFor=function(val){
+    if(sentEarly==='pos') return function(x){ return -val(x); };
+    if(sentEarly==='neu') return function(x){ return -(x.st.neu/x.st.n); };
+    return function(x){ return val(x); };
+  };
+  var cardWord = sentEarly==='pos'? 'Highest' : (sentEarly==='neu'? 'Most neutral' : 'Lowest');
+  var vCsat =function(x){ return x.st.csat; },
+      vNps  =function(x){ return x.st.nps; },
+      vScore=function(x){ return x.st.avg/x.q.outOf; };
+  var leastCsat  = pickBy(function(x){ return x.q.csat; },         vCsat,  rankFor(vCsat));
+  var leastNps   = pickBy(function(x){ return x.q.type==='nps'; }, vNps,   rankFor(vNps));
+  var leastScore = pickBy(function(x){ return x.q.scored; },       vScore, rankFor(vScore));
 
   var worstBlock=function(title, x, norm, value, counts){
     var b=dsBand(norm);
@@ -9381,13 +9394,13 @@ function sdRenderResults(){
       '<div style="font-size:11.5px;color:#8C91AB;margin-top:9px;line-height:1.5;">'+counts+'</div></div>';
   };
   var blocks=[];
-  if(leastCsat) blocks.push(worstBlock('Lowest CSAT question', leastCsat, leastCsat.st.csat/100,
+  if(leastCsat) blocks.push(worstBlock(cardWord+' CSAT question', leastCsat, leastCsat.st.csat/100,
     sdFmtCsat(leastCsat.st.csat),
     leastCsat.st.pos+' positive &middot; '+leastCsat.st.neu+' neutral &middot; '+leastCsat.st.neg+' negative<br>of '+leastCsat.st.n+' answers'));
-  if(leastNps) blocks.push(worstBlock('Lowest NPS question', leastNps, (leastNps.st.nps+100)/200,
+  if(leastNps) blocks.push(worstBlock(cardWord+' NPS question', leastNps, (leastNps.st.nps+100)/200,
     sdFmtNps(leastNps.st.nps),
     leastNps.st.pos+' promoters &middot; '+leastNps.st.neu+' passives &middot; '+leastNps.st.neg+' detractors<br>of '+leastNps.st.n+' answers'));
-  if(leastScore) blocks.push(worstBlock('Lowest scoring question', leastScore, leastScore.st.avg/leastScore.q.outOf,
+  if(leastScore) blocks.push(worstBlock(cardWord+' scoring question', leastScore, leastScore.st.avg/leastScore.q.outOf,
     leastScore.st.avg.toFixed(2)+'<span style="font-size:13px;color:#9AA0B1;font-weight:600;"> / '+leastScore.q.outOf+'</span>',
     'average points across '+leastScore.st.n+' answers'));
 
@@ -9406,19 +9419,23 @@ function sdRenderResults(){
       '<span style="font-size:11.5px;color:#9AA0B1;">'+answers.length+' '+SD_VERDICT[sent].t.toLowerCase()+'</span></div>';
     var body='';
     if(open){
+      // same table treatment as All Respondents
+      var thS='padding:12px 16px;text-align:left;font-size:13px;font-weight:600;color:#333;white-space:nowrap;border-bottom:2px solid #e0e0e0;';
+      var tdS='padding:14px 16px;font-size:13px;color:#333;vertical-align:middle;border-bottom:1px solid #f0f0f0;';
       body = answers.length
-        ? '<div style="overflow-x:auto;margin:0 0 6px;"><table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #E6E6EC;">'+
-            '<thead><tr style="background:#F7F8FA;">'+
+        ? '<div style="border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;margin:0 0 10px;">'+
+          '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
+            '<thead><tr style="background:#fff;">'+
               ['Respondent','Process','Owner','Answer'].map(function(h,i){
-                return '<th class="sdr-th" style="text-align:left;'+(i<3?'width:150px;':'')+'">'+h+'</th>'; }).join('')+
+                return '<th style="'+thS+(i<3?'width:160px;':'')+'">'+h+'</th>'; }).join('')+
             '</tr></thead><tbody>'+
             answers.map(function(r){
               return '<tr>'+
-                '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+r.name+'</td>'+
-                '<td class="sdr-td" style="text-align:left;">'+r.process+'</td>'+
-                '<td class="sdr-td" style="text-align:left;">'+r.owner+'</td>'+
-                '<td class="sdr-td" style="text-align:left;white-space:normal;color:#313949;line-height:1.55;">'+r[t.field]+'</td>'+
-              '</tr>'; }).join('')+'</tbody></table></div>'
+                '<td style="'+tdS+'white-space:nowrap;"><span style="color:#1a73e8;font-weight:500;">'+r.name+'</span></td>'+
+                '<td style="'+tdS+'white-space:nowrap;">'+r.process+'</td>'+
+                '<td style="'+tdS+'white-space:nowrap;">'+r.owner+'</td>'+
+                '<td style="'+tdS+'line-height:1.55;">'+r[t.field]+'</td>'+
+              '</tr>'; }).join('')+'</tbody></table></div></div>'
         : '<div style="padding:6px 0 14px;font-size:12.5px;color:#9AA0B1;">No '+SD_VERDICT[sent].t.toLowerCase()+' answers to this question.</div>';
     }
     return '<div style="border-top:1px solid #F0F0F4;">'+head+body+'</div>';
