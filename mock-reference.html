@@ -9091,8 +9091,7 @@ var SD_SECTIONS=[
   ['sd-respondents-section', true ],
   ['sd-owner-section',       true ],
   ['sd-qresp-section',       false],  // question-level detail — collapsed until asked for
-  ['sd-reports-section',     true ],
-  ['sd-quota-section',       false]   // setup, not results
+  ['sd-reports-section',     true ]
 ];
 function sdInitSections(){
   SD_SECTIONS.forEach(function(pair){
@@ -9172,27 +9171,17 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   if(!results) return;
   var parent=results.parentElement;
   var owner=sdMakeSection('sd-owner-section','Responses by Owner');
-  var quota=sdMakeSection('sd-quota-section','Survey Quota');
-  // move the quota block out of the collapsed setup section, once
-  var qsrc=document.getElementById('sd-quota-block');
-  if(!qsrc){
-    var body=document.getElementById('sd-hide-details-body');
-    if(body){
-      var found=null;
-      [].forEach.call(body.children, function(c){ if(!found && /Survey Quota/.test(c.textContent||'')) found=c; });
-      if(found){ found.id='sd-quota-block'; qsrc=found; }
-    }
-  }
-  var order=['sd-sec-stats','sd-results','sd-respondents-section','sd-owner-section',
-             'sd-qresp-section','sd-reports-section','sd-quota-section'];
+  // quota first, then the numbers, then the charts, then the detail
+  var order=['sd-quota-strip','sd-sec-stats','sd-reports-section','sd-results',
+             'sd-respondents-section','sd-owner-section','sd-qresp-section'];
   order.forEach(function(id){
-    var el = (id==='sd-owner-section')? owner : (id==='sd-quota-section')? quota : document.getElementById(id);
+    var el = (id==='sd-owner-section')? owner : document.getElementById(id);
     if(el) parent.appendChild(el);              // appendChild moves an existing node
   });
+  var qs=document.getElementById('sd-quota-strip');
+  if(qs) qs.className='sd-quota-top';
   var oh=document.getElementById('sd-owner-section-host');
   if(oh) oh.innerHTML=ownerHtml;
-  var qh=document.getElementById('sd-quota-section-host');
-  if(qh && qsrc && qsrc.parentElement!==qh) qh.appendChild(qsrc);
   // the pending list is a tile now; keep the names available under All Respondents
   var pw=document.getElementById('sd-pending-host');
   if(!pw){
@@ -15474,6 +15463,14 @@ function bpAfterTplChanged(){
 .sdr-th{text-align:right;padding:9px 12px;font-size:11px;font-weight:700;color:#616E88;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #E6E6EC;white-space:nowrap;}
 .sdr-td{text-align:right;padding:11px 12px;font-size:13px;color:#434D5E;border-bottom:1px solid #F0F0F4;white-space:nowrap;}
 .sdr-row:hover{background:#F4F6FB;}
+/* Quota is a status line, not a section — one slim row above everything else. */
+.sd-quota-top{display:flex !important;align-items:center;flex-wrap:wrap;gap:10px 26px;
+  margin:0 24px 16px !important;padding:12px 18px !important;background:#fff;
+  border:1px solid #E8E8EC;border-radius:8px;}
+.sd-quota-top > div{margin:0 !important;padding:0 !important;}
+.sd-quota-top > div:last-child{display:flex;align-items:center;gap:28px;flex:1;min-width:340px;}
+.sd-quota-top > div:last-child > div{margin:0 !important;flex:none;}
+.sd-quota-top > div:last-child > div:first-child{flex:1;min-width:180px;}
 .dd-nav{padding:9px 16px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
 .dd-nav:hover{background:#6E2A47;}
 .dd-mod{padding:9px 16px 9px 34px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
