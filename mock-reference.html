@@ -9442,6 +9442,41 @@ function sdRenderResults(){
     leastScore.st.avg.toFixed(2)+'<span style="font-size:13px;color:#9AA0B1;font-weight:600;"> / '+leastScore.q.outOf+'</span>',
     'average points across '+leastScore.st.n+' answers'));
 
+  // ── the owner card ──
+  // The question cards say WHAT was answered badly; this says WHO the feedback landed
+  // on. Ranked by SHARE of that owner's own responses, not by raw count — otherwise
+  // whoever was simply sent the most surveys always wins the card. Count breaks ties.
+  if(sentEarly!=='all'){
+    var oMap={};
+    rows.forEach(function(r){
+      var k=r.owner||'Unassigned';
+      if(!oMap[k]) oMap[k]={owner:k, hit:0, n:0};
+      oMap[k].n++;
+      if(sdRespVerdict(r).band===sentEarly) oMap[k].hit++;
+    });
+    var oList=Object.keys(oMap).map(function(k){ return oMap[k]; })
+      .filter(function(o){ return o.hit>0; })
+      .sort(function(a,b){ return (b.hit/b.n)-(a.hit/a.n) || b.hit-a.hit || a.owner.localeCompare(b.owner); });
+    if(oList.length){
+      var top=oList[0], share=top.hit/top.n;
+      var tied=oList.filter(function(o){ return o.hit/o.n===share && o.hit===top.hit; }).length-1;
+      var vc=SD_VERDICT[sentEarly].c;
+      var word=(sentEarly==='pos'?'positive':(sentEarly==='neu'?'neutral':'negative'));
+      blocks.push('<div style="flex:1;min-width:255px;border:1px solid #EDEEF3;border-top:3px solid '+vc+';'+
+        'border-radius:10px;padding:17px 19px;background:#fff;">'+
+        '<div style="font-size:10.5px;font-weight:700;color:#8C91AB;text-transform:uppercase;letter-spacing:.07em;">'+
+          'Most '+word+' feedback</div>'+
+        '<div style="font-size:14.5px;font-weight:600;color:#1F2733;margin-top:10px;line-height:1.45;">'+
+          top.owner+'</div>'+
+        '<div style="font-size:24px;font-weight:800;color:'+vc+';margin-top:14px;line-height:1;letter-spacing:-.5px;">'+
+          top.hit+'<span style="font-size:13px;color:#9AA0B1;font-weight:600;"> of '+top.n+'</span></div>'+
+        '<div style="font-size:11.5px;color:#8C91AB;margin-top:9px;line-height:1.5;">'+
+          Math.round(share*100)+'% of their responses were '+word+
+          (tied>0? '<br>tied with '+tied+' other owner'+(tied>1?'s':'') : '')+
+        '</div></div>');
+    }
+  }
+
   var order={neg:0,neu:1,pos:2};
   var byWorst=rows.slice().sort(function(a,b){ return order[sdRespVerdict(a).band]-order[sdRespVerdict(b).band]; });
   var sent=(typeof sdTextSent!=='undefined')? sdTextSent : 'neg';
