@@ -3900,7 +3900,7 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px 18px;background:#E8E8EC;border:1px solid #E8E8EC;border-radius:8px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px;background:#EDEEF2;overflow:hidden;">
                 <div style="background:#fff;padding:21px 14px;text-align:center;">
                   <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
                   <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Sent</div>
@@ -9090,8 +9090,7 @@ var SD_SECTIONS=[
   ['sd-sec-stats',           true ],
   ['sd-respondents-section', true ],
   ['sd-owner-section',       true ],
-  ['sd-qresp-section',       false],  // question-level detail — collapsed until asked for
-  ['sd-reports-section',     true ]
+  ['sd-qresp-section',       false]   // question-level detail — collapsed until asked for
 ];
 function sdInitSections(){
   SD_SECTIONS.forEach(function(pair){
@@ -9171,15 +9170,17 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   if(!results) return;
   var parent=results.parentElement;
   var owner=sdMakeSection('sd-owner-section','Responses by Owner');
-  // quota first, then the numbers, then the charts, then the detail
-  var order=['sd-quota-strip','sd-sec-stats','sd-reports-section','sd-results',
-             'sd-respondents-section','sd-owner-section','sd-qresp-section'];
+  var order=['sd-sec-stats','sd-results','sd-respondents-section','sd-owner-section','sd-qresp-section'];
   order.forEach(function(id){
     var el = (id==='sd-owner-section')? owner : document.getElementById(id);
     if(el) parent.appendChild(el);              // appendChild moves an existing node
   });
+  // Response Statistics, the charts and the quota line share one box — fewer borders to read past
+  var statsBody=document.getElementById('sd-sec-stats-body') || document.getElementById('sd-sec-stats');
+  var reports=document.getElementById('sd-reports-section');
+  if(statsBody && reports) statsBody.appendChild(reports);
   var qs=document.getElementById('sd-quota-strip');
-  if(qs) qs.className='sd-quota-top';
+  if(qs){ qs.className='sd-quota-top'; if(statsBody) statsBody.appendChild(qs); }
   var oh=document.getElementById('sd-owner-section-host');
   if(oh) oh.innerHTML=ownerHtml;
   // the pending list is a tile now; keep the names available under All Respondents
@@ -15465,12 +15466,16 @@ function bpAfterTplChanged(){
 .sdr-row:hover{background:#F4F6FB;}
 /* Quota is a status line, not a section — one slim row above everything else. */
 .sd-quota-top{display:flex !important;align-items:center;flex-wrap:wrap;gap:10px 26px;
-  margin:0 24px 16px !important;padding:12px 18px !important;background:#fff;
-  border:1px solid #E8E8EC;border-radius:8px;}
+  margin:14px 24px 4px !important;padding:14px 0 0 !important;background:transparent;
+  border:none;border-top:1px solid #F0F0F4;}
 .sd-quota-top > div{margin:0 !important;padding:0 !important;}
 .sd-quota-top > div:last-child{display:flex;align-items:center;gap:28px;flex:1;min-width:340px;}
 .sd-quota-top > div:last-child > div{margin:0 !important;flex:none;}
 .sd-quota-top > div:last-child > div:first-child{flex:1;min-width:180px;}
+/* charts sit inside the statistics card, so they lose their own boxes */
+#sd-reports-section{border:none !important;margin:0 !important;}
+#sd-reports-section .sd-chart-card{border:none !important;background:transparent !important;border-radius:0 !important;}
+#sd-reports-section .sd-chart-card + .sd-chart-card{border-left:1px solid #F0F0F4 !important;padding-left:18px;}
 .dd-nav{padding:9px 16px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
 .dd-nav:hover{background:#6E2A47;}
 .dd-mod{padding:9px 16px 9px 34px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
