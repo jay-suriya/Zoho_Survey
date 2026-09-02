@@ -9130,9 +9130,7 @@ function sdGroupRows(groups, label, filterKey){
     groups.map(function(g){
       var b=dsBand(g.norm);
       return '<tr class="sdr-row" style="cursor:pointer;" onclick="sdApplyChartFilter(\''+label+': '+g.label+'\', function(r){return r[\''+filterKey+'\']===\''+g.label+'\';})">'+
-        '<td class="sdr-td" style="text-align:left;">'+(filterKey==='process'
-          ? '<span class="cv-proc-link" onclick="event.stopPropagation();sdGoToQuestions(\''+g.label+'\')">'+g.label+'</span>'
-          : '<span style="font-weight:600;color:#1F2733;">'+g.label+'</span>')+'</td>'+
+        '<td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+g.label+'</td>'+
         '<td class="sdr-td">'+g.n+'</td>'+
         '<td class="sdr-td">'+(g.pending? '<span style="color:#B8791A;font-weight:600;">'+g.pending+'</span>' : '<span style="color:#C3C7D2;">&#8212;</span>')+'</td>'+
         '<td class="sdr-td" style="color:#1F8A54;font-weight:600;">'+g.pos+'</td>'+
@@ -9356,8 +9354,6 @@ function sdRenderResults(){
   var rows=sdRows();
 
   // ── 2. Responses by process ──
-  var byProc=sdCard('Responses by Process',
-    sdGroupRows(sdGroup(rows,'process'),'Process','process'));
 
   // ── What the customer says ──
   // One block per metric the survey actually collects, each showing only its WEAKEST
@@ -9433,7 +9429,7 @@ function sdRenderResults(){
     '</tbody></table></div>',
     sdPendingRows().length+' invited, no response yet');
 
-  host.innerHTML = said + byProc;
+  host.innerHTML = said;
   sdPlaceSections(byOwner, pend);
   sdRenderReportCards(rows);
 }
@@ -10678,13 +10674,6 @@ function sdQRespSetProcess(proc) {
   var l=document.getElementById('sd-qresp-process-label'); if(l) l.textContent = proc;
   var dd=document.getElementById('sd-qresp-process-dd'); if(dd) dd.style.display='none';
   sdQRespRender();
-}
-// From Responses by Process: jump to the question breakdown, pre-filtered to that process.
-function sdGoToQuestions(proc){
-  if(sdOpen['sd-qresp-section']===false) sdToggleSec('sd-qresp-section');
-  sdQRespSetProcess(proc);
-  var sec=document.getElementById('sd-qresp-section');
-  if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function sdQRespToggleModuleDD() {
   var dd = document.getElementById('sd-qresp-module-dd');
