@@ -8887,7 +8887,7 @@ var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){..
 function sdRespPassesFilters(r) {
   if (sdRespModuleFilter !== 'All Modules' && r.module !== sdRespModuleFilter) return false;
   if (sdProcFilter!=='All' && r.process!==sdProcFilter) return false;
-  if (typeof sdTextSent!=='undefined' && sdRespVerdict(r).band!==sdTextSent) return false;
+  if (typeof sdTextSent!=='undefined' && sdTextSent!=='all' && sdRespVerdict(r).band!==sdTextSent) return false;
   if (sdActiveChartFilter && !sdActiveChartFilter.test(r)) return false;
   return true;
 }
@@ -9382,7 +9382,7 @@ function sdRenderResults(){
   var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
   var qs=SD_Q.map(function(q,i){ return {q:q, st:sdQStats(q,rows), color:QCOL[i%QCOL.length]}; });
   var agg=sdMetrics(rows);
-  var sentEarly=(typeof sdTextSent!=='undefined')? sdTextSent : 'neg';
+  var sentEarly=(typeof sdTextSent!=='undefined')? sdTextSent : 'all';
   // Negative -> the weakest question; Positive -> the strongest; Neutral -> the most
   // neutral answers, which is the only "extreme" that means anything for the middle band.
   var pickBy=function(filter, val, rank){
@@ -9412,13 +9412,14 @@ function sdRenderResults(){
       '<div style="font-size:11.5px;color:#8C91AB;margin-top:9px;line-height:1.5;">'+counts+'</div></div>';
   };
   var blocks=[];
-  if(leastCsat) blocks.push(worstBlock(cardWord+' CSAT question', leastCsat, leastCsat.st.csat/100,
+  if(sentEarly==='all') blocks=[];   // filled below only when a sentiment is chosen
+  if(sentEarly!=='all' && leastCsat) blocks.push(worstBlock(cardWord+' CSAT question', leastCsat, leastCsat.st.csat/100,
     sdFmtCsat(leastCsat.st.csat),
     leastCsat.st.pos+' positive &middot; '+leastCsat.st.neu+' neutral &middot; '+leastCsat.st.neg+' negative<br>of '+leastCsat.st.n+' answers'));
-  if(leastNps) blocks.push(worstBlock(cardWord+' NPS question', leastNps, (leastNps.st.nps+100)/200,
+  if(sentEarly!=='all' && leastNps) blocks.push(worstBlock(cardWord+' NPS question', leastNps, (leastNps.st.nps+100)/200,
     sdFmtNps(leastNps.st.nps),
     leastNps.st.pos+' promoters &middot; '+leastNps.st.neu+' passives &middot; '+leastNps.st.neg+' detractors<br>of '+leastNps.st.n+' answers'));
-  if(leastScore) blocks.push(worstBlock(cardWord+' scoring question', leastScore, leastScore.st.avg/leastScore.q.outOf,
+  if(sentEarly!=='all' && leastScore) blocks.push(worstBlock(cardWord+' scoring question', leastScore, leastScore.st.avg/leastScore.q.outOf,
     leastScore.st.avg.toFixed(2)+'<span style="font-size:13px;color:#9AA0B1;font-weight:600;"> / '+leastScore.q.outOf+'</span>',
     'average points across '+leastScore.st.n+' answers'));
 
@@ -9429,15 +9430,16 @@ function sdRenderResults(){
   var chip='<span onclick="event.stopPropagation();sdToggleTextDD();" style="position:relative;display:inline-flex;'+
       'align-items:center;gap:6px;font-size:12px;color:#434D5E;background:#F4F5F9;border:1px solid #E1E3EA;'+
       'border-radius:20px;padding:3px 11px;cursor:pointer;margin-left:2px;">'+
-      'Showing: <b style="font-weight:700;color:'+SD_VERDICT[sent].c+';">'+SD_VERDICT[sent].t+'</b>'+
+      'Showing: <b style="font-weight:700;color:'+(sent==='all'?'#1F2733':SD_VERDICT[sent].c)+';">'+
+        (sent==='all'?'All':SD_VERDICT[sent].t)+'</b>'+
       '<span style="color:#8C91AB;">&#9662;</span>'+
       '<div id="sd-text-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:150px;'+
         'background:#fff;border:1px solid #D6D6E3;border-radius:8px;box-shadow:0 6px 18px rgba(49,57,73,.18);padding:5px;">'+
-        ['neg','pos','neu'].map(function(k){
+        ['all','pos','neu','neg'].map(function(k){
           var selk=(k===sent);
           return '<div onclick="event.stopPropagation();sdSetTextSent(\''+k+'\')" style="padding:7px 10px;border-radius:6px;'+
             'font-size:12.5px;cursor:pointer;'+(selk?'background:#EBEDFF;font-weight:700;color:#3752CA;':'color:#434D5E;')+'">'+
-            SD_VERDICT[k].t+'</div>'; }).join('')+
+            (k==='all'?'All':SD_VERDICT[k].t)+'</div>'; }).join('')+
       '</div></span>';
   var said=sdCard('What the customer says',
     '<div style="display:flex;gap:15px;flex-wrap:wrap;">'+blocks.join('')+'</div>'+
@@ -15793,7 +15795,7 @@ var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
 var SD_QUOTA={limit:200};   // response quota for this survey
 // Page-level process filter — every figure on the page reads through this.
 var sdProcFilter='All';
-var sdTextSent='neg';        // What the customer says opens on the negatives
+var sdTextSent='all';        // What the customer says opens on everything
 function sdToggleTextDD(){
   var dd=document.getElementById('sd-text-dd'); if(!dd) return;
   dd.style.display=(dd.style.display==='none'||!dd.style.display)?'block':'none';
