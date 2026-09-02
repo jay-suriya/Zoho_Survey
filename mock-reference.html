@@ -3899,7 +3899,7 @@ tbody tr:hover{background:#f5f7ff;}
 
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
-              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Response Statistics</span></div>
+              <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Statistics</span></div>
               <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px;background:#EDEEF2;overflow:hidden;">
                 <div style="background:#fff;padding:21px 14px;text-align:center;">
                   <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
@@ -9175,12 +9175,33 @@ function sdPlaceSections(ownerHtml, pendingHtml){
     var el = (id==='sd-owner-section')? owner : document.getElementById(id);
     if(el) parent.appendChild(el);              // appendChild moves an existing node
   });
-  // Response Statistics, the charts and the quota line share one box — fewer borders to read past
+  // One "Survey Statistics" umbrella: quota, then the numbers, then the charts
   var statsBody=document.getElementById('sd-sec-stats-body') || document.getElementById('sd-sec-stats');
   var reports=document.getElementById('sd-reports-section');
-  if(statsBody && reports) statsBody.appendChild(reports);
   var qs=document.getElementById('sd-quota-strip');
-  if(qs){ qs.className='sd-quota-top'; if(statsBody) statsBody.appendChild(qs); }
+  var grid=document.getElementById('sd-stat-sent');
+  grid=grid? grid.parentElement.parentElement : null;
+  var tiles=document.getElementById('sd-tiles-sub');
+  if(!tiles && grid){
+    tiles=document.createElement('div');
+    tiles.id='sd-tiles-sub';
+    tiles.innerHTML='<div class="sd-sub-label">Response Statistics</div>';
+    grid.parentElement.insertBefore(tiles, grid);
+    tiles.appendChild(grid);
+  }
+  if(qs)      { qs.className='sd-quota-top'; }
+  var qwrap=document.getElementById('sd-quota-sub');
+  if(!qwrap && qs){
+    qwrap=document.createElement('div'); qwrap.id='sd-quota-sub';
+    qs.parentElement.insertBefore(qwrap, qs); qwrap.appendChild(qs);
+  }
+  [qwrap, tiles, reports].forEach(function(el){
+    if(!el) return;
+    el.className=(el.id==='sd-quota-strip'? el.className+' ' : (el===reports? '' : el.className? el.className+' ' : ''))+'sd-sub';
+    if(statsBody) statsBody.appendChild(el);
+  });
+  if(reports){ reports.style.borderLeft='none'; reports.style.borderRight='none';
+               reports.style.borderBottom='none'; reports.style.borderTop=''; reports.style.margin='0'; }
   var oh=document.getElementById('sd-owner-section-host');
   if(oh) oh.innerHTML=ownerHtml;
   // the pending list is a tile now; keep the names available under All Respondents
@@ -15466,14 +15487,18 @@ function bpAfterTplChanged(){
 .sdr-row:hover{background:#F4F6FB;}
 /* Quota is a status line, not a section — one slim row above everything else. */
 .sd-quota-top{display:flex !important;align-items:center;flex-wrap:wrap;gap:10px 26px;
-  margin:14px 24px 4px !important;padding:14px 0 0 !important;background:transparent;
-  border:none;border-top:1px solid #F0F0F4;}
+  margin:0 24px !important;padding:0 !important;background:transparent;border:none;}
+/* Survey Quota / Response Statistics / Survey Report — one umbrella, three distinct bands */
+.sd-sub{padding:22px 0;}
+.sd-sub:first-child{padding-top:6px;}
+.sd-sub + .sd-sub{border-top:1px solid #EFF0F4 !important;}
+.sd-sub-label{font-size:12.5px;font-weight:700;color:#1B1A2E;letter-spacing:-.1px;margin:0 24px 15px;}
 .sd-quota-top > div{margin:0 !important;padding:0 !important;}
 .sd-quota-top > div:last-child{display:flex;align-items:center;gap:28px;flex:1;min-width:340px;}
 .sd-quota-top > div:last-child > div{margin:0 !important;flex:none;}
 .sd-quota-top > div:last-child > div:first-child{flex:1;min-width:180px;}
 /* charts sit inside the statistics card, so they lose their own boxes */
-#sd-reports-section{border:none !important;margin:0 !important;}
+#sd-reports-section{border-left:none !important;border-right:none !important;border-bottom:none !important;margin:0 !important;}
 #sd-reports-section .sd-chart-card{border:none !important;background:transparent !important;border-radius:0 !important;}
 #sd-reports-section .sd-chart-card + .sd-chart-card{border-left:1px solid #F0F0F4 !important;padding-left:18px;}
 .dd-nav{padding:9px 16px;font-size:13.5px;color:#F0DDE6;cursor:pointer;}
