@@ -9405,6 +9405,7 @@ function sdPlaceSections(ownerHtml, pendingHtml){
     if(rs){ pw=document.createElement('div'); pw.id='sd-pending-host'; rs.appendChild(pw); }
   }
   if(pw) pw.innerHTML=pendingHtml||'';
+  if(typeof sdPendRender==='function') sdPendRender(false);
 }
 function sdRenderReportCards(rows){
   var QCOL=['#00BCD4','#3F51B5','#E91E63','#9C27B0','#FF9800','#4CAF50'];
@@ -9607,28 +9608,12 @@ function sdRenderResults(){
     sdGroupRows(sdGroup(rows,'owner'),'Owner','owner');
 
   // ── 6. Not responded ──
-  // same table language as All Respondents: same paddings, 2px header rule, hairline
-  // rows, blue name; no Process column (the page filter already scopes it) and no Remind.
-  var pTh='padding:12px 16px;text-align:left;font-size:13px;font-weight:600;color:#333;'+
-          'white-space:nowrap;border-bottom:2px solid #e0e0e0;';
-  var pTd='padding:14px 16px;font-size:13px;color:#333;white-space:nowrap;vertical-align:middle;';
-  var pRows=sdPendingRows();
+  // Same table language as All Respondents, and the same behaviour: the Module header
+  // is a filter, picking one module turns on checkboxes (mass actions are per-module
+  // in CRM, so they only make sense once a single module is in view), and it pages at 10.
   var pend=sdCard('Yet to respond',
-    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;background:#fff;">'+
-    '<thead><tr>'+['Name','Email','Module','Owner','Survey sent through','Sent on'].map(function(h){
-      return '<th style="'+pTh+'">'+h+'</th>'; }).join('')+'</tr></thead><tbody>'+
-    (pRows.length? pRows.map(function(p){
-      return '<tr style="border-bottom:1px solid #e8e8e8;" '+
-        'onmouseenter="this.style.background=\'#f8f9fc\'" onmouseleave="this.style.background=\'#fff\'">'+
-        '<td style="'+pTd+'color:#1a73e8;cursor:pointer;font-weight:500;">'+p.name+'</td>'+
-        '<td style="'+pTd+'">'+p.email+'</td>'+
-        '<td style="'+pTd+'">'+(p.module||'\u2014')+'</td>'+
-        '<td style="'+pTd+'">'+p.owner+'</td>'+
-        '<td style="'+pTd+'">'+(p.via||'\u2014')+'</td>'+
-        '<td style="'+pTd+'color:#5f6368;">'+p.sent+'</td></tr>'; }).join('')
-      : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#80868b;font-size:13px;">No records found.</td></tr>')+
-    '</tbody></table></div>',
-    pRows.length+' invited, no response yet');
+    '<div id="sd-pend-table"></div>',
+    '<span id="sd-pend-count">'+sdPendingRows().length+'</span> invited, no response yet');
 
   // park the nested All Respondents node before rewriting this card, or the
   // innerHTML replacement destroys it and every later re-render loses the table
@@ -9692,16 +9677,13 @@ function sdRespToggleRow(id, checked) {
   var filtered = sdRespData.filter(function(r){
     return sdRespPassesFilters(r);
   });
-  var allChecked = filtered.length > 0 && filtered.every(function(r){ return sdRespSelectedIds[r.responseId]; });
+  var allChecked = (sdRespPageRows||[]).length > 0 && sdRespPageRows.every(function(r){ return sdRespSelectedIds[r.responseId]; });
   var selAll = document.getElementById('sd-resp-select-all');
   if (selAll) selAll.checked = allChecked;
 }
 
 function sdRespToggleAll(checked) {
-  var filtered = sdRespData.filter(function(r){
-    return sdRespPassesFilters(r);
-  });
-  filtered.forEach(function(r){ sdRespSelectedIds[r.responseId] = checked; });
+  (sdRespPageRows||[]).forEach(function(r){ sdRespSelectedIds[r.responseId] = checked; });
   // Update all row checkboxes
   document.querySelectorAll('.sd-resp-row-cb').forEach(function(cb){ cb.checked = checked; });
   sdRespUpdateSelectionBar();
@@ -9737,7 +9719,31 @@ document.addEventListener('click', function() {
   if (menu) menu.style.display = 'none';
 });
 
-function sdRespRender() {
+// CRM lists page at 10; both tables on this page use the same size and the same
+// button shape so they read as one component.
+var SD_PER_PAGE = 10;
+var sdRespPage = 1;   // was an implicit global, only created once a filter had been touched
+function sdPageBtns(page, total, fn){
+  var pages=Math.max(1, Math.ceil(total/SD_PER_PAGE));
+  var btn=function(label, to, on, dis){
+    var st='border:1px solid '+(on?'#1a73e8':'#dadce0')+';border-radius:4px;padding:3px 8px;font-size:12px;'+
+      'min-width:28px;font-family:inherit;'+
+      (on? 'font-weight:700;background:#1a73e8;color:#fff;' : 'background:#fff;color:'+(dis?'#c9ccd1':'#5f6368')+';')+
+      (dis? 'cursor:default;' : 'cursor:pointer;');
+    return '<button style="'+st+'"'+(dis?' disabled':' onclick="'+fn+'('+to+')"')+'>'+label+'</button>';
+  };
+  var html=btn('&lsaquo;', page-1, false, page<=1);
+  for(var i=1;i<=pages;i++) html+=btn(i, i, i===page, false);
+  return html+btn('&rsaquo;', page+1, false, page>=pages);
+}
+var sdRespPageRows = [];
+function sdRespGoPage(n){
+  var total=sdRespData.filter(sdRespPassesFilters).length;
+  var pages=Math.max(1, Math.ceil(total/SD_PER_PAGE));
+  sdRespPage=Math.min(Math.max(1,n), pages);
+  sdRespRender(true);
+}
+function sdRespRender(keepSel) {
   var showCheckboxes = sdRespModuleFilter !== 'All Modules';
   var filtered = sdRespData.filter(function(r){
     return sdRespPassesFilters(r);
@@ -9749,9 +9755,14 @@ function sdRespRender() {
   var badge = document.getElementById('sd-resp-count-badge');
   if (badge) badge.textContent = filtered.length;
 
-  // Reset selection when filter changes
-  sdRespSelectedIds = {};
+  // Reset selection when the filter changes — but not when merely paging
+  if(!keepSel) sdRespSelectedIds = {};
   sdRespUpdateSelectionBar();
+
+  var pageCount=Math.max(1, Math.ceil(filtered.length/SD_PER_PAGE));
+  if(sdRespPage>pageCount) sdRespPage=pageCount;
+  if(sdRespPage<1) sdRespPage=1;
+  sdRespPageRows = filtered.slice((sdRespPage-1)*SD_PER_PAGE, sdRespPage*SD_PER_PAGE);
 
   // Build thead
   var thead = document.getElementById('sd-resp-thead');
@@ -9776,7 +9787,7 @@ function sdRespRender() {
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="'+totalCols+'" style="text-align:center;padding:40px;color:#80868b;font-size:13px;">No records found.</td></tr>';
   } else {
-    filtered.forEach(function(r){
+    sdRespPageRows.forEach(function(r){
       var tr = document.createElement('tr');
       tr.style.cssText = 'border-bottom:1px solid #e8e8e8;transition:background .1s;';
       tr.onmouseenter = function(){ if (!sdRespSelectedIds[r.responseId]) tr.style.background='#f8f9fc'; };
@@ -9799,7 +9810,153 @@ function sdRespRender() {
       tbody.appendChild(tr);
     });
   }
-  document.getElementById('sd-resp-page-info').textContent = filtered.length === 0 ? '0 records' : '1 – '+filtered.length+' of '+filtered.length+' records';
+  document.getElementById('sd-resp-page-info').textContent = filtered.length === 0 ? '0 records'
+    : ((sdRespPage-1)*SD_PER_PAGE+1)+' – '+Math.min(sdRespPage*SD_PER_PAGE, filtered.length)+' of '+filtered.length+' records';
+  var pb=document.getElementById('sd-resp-page-btns');
+  if(pb) pb.innerHTML=sdPageBtns(sdRespPage, filtered.length, 'sdRespGoPage');
+}
+
+// ══════════ Yet to respond: module filter + selection + pagination ══════════
+var sdPendModuleFilter='All Modules';
+var sdPendPage=1;
+var sdPendSelected={};
+var sdPendPageRows=[];
+function sdPendModules(){
+  var out=[]; (typeof sdPending!=='undefined'? sdPending:[]).forEach(function(p){
+    if(p.module && out.indexOf(p.module)<0) out.push(p.module); });
+  return out.sort();
+}
+function sdPendFiltered(){
+  return sdPendingRows().filter(function(p){
+    return sdPendModuleFilter==='All Modules' || p.module===sdPendModuleFilter;
+  });
+}
+function sdPendKey(p){ return p.email; }
+function sdPendSelCount(){ return Object.keys(sdPendSelected).filter(function(k){ return sdPendSelected[k]; }).length; }
+function sdPendToggleModuleDD(){
+  var dd=document.getElementById('sd-pend-module-dd'); if(!dd) return;
+  dd.style.display = dd.style.display==='none'? 'block':'none';
+}
+function sdPendSetModule(m){
+  sdPendModuleFilter=m; sdPendPage=1; sdPendSelected={}; sdPendRender(false);
+}
+function sdPendGoPage(n){
+  var pages=Math.max(1, Math.ceil(sdPendFiltered().length/SD_PER_PAGE));
+  sdPendPage=Math.min(Math.max(1,n), pages); sdPendRender(true);
+}
+function sdPendToggleRow(k,ch){ sdPendSelected[k]=ch; sdPendRender(true); }
+function sdPendToggleAll(ch){
+  sdPendPageRows.forEach(function(p){ sdPendSelected[sdPendKey(p)]=ch; }); sdPendRender(true);
+}
+function sdPendClearSel(){ sdPendSelected={}; sdPendRender(true); }
+function sdPendSelectAllView(){
+  sdPendFiltered().forEach(function(p){ sdPendSelected[sdPendKey(p)]=true; }); sdPendRender(true);
+}
+function sdPendToggleDots(e){
+  e.stopPropagation();
+  var m=document.getElementById('sd-pend-dots'); if(m) m.style.display = m.style.display==='none'?'block':'none';
+}
+document.addEventListener('click', function(){
+  var m=document.getElementById('sd-pend-dots'); if(m) m.style.display='none';
+  var d=document.getElementById('sd-pend-module-dd'); if(d) d.style.display='none';
+});
+function sdPendRender(keepSel){
+  var wrap=document.getElementById('sd-pend-table'); if(!wrap) return;
+  if(!keepSel) sdPendSelected={};
+  var rows=sdPendFiltered();
+  var cb=sdPendModuleFilter!=='All Modules';
+  var pages=Math.max(1, Math.ceil(rows.length/SD_PER_PAGE));
+  if(sdPendPage>pages) sdPendPage=pages;
+  if(sdPendPage<1) sdPendPage=1;
+  sdPendPageRows=rows.slice((sdPendPage-1)*SD_PER_PAGE, sdPendPage*SD_PER_PAGE);
+  var sel=sdPendSelCount();
+
+  var th='padding:12px 16px;text-align:left;font-size:13px;font-weight:600;color:#333;'+
+         'white-space:nowrap;border-bottom:2px solid #e0e0e0;';
+  var td='padding:14px 16px;font-size:13px;color:#333;white-space:nowrap;vertical-align:middle;';
+  var btn=function(label,extra){
+    return '<button style="padding:6px 14px;border:1px solid #dadce0;border-radius:4px;font-size:12px;'+
+      'font-weight:500;background:#fff;cursor:pointer;color:#333;font-family:inherit;'+(extra||'')+'" '+
+      'onmouseenter="this.style.background=\'#f5f5f5\'" onmouseleave="this.style.background=\'#fff\'">'+label+'</button>';
+  };
+  // Selection bar — the same actions the respondents table offers
+  var bar = sel>0 ?
+    '<div style="padding:8px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e8e8e8;background:#fff;flex-wrap:wrap;">'+
+      '<span style="font-size:13px;font-weight:700;color:#1B1A2E;">'+sel+' Record'+(sel!==1?'s':'')+' Selected.</span>'+
+      '<span onclick="sdPendClearSel()" style="color:#1a73e8;font-size:13px;font-weight:500;cursor:pointer;'+
+        'text-decoration:underline dotted;text-underline-offset:3px;">Clear</span>'+
+      '<span onclick="sdPendSelectAllView()" style="color:#C2185B;font-size:13px;font-weight:500;cursor:pointer;">'+
+        'Select All records in this view</span>'+
+      '<div style="margin-left:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+
+        btn('Send Mail')+
+        '<div style="position:relative;display:inline-flex;">'+
+          btn('Tags &#9660;','border-right:none;border-radius:4px 0 0 4px;')+
+          btn('&#9660;','border-radius:0 4px 4px 0;padding:6px 8px;')+
+        '</div>'+
+        btn('Send with Zoho Sign')+
+        '<div style="position:relative;">'+
+          '<button onclick="sdPendToggleDots(event)" style="padding:6px 10px;border:1px solid #dadce0;border-radius:4px;'+
+            'font-size:14px;background:#fff;cursor:pointer;color:#333;font-family:inherit;line-height:1;">&bull;&bull;&bull;</button>'+
+          '<div id="sd-pend-dots" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:#fff;'+
+            'border:1px solid #e0e0e0;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.14);z-index:700;min-width:200px;'+
+            'overflow:hidden;" onclick="event.stopPropagation()">'+
+            ['Send Reminder','Run Macro','Create Task','Set Reminder','Mass Update','Change Owner','Cadences',
+             'Add to Campaigns','Print Mailing Labels'].map(function(x){
+              return '<div class="sd-inv-dd-item" style="font-size:14px;padding:13px 18px;color:#1B1A2E;">'+x+'</div>'; }).join('')+
+          '</div>'+
+        '</div>'+
+      '</div></div>' : '';
+
+  // Module header cell doubles as the filter, exactly as it does above
+  var modTh='<th style="'+th+'position:relative;cursor:pointer;" onclick="event.stopPropagation();sdPendToggleModuleDD()">'+
+    '<span style="display:flex;align-items:center;gap:4px;">'+sdPendModuleFilter+
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'+
+      '<polyline points="6 9 12 15 18 9"/></svg></span>'+
+    '<div id="sd-pend-module-dd" style="display:none;position:absolute;top:100%;left:0;background:#fff;'+
+      'border:1px solid #dadce0;border-radius:6px;box-shadow:0 8px 28px rgba(0,0,0,0.18);z-index:600;min-width:170px;'+
+      'font-weight:400;" onclick="event.stopPropagation()">'+
+      ['All Modules'].concat(sdPendModules()).map(function(m){
+        var on=(m===sdPendModuleFilter);
+        return '<div class="sd-inv-dd-item"'+(on?' style="color:#1a73e8;font-weight:600;"':'')+
+          ' onclick="sdPendSetModule(\''+m+'\')">'+m+'</div>'; }).join('')+
+    '</div></th>';
+
+  var allOn = sdPendPageRows.length>0 && sdPendPageRows.every(function(p){ return sdPendSelected[sdPendKey(p)]; });
+  var head='<tr>'+
+    (cb? '<th style="'+th+'width:40px;text-align:center;"><input type="checkbox"'+(allOn?' checked':'')+
+         ' style="width:15px;height:15px;accent-color:#C2185B;cursor:pointer;"'+
+         ' onchange="sdPendToggleAll(this.checked)"></th>' : '')+
+    '<th style="'+th+'">Name</th><th style="'+th+'">Email</th>'+modTh+
+    '<th style="'+th+'">Owner</th><th style="'+th+'">Survey sent through</th><th style="'+th+'">Sent on</th></tr>';
+
+  var ncols=(cb?1:0)+6;
+  var body = sdPendPageRows.length? sdPendPageRows.map(function(p){
+      var k=sdPendKey(p), on=!!sdPendSelected[k];
+      return '<tr style="border-bottom:1px solid #e8e8e8;'+(on?'background:#fdf3f8;':'')+'" '+
+        'onmouseenter="if(!this.dataset.sel)this.style.background=\'#f8f9fc\'" '+
+        'onmouseleave="if(!this.dataset.sel)this.style.background=\'#fff\'"'+(on?' data-sel="1"':'')+'>'+
+        (cb? '<td style="'+td+'width:40px;text-align:center;"><input type="checkbox"'+(on?' checked':'')+
+             ' style="width:15px;height:15px;accent-color:#C2185B;cursor:pointer;"'+
+             ' onchange="sdPendToggleRow(\''+k+'\',this.checked)"></td>' : '')+
+        '<td style="'+td+'color:#1a73e8;cursor:pointer;font-weight:500;">'+p.name+'</td>'+
+        '<td style="'+td+'">'+p.email+'</td>'+
+        '<td style="'+td+'">'+(p.module||'\u2014')+'</td>'+
+        '<td style="'+td+'">'+p.owner+'</td>'+
+        '<td style="'+td+'">'+(p.via||'\u2014')+'</td>'+
+        '<td style="'+td+'color:#5f6368;">'+p.sent+'</td></tr>'; }).join('')
+    : '<tr><td colspan="'+ncols+'" style="text-align:center;padding:40px;color:#80868b;font-size:13px;">No records found.</td></tr>';
+
+  wrap.innerHTML='<div style="border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;background:#fff;">'+
+    bar+
+    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;background:#fff;">'+
+      '<thead>'+head+'</thead><tbody>'+body+'</tbody></table></div>'+
+    '<div style="padding:10px 16px;display:flex;align-items:center;justify-content:space-between;'+
+      'border-top:1px solid #e8e8e8;background:#fafafa;">'+
+      '<span style="font-size:12px;color:#5f6368;">'+(rows.length===0? '0 records'
+        : ((sdPendPage-1)*SD_PER_PAGE+1)+' \u2013 '+Math.min(sdPendPage*SD_PER_PAGE, rows.length)+' of '+rows.length+' records')+'</span>'+
+      '<div style="display:flex;align-items:center;gap:4px;">'+sdPageBtns(sdPendPage, rows.length, 'sdPendGoPage')+'</div>'+
+    '</div></div>';
+  var cnt=document.getElementById('sd-pend-count'); if(cnt) cnt.textContent=rows.length;
 }
 
 function sdRespToggleModuleDD() {
@@ -11809,7 +11966,8 @@ function rdpRender() {
       tr.onclick = function(e) {
         // Don't open detail panel if clicking on the checkbox cell
         if (e.target.type === 'checkbox' || e.target.closest && e.target.closest('td') && e.target.closest('td').querySelector('input[type=checkbox]')) return;
-        rdpOpen(i);
+        // rdpOpen indexes the whole filtered set, so offset by the current page
+        rdpOpen((sdRespPage-1)*SD_PER_PAGE + i);
       };
     });
   };
@@ -16001,7 +16159,7 @@ document.addEventListener('click', function(){
   var dd=document.getElementById('sd-trend-dd');
   if(dd && dd.style.display==='block') dd.style.display='none';
 });
-var sdTextSent='all';        // What the customer says opens on everything
+var sdTextSent='neg';   // the page opens on the feedback that needs acting on        // What the customer says opens on everything
 function sdToggleTextDD(){
   var dd=document.getElementById('sd-text-dd'); if(!dd) return;
   dd.style.display=(dd.style.display==='none'||!dd.style.display)?'block':'none';
