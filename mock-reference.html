@@ -3940,11 +3940,11 @@ tbody tr:hover{background:#f5f7ff;}
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
                   <div id="sd-stat-happy" style="font-size:27px;font-weight:700;color:#10975E;letter-spacing:-.6px;line-height:1;">0</div>
-                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Happy</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Positive</div>
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('unhappy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
                   <div id="sd-stat-unhappy" style="font-size:27px;font-weight:700;color:#C8324A;letter-spacing:-.6px;line-height:1;">0</div>
-                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Unhappy</div>
+                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Negative</div>
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('neutral')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
                   <div id="sd-stat-neutral" style="font-size:27px;font-weight:700;color:#616E88;letter-spacing:-.6px;line-height:1;">0</div>
@@ -8916,10 +8916,13 @@ function sdSentiment(r){
 function sdIsHappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='pos' : sdSentiment(r)==='happy'; }
 function sdIsUnhappy(r){ return (typeof sdRespVerdict==='function')? sdRespVerdict(r).band==='neg' : sdSentiment(r)==='unhappy'; }
 function sdIsNeutral(r){ return sdRespVerdict(r).band==='neu'; }
+// Clicking a sentiment tile sets the What-the-customer-says filter and scrolls there,
+// rather than applying a separate chip to the table.
 function sdFilterSentiment(kind){
-  if(kind==='happy')        sdApplyChartFilter('Positive responses', sdIsHappy);
-  else if(kind==='neutral') sdApplyChartFilter('Neutral responses',  sdIsNeutral);
-  else                      sdApplyChartFilter('Negative responses', sdIsUnhappy);
+  var map={happy:'pos', neutral:'neu', unhappy:'neg'};
+  if(typeof sdSetTextSent==='function') sdSetTextSent(map[kind]||'all');
+  var el=document.getElementById('sd-results');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 // ═══════════ Zoho Survey metric engine ═══════════
