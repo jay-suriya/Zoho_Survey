@@ -3900,12 +3900,12 @@ tbody tr:hover{background:#f5f7ff;}
             <!-- 1. Response Statistics -->
             <div id="sd-sec-stats" style="padding-bottom:8px;">
               <div style="padding:16px 24px 12px;display:flex;align-items:center;gap:8px;"><span style="font-size:14px;font-weight:700;color:#1B1A2E;letter-spacing:-.2px;">Survey Statistics</span></div>
-              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;margin:0 24px;background:#EDEEF2;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin:0 24px;background:#EDEEF2;overflow:hidden;">
                 <div style="background:#fff;padding:21px 14px;text-align:center;">
                   <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
                   <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Sent</div>
                 </div>
-                <div style="background:#fff;padding:16px 14px;display:flex;align-items:center;justify-content:center;gap:12px;">
+                <div style="grid-column:span 2;background:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:center;gap:14px;">
                   <div id="sd-quota-ring" style="flex:none;"></div>
                   <div style="text-align:left;">
                     <div style="display:flex;align-items:baseline;gap:4px;">
@@ -3914,6 +3914,7 @@ tbody tr:hover{background:#f5f7ff;}
                     </div>
                     <div style="font-size:11.5px;color:#5B6473;margin-top:6px;font-weight:500;">Response Received</div>
                     <div id="sd-stat-quota-left" style="font-size:11px;font-weight:600;color:#12A150;margin-top:3px;">&nbsp;</div>
+                    <div id="sd-stat-quota-meta" style="font-size:10.5px;color:#9AA0B1;margin-top:5px;line-height:1.6;"></div>
                   </div>
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
@@ -5520,6 +5521,18 @@ function sdSetData(hasData) {
   set('sd-stat-quota-limit','/ '+lim);
   var left=document.getElementById('sd-stat-quota-left');
   if(left) left.textContent=Math.max(0, lim-got).toLocaleString()+' more can be received';
+  // the quota's own settings, read from the survey rather than restated elsewhere
+  var meta=document.getElementById('sd-stat-quota-meta');
+  if(meta){
+    var when=(document.getElementById('sd-quota-when-meta')||{}).textContent||'Close the survey';
+    var conds=(typeof currentQuotaConditions!=='undefined' && currentQuotaConditions.length)
+      ? currentQuotaConditions.map(function(c){ return c.question+' '+c.operator.toLowerCase()+' '+c.value; }).join(' and ')
+      : 'No condition set';
+    meta.innerHTML = hasData
+      ? 'Limit <b style="color:#5B6473;">'+lim+'</b> &middot; when reached <b style="color:#5B6473;">'+when+'</b>'+
+        '<br>Condition: <b style="color:#5B6473;">'+conds+'</b>'
+      : '';
+  }
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
@@ -9210,7 +9223,7 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   if(!tiles && grid){
     tiles=document.createElement('div');
     tiles.id='sd-tiles-sub';
-    tiles.innerHTML='<div class="sd-sub-label">Response Statistics</div>';
+    tiles.innerHTML='';
     grid.parentElement.insertBefore(tiles, grid);
     tiles.appendChild(grid);
   }
