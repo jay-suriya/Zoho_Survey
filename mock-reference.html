@@ -3902,6 +3902,15 @@ tbody tr:hover{background:#f5f7ff;}
                      min-width:190px;background:#fff;border:1px solid #D6D6E3;border-radius:8px;
                      box-shadow:0 6px 18px rgba(49,57,73,.18);padding:5px;"></div>
               </span>
+              <span onclick="event.stopPropagation();sdToggleTrendDD();" id="sd-trend-chip"
+                    style="position:relative;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#434D5E;
+                           background:#fff;border:1px solid #C7D2EA;border-radius:20px;padding:3px 11px;cursor:pointer;">
+                Trend: <b id="sd-trend-label" style="font-weight:700;">All</b>
+                <span style="color:#8C91AB;">&#9662;</span>
+                <div id="sd-trend-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;
+                     min-width:170px;background:#fff;border:1px solid #D6D6E3;border-radius:8px;
+                     box-shadow:0 6px 18px rgba(49,57,73,.18);padding:5px;"></div>
+              </span>
             </div>
           </div>
           <div id="sd-responses-body" style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;">
@@ -8893,6 +8902,7 @@ var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){..
 function sdRespPassesFilters(r) {
   if (sdRespModuleFilter !== 'All Modules' && r.module !== sdRespModuleFilter) return false;
   if (sdProcFilter!=='All' && r.process!==sdProcFilter) return false;
+  if (typeof sdInTrend==='function' && !sdInTrend(r)) return false;
   if (typeof sdTextSent!=='undefined' && sdTextSent!=='all' && sdRespVerdict(r).band!==sdTextSent) return false;
   if (sdActiveChartFilter && !sdActiveChartFilter.test(r)) return false;
   return true;
@@ -9054,10 +9064,10 @@ function sdFmtRate(v){ return v===null||v===undefined? '—' : v.toFixed(2)+' / 
 
 // People invited who have not answered yet (Survey knows its invitee list).
 var sdPending=[
-  {name:'Arun Mehta',   email:'arun.m@testmail.com',   process:'Service job',      owner:'S. Kumar',   sent:'Apr 3, 2026'},
-  {name:'Kavya Iyer',   email:'kavya.i@testmail.com',  process:'Vehicle purchase', owner:'A. Rahman',  sent:'Apr 4, 2026'},
-  {name:'Suresh Nair',  email:'suresh.n@testmail.com', process:'Delivery',         owner:'R. Menon',   sent:'Apr 5, 2026'},
-  {name:'Fatima Ali',   email:'fatima.a@testmail.com', process:'Service job',      owner:'S. Kumar',   sent:'Apr 6, 2026'}
+  {name:'Arun Mehta',   email:'arun.m@testmail.com',   process:'Service job',      module:'Service Requests', via:'Post-Service Feedback',  owner:'S. Kumar',   sent:'Apr 3, 2026'},
+  {name:'Kavya Iyer',   email:'kavya.i@testmail.com',  process:'Vehicle purchase', module:'Potentials',       via:'Post-Purchase Feedback', owner:'A. Rahman',  sent:'Apr 4, 2026'},
+  {name:'Suresh Nair',  email:'suresh.n@testmail.com', process:'Delivery',         module:'Deliveries',       via:'Post-Delivery Feedback', owner:'R. Menon',   sent:'Apr 5, 2026'},
+  {name:'Fatima Ali',   email:'fatima.a@testmail.com', process:'Service job',      module:'Service Requests', via:'Post-Service Feedback',  owner:'S. Kumar',   sent:'Apr 6, 2026'}
 ];
 // Question set, with how each one is scored out of its own scale.
 var sdQuestionDefs=[
@@ -9461,19 +9471,28 @@ function sdRenderResults(){
     sdGroupRows(sdGroup(rows,'owner'),'Owner','owner');
 
   // ── 6. Not responded ──
+  // same table language as All Respondents: same paddings, 2px header rule, hairline
+  // rows, blue name; no Process column (the page filter already scopes it) and no Remind.
+  var pTh='padding:12px 16px;text-align:left;font-size:13px;font-weight:600;color:#333;'+
+          'white-space:nowrap;border-bottom:2px solid #e0e0e0;';
+  var pTd='padding:14px 16px;font-size:13px;color:#333;white-space:nowrap;vertical-align:middle;';
+  var pRows=sdPendingRows();
   var pend=sdCard('Yet to respond',
-    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
-    '<thead><tr style="background:#F7F8FA;">'+['Name','Email','Process','Owner','Sent'].map(function(h){
-      return '<th class="sdr-th" style="text-align:left;">'+h+'</th>'; }).join('')+'<th class="sdr-th"></th></tr></thead><tbody>'+
-    sdPendingRows().map(function(p){
-      return '<tr><td class="sdr-td" style="text-align:left;font-weight:600;color:#1F2733;">'+p.name+'</td>'+
-        '<td class="sdr-td" style="text-align:left;color:#616E88;">'+p.email+'</td>'+
-        '<td class="sdr-td" style="text-align:left;">'+p.process+'</td>'+
-        '<td class="sdr-td" style="text-align:left;">'+p.owner+'</td>'+
-        '<td class="sdr-td" style="text-align:left;color:#8C91AB;">'+p.sent+'</td>'+
-        '<td class="sdr-td" style="text-align:right;"><span style="color:#5464F2;font-weight:600;cursor:pointer;">Remind</span></td></tr>'; }).join('')+
+    '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;background:#fff;">'+
+    '<thead><tr>'+['Name','Email','Module','Owner','Survey sent through','Sent on'].map(function(h){
+      return '<th style="'+pTh+'">'+h+'</th>'; }).join('')+'</tr></thead><tbody>'+
+    (pRows.length? pRows.map(function(p){
+      return '<tr style="border-bottom:1px solid #e8e8e8;" '+
+        'onmouseenter="this.style.background=\'#f8f9fc\'" onmouseleave="this.style.background=\'#fff\'">'+
+        '<td style="'+pTd+'color:#1a73e8;cursor:pointer;font-weight:500;">'+p.name+'</td>'+
+        '<td style="'+pTd+'">'+p.email+'</td>'+
+        '<td style="'+pTd+'">'+(p.module||'\u2014')+'</td>'+
+        '<td style="'+pTd+'">'+p.owner+'</td>'+
+        '<td style="'+pTd+'">'+(p.via||'\u2014')+'</td>'+
+        '<td style="'+pTd+'color:#5f6368;">'+p.sent+'</td></tr>'; }).join('')
+      : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#80868b;font-size:13px;">No records found.</td></tr>')+
     '</tbody></table></div>',
-    sdPendingRows().length+' invited, no response yet');
+    pRows.length+' invited, no response yet');
 
   // park the nested All Respondents node before rewriting this card, or the
   // innerHTML replacement destroys it and every later re-render loses the table
@@ -9588,7 +9607,7 @@ function sdRespRender() {
     return sdRespPassesFilters(r);
   });
   var visCols = sdRespGetVisibleCols();
-  var totalCols = (showCheckboxes ? 1 : 0) + 3 + visCols.length;
+  var totalCols = (showCheckboxes ? 1 : 0) + 4 + visCols.length;   // + Owner
 
   // Update count badge
   var badge = document.getElementById('sd-resp-count-badge');
@@ -9609,6 +9628,7 @@ function sdRespRender() {
   }
   hdrTr.innerHTML += '<th style="'+thStyle+'">Last Name</th><th style="'+thStyle+'">Email</th>';
   hdrTr.innerHTML += '<th style="'+thStyle+'position:relative;cursor:pointer;" onclick="event.stopPropagation();sdRespToggleModuleDD()"><span style="display:flex;align-items:center;gap:4px;" id="sd-resp-module-label">'+sdRespModuleFilter+' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span><div id="sd-resp-module-dd" style="display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 8px 28px rgba(0,0,0,0.18);z-index:600;min-width:160px;font-weight:400;" onclick="event.stopPropagation()"><div class="sd-inv-dd-item" style="color:#1a73e8;font-weight:600;" onclick="sdRespSetModule(\'All Modules\')">All Modules</div><div class="sd-inv-dd-item" onclick="sdRespSetModule(\'Leads\')">Leads</div><div class="sd-inv-dd-item" onclick="sdRespSetModule(\'Contacts\')">Contacts</div><div class="sd-inv-dd-item" onclick="sdRespSetModule(\'Custom Module\')">Custom Module</div></div></th>';
+  hdrTr.innerHTML += '<th style="'+thStyle+'">Owner</th>';
   visCols.forEach(function(c){
     hdrTr.innerHTML += '<th style="'+thStyle+'max-width:220px;overflow:hidden;text-overflow:ellipsis;" title="'+c.label+'">'+c.label+'</th>';
   });
@@ -9635,6 +9655,7 @@ function sdRespRender() {
       html += '<td style="'+tdStyle+'color:#1a73e8;cursor:pointer;font-weight:500;">'+r.name+'</td>';
       html += '<td style="'+tdStyle+'">'+r.email+'</td>';
       html += '<td style="'+tdStyle+'">'+r.module+'</td>';
+      html += '<td style="'+tdStyle+'">'+(r.owner||'\u2014')+'</td>';
       visCols.forEach(function(c){
         html += '<td style="'+tdStyle+'max-width:220px;overflow:hidden;text-overflow:ellipsis;">'+(r[c.key]||'—')+'</td>';
       });
@@ -15804,6 +15825,46 @@ var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
 var SD_QUOTA={limit:200};   // response quota for this survey
 // Page-level process filter — every figure on the page reads through this.
 var sdProcFilter='All';
+// Period scope. Each option keeps the most recent window of that size, measured
+// from the latest response in the set rather than from today's date.
+var SD_TREND=[['All','All'],['day','By day'],['week','By week'],['month','By month'],['quarter','By quarter']];
+var sdTrend='All';
+function sdRespDate(r){ var d=new Date(String(r.startTime||'')); return isNaN(d)? null : d; }
+function sdTrendCutoff(){
+  if(sdTrend==='All') return null;
+  var days={day:1, week:7, month:31, quarter:92}[sdTrend];
+  var latest=null;
+  sdRespData.forEach(function(r){ var d=sdRespDate(r); if(d && (!latest || d>latest)) latest=d; });
+  return latest? new Date(latest.getTime()-(days-1)*86400000) : null;
+}
+function sdInTrend(r){
+  var cut=sdTrendCutoff(); if(!cut) return true;
+  var d=sdRespDate(r); return d? d>=cut : true;
+}
+function sdToggleTrendDD(){
+  var dd=document.getElementById('sd-trend-dd'); if(!dd) return;
+  var open=dd.style.display==='none'||!dd.style.display;
+  if(open){
+    dd.innerHTML=SD_TREND.map(function(o){
+      var sel=(o[0]===sdTrend);
+      return '<div onclick="event.stopPropagation();sdSetTrend(\''+o[0]+'\')" style="padding:7px 10px;border-radius:6px;'+
+        'font-size:12.5px;cursor:pointer;white-space:nowrap;'+
+        (sel?'background:#EBEDFF;color:#3752CA;font-weight:700;':'color:#434D5E;')+'">'+o[1]+'</div>'; }).join('');
+  }
+  dd.style.display=open?'block':'none';
+}
+function sdSetTrend(k){
+  sdTrend=k;
+  var lbl=document.getElementById('sd-trend-label');
+  if(lbl) lbl.textContent=(SD_TREND.filter(function(o){return o[0]===k;})[0]||['','All'])[1];
+  var dd=document.getElementById('sd-trend-dd'); if(dd) dd.style.display='none';
+  sdSetData(true);
+  if(typeof sdRespRender==='function'){ sdRespPage=1; sdRespRender(); }
+}
+document.addEventListener('click', function(){
+  var dd=document.getElementById('sd-trend-dd');
+  if(dd && dd.style.display==='block') dd.style.display='none';
+});
 var sdTextSent='all';        // What the customer says opens on everything
 function sdToggleTextDD(){
   var dd=document.getElementById('sd-text-dd'); if(!dd) return;
@@ -15819,13 +15880,20 @@ document.addEventListener('click', function(){
   if(dd && dd.style.display==='block') dd.style.display='none';
 });
 function sdRows(){
-  return sdProcFilter==='All'? sdRespData
-    : sdRespData.filter(function(r){ return r.process===sdProcFilter; });
+  return sdRespData.filter(function(r){
+    return (sdProcFilter==='All' || r.process===sdProcFilter) && sdInTrend(r);
+  });
 }
 function sdPendingRows(){
   if(typeof sdPending==='undefined') return [];
-  return sdProcFilter==='All'? sdPending
-    : sdPending.filter(function(p){ return p.process===sdProcFilter; });
+  // the invitees are scoped by the same two page filters as the responses, so the
+  // "Yet to respond" tile and this table can never disagree with the rest of the page
+  var cut=sdTrendCutoff();
+  return sdPending.filter(function(p){
+    if(sdProcFilter!=='All' && p.process!==sdProcFilter) return false;
+    if(cut){ var d=new Date(String(p.sent||'')); if(!isNaN(d) && d<cut) return false; }
+    return true;
+  });
 }
 function sdProcList(){
   var out=[]; sdRespData.forEach(function(r){ if(r.process && out.indexOf(r.process)<0) out.push(r.process); });
