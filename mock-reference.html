@@ -8887,6 +8887,7 @@ var sdActiveChartFilter = null; // {label: 'Module: Leads', test: function(r){..
 function sdRespPassesFilters(r) {
   if (sdRespModuleFilter !== 'All Modules' && r.module !== sdRespModuleFilter) return false;
   if (sdProcFilter!=='All' && r.process!==sdProcFilter) return false;
+  if (typeof sdTextSent!=='undefined' && sdRespVerdict(r).band!==sdTextSent) return false;
   if (sdActiveChartFilter && !sdActiveChartFilter.test(r)) return false;
   return true;
 }
@@ -9147,7 +9148,6 @@ function sdGroupRows(groups, label, filterKey){
 // Turn the page's static sections into the same collapsible shape as the results cards.
 var SD_SECTIONS=[
   ['sd-sec-stats',           true ],
-  ['sd-respondents-section', true ],
   ['sd-owner-section',       true ],
   ['sd-qresp-section',       false]   // question-level detail — collapsed until asked for
 ];
@@ -9238,7 +9238,7 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   if(!results) return;
   var parent=results.parentElement;
   var owner=sdMakeSection('sd-owner-section','Responses by Owner');
-  var order=['sd-sec-stats','sd-results','sd-respondents-section','sd-owner-section','sd-qresp-section'];
+  var order=['sd-sec-stats','sd-results','sd-owner-section','sd-qresp-section'];
   order.forEach(function(id){
     var el = (id==='sd-owner-section')? owner : document.getElementById(id);
     if(el) parent.appendChild(el);              // appendChild moves an existing node
@@ -9265,6 +9265,24 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   });
   if(reports){ reports.style.borderLeft='none'; reports.style.borderRight='none';
                reports.style.borderBottom='none'; reports.style.borderTop=''; reports.style.margin='0'; }
+  // All Respondents lives inside What the customer says now, so it loses its own
+  // heading and section chrome and follows that card's sentiment filter
+  var resp=document.getElementById('sd-respondents-section');
+  var respHost=document.getElementById('sd-resp-host');
+  if(resp && respHost && resp.parentElement!==respHost){
+    resp.style.borderTop='none'; resp.style.marginTop='0';
+    var rh=resp.children[0];
+    if(rh){
+      [].forEach.call(rh.children, function(c){
+        if(/^All Respondents$/.test((c.textContent||'').trim())) c.style.display='none';
+      });
+      // the count badge belonged to that title — the footer already says "1 – 5 of 5"
+      var badge=document.getElementById('sd-resp-count-badge');
+      if(badge) badge.style.display='none';
+      rh.style.padding='4px 24px 12px';
+    }
+    respHost.appendChild(resp);
+  }
   var oh=document.getElementById('sd-owner-section-host');
   if(oh) oh.innerHTML=ownerHtml;
   // the pending list is a tile now; keep the names available under All Respondents
@@ -9406,40 +9424,7 @@ function sdRenderResults(){
 
   var order={neg:0,neu:1,pos:2};
   var byWorst=rows.slice().sort(function(a,b){ return order[sdRespVerdict(a).band]-order[sdRespVerdict(b).band]; });
-  // Free-text answers, filtered to one sentiment at a time (Negative by default —
-  // that's what a manager came for). Each text question is its own expandable table.
   var sent=(typeof sdTextSent!=='undefined')? sdTextSent : 'neg';
-  var textBlocks=SD_TEXT.map(function(t,ti){
-    var answers=rows.filter(function(r){ return r[t.field] && sdRespVerdict(r).band===sent; });
-    var open=(sdTextOpen[t.field]!==undefined)? sdTextOpen[t.field] : (ti===0);
-    var head='<div onclick="sdToggleText(\''+t.field+'\')" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:12px 0;">'+
-      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#5B6473" stroke-width="2.6" '+
-        'style="flex:none;transition:transform .18s;'+(open?'':'transform:rotate(-90deg);')+'"><polyline points="6 9 12 15 18 9"/></svg>'+
-      '<span style="font-size:13.5px;font-weight:600;color:#1F2733;">'+t.q+'</span>'+
-      '<span style="font-size:11.5px;color:#9AA0B1;">'+answers.length+' '+SD_VERDICT[sent].t.toLowerCase()+'</span></div>';
-    var body='';
-    if(open){
-      // same table treatment as All Respondents
-      var thS='padding:12px 16px;text-align:left;font-size:13px;font-weight:600;color:#333;white-space:nowrap;border-bottom:2px solid #e0e0e0;';
-      var tdS='padding:14px 16px;font-size:13px;color:#333;vertical-align:middle;border-bottom:1px solid #f0f0f0;';
-      body = answers.length
-        ? '<div style="border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;margin:0 0 10px;">'+
-          '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">'+
-            '<thead><tr style="background:#fff;">'+
-              ['Respondent','Process','Owner','Answer'].map(function(h,i){
-                return '<th style="'+thS+(i<3?'width:160px;':'')+'">'+h+'</th>'; }).join('')+
-            '</tr></thead><tbody>'+
-            answers.map(function(r){
-              return '<tr>'+
-                '<td style="'+tdS+'white-space:nowrap;"><span style="color:#1a73e8;font-weight:500;">'+r.name+'</span></td>'+
-                '<td style="'+tdS+'white-space:nowrap;">'+r.process+'</td>'+
-                '<td style="'+tdS+'white-space:nowrap;">'+r.owner+'</td>'+
-                '<td style="'+tdS+'line-height:1.55;">'+r[t.field]+'</td>'+
-              '</tr>'; }).join('')+'</tbody></table></div></div>'
-        : '<div style="padding:6px 0 14px;font-size:12.5px;color:#9AA0B1;">No '+SD_VERDICT[sent].t.toLowerCase()+' answers to this question.</div>';
-    }
-    return '<div style="border-top:1px solid #F0F0F4;">'+head+body+'</div>';
-  }).join('');
 
   var chip='<span onclick="event.stopPropagation();sdToggleTextDD();" style="position:relative;display:inline-flex;'+
       'align-items:center;gap:6px;font-size:12px;color:#434D5E;background:#F4F5F9;border:1px solid #E1E3EA;'+
@@ -9455,7 +9440,8 @@ function sdRenderResults(){
             SD_VERDICT[k].t+'</div>'; }).join('')+
       '</div></span>';
   var said=sdCard('What the customer says',
-    '<div style="display:flex;gap:15px;flex-wrap:wrap;margin-bottom:6px;">'+blocks.join('')+'</div>'+ textBlocks,
+    '<div style="display:flex;gap:15px;flex-wrap:wrap;">'+blocks.join('')+'</div>'+
+    '<div id="sd-resp-host"></div>',
     chip);
 
   // ── 5. By owner ──
@@ -9478,6 +9464,10 @@ function sdRenderResults(){
     '</tbody></table></div>',
     sdPendingRows().length+' invited, no response yet');
 
+  // park the nested All Respondents node before rewriting this card, or the
+  // innerHTML replacement destroys it and every later re-render loses the table
+  var parked=document.getElementById('sd-respondents-section');
+  if(parked && host.contains(parked)) host.parentElement.appendChild(parked);
   host.innerHTML = said;
   sdPlaceSections(byOwner, pend);
   sdRenderReportCards(rows);
@@ -15804,17 +15794,15 @@ var SD_QUOTA={limit:200};   // response quota for this survey
 // Page-level process filter — every figure on the page reads through this.
 var sdProcFilter='All';
 var sdTextSent='neg';        // What the customer says opens on the negatives
-var sdTextOpen={};           // per text question: expanded?
-function sdToggleText(field){
-  var cur=(sdTextOpen[field]!==undefined)? sdTextOpen[field] : (SD_TEXT[0] && SD_TEXT[0].field===field);
-  sdTextOpen[field]=!cur;
-  sdRenderResults();
-}
 function sdToggleTextDD(){
   var dd=document.getElementById('sd-text-dd'); if(!dd) return;
   dd.style.display=(dd.style.display==='none'||!dd.style.display)?'block':'none';
 }
-function sdSetTextSent(k){ sdTextSent=k; sdRenderResults(); }
+function sdSetTextSent(k){
+  sdTextSent=k;
+  sdRenderResults();
+  if(typeof sdRespRender==='function'){ sdRespPage=1; sdRespRender(); }
+}
 document.addEventListener('click', function(){
   var dd=document.getElementById('sd-text-dd');
   if(dd && dd.style.display==='block') dd.style.display='none';
