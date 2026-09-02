@@ -4126,14 +4126,6 @@ tbody tr:hover{background:#f5f7ff;}
                       <div class="sd-inv-dd-item" onclick="sdQRespSetModule('Custom Module')">Custom Module</div>
                     </div>
                   </div>
-                  <!-- Process dropdown -->
-                  <div style="position:relative;display:inline-block;" id="sd-qresp-process-wrap">
-                    <button onclick="event.stopPropagation();sdQRespToggleProcessDD()" style="border:1px solid #dadce0;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;background:#fff;color:#3c4043;display:flex;align-items:center;gap:6px;font-family:inherit;">
-                      <span id="sd-qresp-process-label">All Processes</span>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div id="sd-qresp-process-dd" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid #dadce0;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.14);min-width:180px;z-index:40;padding:4px;"></div>
-                  </div>
                   <!-- Filter icon on far right -->
                   <div style="margin-left:auto;">
                     <button onclick="sdRespToggleFilter()" title="Filter" style="background:none;border:1px solid #dadce0;border-radius:4px;cursor:pointer;padding:4px 8px;color:#666;display:flex;align-items:center;gap:4px;font-size:11px;font-family:inherit;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background='none'">
@@ -10578,7 +10570,6 @@ var sdQRespPersonDetails = {
   'Karthik':{email:'karthik@testmail.com', leadSource:'Webinar', mobile:'+91 10987 65432', industry:'Technology', status:'New'}
 };
 var sdQRespModuleFilter = 'All Modules';
-var sdQRespProcessFilter = 'All Processes';
 function sdProcessOf(name){
   var r=sdRespData.filter(function(x){ return x.name===name; })[0];
   return r? r.process : null;
@@ -10597,8 +10588,9 @@ function sdQRespGetItems() {
 
 function sdQRespGetFilteredResponses(q) {
   var base = sdQRespModuleFilter === 'All Modules' ? q.responses : q.responses.filter(function(r){ return r.module === sdQRespModuleFilter; });
-  if (sdQRespProcessFilter !== 'All Processes')
-    base = base.filter(function(r){ return sdProcessOf(r.name) === sdQRespProcessFilter; });
+  // scoped by the page-level Process filter beside "Survey Responses Summary"
+  if (typeof sdProcFilter!=='undefined' && sdProcFilter!=='All')
+    base = base.filter(function(r){ return sdProcessOf(r.name) === sdProcFilter; });
   return base.filter(function(r){ return sdQRespMatchesRespFilter(r.name); });
 }
 
@@ -11021,24 +11013,6 @@ function sdQRespMatchesRespFilter(respName) {
   return true;
 }
 
-function sdQRespToggleProcessDD() {
-  var dd=document.getElementById('sd-qresp-process-dd');
-  var open=dd.style.display==='none'||!dd.style.display;
-  if(open){
-    dd.innerHTML=['All Processes'].concat(sdAllProcesses()).map(function(p){
-      var sel=(p===sdQRespProcessFilter);
-      return '<div class="sd-inv-dd-item" onclick="sdQRespSetProcess(\''+p+'\')"'+
-        (sel?' style="font-weight:600;color:#1a73e8;"':'')+'>'+p+'</div>'; }).join('');
-  }
-  dd.style.display = open? 'block':'none';
-}
-function sdQRespSetProcess(proc) {
-  sdQRespProcessFilter = proc;
-  sdQRespExpandedIds = {}; sdQRespExpandedResp = {}; sdQRespPages = {}; sdQRespTblModFilter = {};
-  var l=document.getElementById('sd-qresp-process-label'); if(l) l.textContent = proc;
-  var dd=document.getElementById('sd-qresp-process-dd'); if(dd) dd.style.display='none';
-  sdQRespRender();
-}
 function sdQRespToggleModuleDD() {
   var dd = document.getElementById('sd-qresp-module-dd');
   dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
@@ -16209,7 +16183,10 @@ function sdSetProcFilter(p){
   sdProcFilter=p;
   var l=document.getElementById('sd-proc-label'); if(l) l.textContent=p;
   var dd=document.getElementById('sd-proc-dd'); if(dd) dd.style.display='none';
-  if(typeof sdQRespSetProcess==='function') sdQRespSetProcess(p==='All'?'All Processes':p);
+  if(typeof sdQRespRender==='function'){
+    sdQRespExpandedIds={}; sdQRespExpandedResp={}; sdQRespPages={}; sdQRespTblModFilter={};
+    sdQRespRender();
+  }
   sdSetData(true);
   if(typeof sdRespRender==='function'){ sdRespPage=1; sdRespRender(); }
 }
