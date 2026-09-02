@@ -3914,6 +3914,9 @@ tbody tr:hover{background:#f5f7ff;}
                      min-width:170px;background:#fff;border:1px solid #D6D6E3;border-radius:8px;
                      box-shadow:0 6px 18px rgba(49,57,73,.18);padding:5px;"></div>
               </span>
+              <!-- which day/week/month is on screen, and arrows to walk through them -->
+              <span id="sd-trend-nav" style="display:none;align-items:center;gap:2px;font-size:12px;
+                     color:#434D5E;background:#fff;border:1px solid #C7D2EA;border-radius:20px;padding:3px 7px;"></span>
             </div>
           </div>
           <div id="sd-responses-body" style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;">
@@ -16319,17 +16322,93 @@ var sdProcFilter='All';
 // from the latest response in the set rather than from today's date.
 var SD_TREND=[['All','All'],['day','By day'],['week','By week'],['month','By month'],['quarter','By quarter']];
 var sdTrend='All';
+var sdTrendOffset=0;   // 0 = the period holding the latest response, -1 = the one before
+var SD_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var SD_MONFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function sdRespDate(r){ var d=new Date(String(r.startTime||'')); return isNaN(d)? null : d; }
-function sdTrendCutoff(){
+function sdPendDate(p){ var d=new Date(String(p.sent||'')); return isNaN(d)? null : d; }
+function sdDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function sdDataBounds(){
+  var lo=null, hi=null, put=function(d){ if(!d) return; if(!lo||d<lo) lo=d; if(!hi||d>hi) hi=d; };
+  sdRespData.forEach(function(r){ put(sdRespDate(r)); });
+  (typeof sdPending!=='undefined'? sdPending:[]).forEach(function(p){ put(sdPendDate(p)); });
+  return {lo:lo?sdDay(lo):null, hi:hi?sdDay(hi):null};
+}
+// Calendar periods, not a rolling window. "By month" has to be able to answer WHICH
+// month, and a trailing 31 days from the latest response has no name a user recognises.
+function sdPeriodOf(d, kind, step){
+  var y=d.getFullYear(), m=d.getMonth();
+  if(kind==='day'){
+    var s0=new Date(y,m,d.getDate()+step);
+    return {start:s0, end:s0, label:SD_MON[s0.getMonth()]+' '+s0.getDate()+', '+s0.getFullYear()};
+  }
+  if(kind==='week'){
+    var dow=(d.getDay()+6)%7;                       // Monday-based
+    var st=new Date(y,m,d.getDate()-dow+step*7);
+    var en=new Date(st.getFullYear(),st.getMonth(),st.getDate()+6);
+    var same=st.getMonth()===en.getMonth();
+    return {start:st, end:en,
+      label:SD_MON[st.getMonth()]+' '+st.getDate()+' \u2013 '+(same?'':SD_MON[en.getMonth()]+' ')+en.getDate()+', '+en.getFullYear()};
+  }
+  if(kind==='month'){
+    var ms=new Date(y,m+step,1), me=new Date(ms.getFullYear(),ms.getMonth()+1,0);
+    return {start:ms, end:me, label:SD_MONFULL[ms.getMonth()]+' '+ms.getFullYear()};
+  }
+  var q=Math.floor(m/3)+step, qs=new Date(y,q*3,1), qe=new Date(qs.getFullYear(),qs.getMonth()+3,0);
+  return {start:qs, end:qe, label:'Q'+(Math.floor(qs.getMonth()/3)+1)+' '+qs.getFullYear()};
+}
+function sdTrendWindow(){
   if(sdTrend==='All') return null;
-  var days={day:1, week:7, month:31, quarter:92}[sdTrend];
-  var latest=null;
-  sdRespData.forEach(function(r){ var d=sdRespDate(r); if(d && (!latest || d>latest)) latest=d; });
-  return latest? new Date(latest.getTime()-(days-1)*86400000) : null;
+  var b=sdDataBounds(); if(!b.hi) return null;
+  return sdPeriodOf(b.hi, sdTrend, sdTrendOffset);
 }
 function sdInTrend(r){
-  var cut=sdTrendCutoff(); if(!cut) return true;
-  var d=sdRespDate(r); return d? d>=cut : true;
+  var w=sdTrendWindow(); if(!w) return true;
+  var d=sdRespDate(r); if(!d) return true;
+  d=sdDay(d);
+  return d>=w.start && d<=w.end;
+}
+function sdInTrendPend(p){
+  var w=sdTrendWindow(); if(!w) return true;
+  var d=sdPendDate(p); if(!d) return true;
+  d=sdDay(d);
+  return d>=w.start && d<=w.end;
+}
+// Can we still step? Clamped to the periods that actually hold data, so the arrows
+// never walk off into empty months.
+function sdTrendCanStep(dir){
+  if(sdTrend==='All') return false;
+  var b=sdDataBounds(); if(!b.hi) return false;
+  var w=sdPeriodOf(b.hi, sdTrend, sdTrendOffset+dir);
+  return dir<0 ? w.end>=b.lo : w.start<=b.hi;
+}
+function sdTrendStep(dir){
+  if(!sdTrendCanStep(dir)) return;
+  sdTrendOffset+=dir;
+  sdTrendApply();
+}
+function sdTrendApply(){
+  var w=sdTrendWindow();
+  var lbl=document.getElementById('sd-trend-label');
+  if(lbl) lbl.textContent=(SD_TREND.filter(function(o){return o[0]===sdTrend;})[0]||['','All'])[1];
+  var nav=document.getElementById('sd-trend-nav');
+  if(nav){
+    if(!w){ nav.style.display='none'; }
+    else {
+      nav.style.display='inline-flex';
+      var arrow=function(dir,glyph){
+        var on=sdTrendCanStep(dir);
+        return '<span onclick="event.stopPropagation();'+(on?'sdTrendStep('+dir+')':'')+'" '+
+          'title="'+(dir<0?'Previous':'Next')+'" style="padding:0 5px;font-size:13px;line-height:1;'+
+          'color:'+(on?'#5464F2':'#C9CDD6')+';cursor:'+(on?'pointer':'default')+';">'+glyph+'</span>';
+      };
+      nav.innerHTML=arrow(-1,'&lsaquo;')+
+        '<b style="font-weight:700;color:#1F2733;white-space:nowrap;">'+w.label+'</b>'+
+        arrow(1,'&rsaquo;');
+    }
+  }
+  sdSetData(true);
+  if(typeof sdRespRender==='function'){ sdRespPage=1; sdRespRender(); }
 }
 function sdToggleTrendDD(){
   var dd=document.getElementById('sd-trend-dd'); if(!dd) return;
@@ -16345,11 +16424,9 @@ function sdToggleTrendDD(){
 }
 function sdSetTrend(k){
   sdTrend=k;
-  var lbl=document.getElementById('sd-trend-label');
-  if(lbl) lbl.textContent=(SD_TREND.filter(function(o){return o[0]===k;})[0]||['','All'])[1];
+  sdTrendOffset=0;   // land on the newest period, then let the arrows walk back
   var dd=document.getElementById('sd-trend-dd'); if(dd) dd.style.display='none';
-  sdSetData(true);
-  if(typeof sdRespRender==='function'){ sdRespPage=1; sdRespRender(); }
+  sdTrendApply();
 }
 document.addEventListener('click', function(){
   var dd=document.getElementById('sd-trend-dd');
@@ -16378,11 +16455,9 @@ function sdPendingRows(){
   if(typeof sdPending==='undefined') return [];
   // the invitees are scoped by the same two page filters as the responses, so the
   // "Yet to respond" tile and this table can never disagree with the rest of the page
-  var cut=sdTrendCutoff();
   return sdPending.filter(function(p){
     if(sdProcFilter!=='All' && p.process!==sdProcFilter) return false;
-    if(cut){ var d=new Date(String(p.sent||'')); if(!isNaN(d) && d<cut) return false; }
-    return true;
+    return sdInTrendPend(p);
   });
 }
 function sdProcList(){
