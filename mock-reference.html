@@ -3905,9 +3905,16 @@ tbody tr:hover{background:#f5f7ff;}
                   <div id="sd-stat-sent" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
                   <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Sent</div>
                 </div>
-                <div style="background:#fff;padding:21px 14px;text-align:center;">
-                  <div id="sd-stat-responses" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</div>
-                  <div style="font-size:11.5px;color:#5B6473;margin-top:8px;font-weight:500;letter-spacing:.01em;">Received</div>
+                <div style="background:#fff;padding:16px 14px;display:flex;align-items:center;justify-content:center;gap:12px;">
+                  <div id="sd-quota-ring" style="flex:none;"></div>
+                  <div style="text-align:left;">
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                      <span id="sd-stat-responses" style="font-size:27px;font-weight:700;color:#1F2733;letter-spacing:-.6px;line-height:1;">0</span>
+                      <span id="sd-stat-quota-limit" style="font-size:14px;font-weight:500;color:#9AA0B1;">/ 200</span>
+                    </div>
+                    <div style="font-size:11.5px;color:#5B6473;margin-top:6px;font-weight:500;">Response Received</div>
+                    <div id="sd-stat-quota-left" style="font-size:11px;font-weight:600;color:#12A150;margin-top:3px;">&nbsp;</div>
+                  </div>
                 </div>
                 <div class="sd-stat-click" onclick="sdFilterSentiment('happy')" title="Click to view these responses" style="background:#fff;padding:21px 14px;text-align:center;cursor:pointer;">
                   <div id="sd-stat-happy" style="font-size:27px;font-weight:700;color:#10975E;letter-spacing:-.6px;line-height:1;">0</div>
@@ -5506,6 +5513,13 @@ function sdSetData(hasData) {
   set('sd-stat-unhappy', hasData? String(rc.neg) : '0');
   set('sd-stat-neutral', hasData? String(rc.neu) : '0');
   set('sd-stat-pending', hasData? String(nPend)  : '0');
+  var lim=(typeof SD_QUOTA!=='undefined')? SD_QUOTA.limit : 0;
+  var got=hasData? nResp : 0;
+  var ring=document.getElementById('sd-quota-ring');
+  if(ring) ring.innerHTML=sdQuotaRing(got, lim);
+  set('sd-stat-quota-limit','/ '+lim);
+  var left=document.getElementById('sd-stat-quota-left');
+  if(left) left.textContent=Math.max(0, lim-got).toLocaleString()+' more can be received';
   var show = function(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; };
   show('sd-reports-section',hasData); show('sd-respondents-section',hasData); show('sd-qresp-section',hasData);
   show('sd-results',hasData); if(hasData && typeof sdRenderResults==='function') sdRenderResults();
@@ -8973,6 +8987,16 @@ function sdRespCounts(rows){
   return c;
 }
 var SD_VERDICT={pos:{t:'Positive',c:'#10975E'},neu:{t:'Neutral',c:'#616E88'},neg:{t:'Negative',c:'#C8324A'}};
+// small donut, like the product's registration tile: share of the quota used
+function sdQuotaRing(used, limit){
+  var pct = limit? Math.min(100, Math.round(used/limit*100)) : 0;
+  var r=17, c=2*Math.PI*r;
+  return '<svg width="46" height="46" viewBox="0 0 46 46">'+
+    '<circle cx="23" cy="23" r="'+r+'" fill="none" stroke="#EDEFF4" stroke-width="5"/>'+
+    '<circle cx="23" cy="23" r="'+r+'" fill="none" stroke="#4A63E7" stroke-width="5" stroke-linecap="round"'+
+      ' stroke-dasharray="'+(c*pct/100).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 23 23)"/>'+
+    '<text x="23" y="26.5" font-size="10.5" font-weight="700" fill="#4A63E7" text-anchor="middle">'+pct+'%</text></svg>';
+}
 function sdFmtCsat(v){ return v===null||v===undefined? '—' : v.toFixed(2); }
 function sdFmtNps(v){  return v===null||v===undefined? '—' : (v>0?'+':'')+v.toFixed(2); }
 function sdFmtRate(v){ return v===null||v===undefined? '—' : v.toFixed(2)+' / 10'; }
@@ -9179,6 +9203,7 @@ function sdPlaceSections(ownerHtml, pendingHtml){
   var statsBody=document.getElementById('sd-sec-stats-body') || document.getElementById('sd-sec-stats');
   var reports=document.getElementById('sd-reports-section');
   var qs=document.getElementById('sd-quota-strip');
+  if(qs) qs.style.display='none';          // quota is folded into the Received tile
   var grid=document.getElementById('sd-stat-sent');
   grid=grid? grid.parentElement.parentElement : null;
   var tiles=document.getElementById('sd-tiles-sub');
@@ -9189,13 +9214,7 @@ function sdPlaceSections(ownerHtml, pendingHtml){
     grid.parentElement.insertBefore(tiles, grid);
     tiles.appendChild(grid);
   }
-  if(qs)      { qs.className='sd-quota-top'; }
-  var qwrap=document.getElementById('sd-quota-sub');
-  if(!qwrap && qs){
-    qwrap=document.createElement('div'); qwrap.id='sd-quota-sub';
-    qs.parentElement.insertBefore(qwrap, qs); qwrap.appendChild(qs);
-  }
-  [qwrap, tiles, reports].forEach(function(el){
+  [tiles, reports].forEach(function(el){
     if(!el) return;
     el.className=(el.id==='sd-quota-strip'? el.className+' ' : (el===reports? '' : el.className? el.className+' ' : ''))+'sd-sub';
     if(statsBody) statsBody.appendChild(el);
@@ -15699,6 +15718,7 @@ var CV_PERIODS={
  'Last 6 months':{m:6.10, a:0.25, dm:1.8},
  'This year':    {m:8.30, a:0.30, dm:2.0}};
 var CV_PERIOD_LIST=Object.keys(CV_PERIODS);
+var SD_QUOTA={limit:200};   // response quota for this survey
 var CV_MINPEOPLE=10; // below this a person's share is too noisy to rank on
 // The survey is the instrument: its own question count and completion behaviour.
 var CV_SURVEYS={
